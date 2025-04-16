@@ -3,7 +3,7 @@
     <q-card>
       <q-card-actions align="between" class="bg-swx overflow-hidden q-pa-none q-pl-xs">
         <q-toolbar>
-          <q-toolbar-title>PENGIRIMAN</q-toolbar-title>
+          <q-toolbar-title>CHECK BUKA</q-toolbar-title>
           <q-btn @click="fixed = false" flat dense color="negative" rounded icon="close">
           </q-btn>
         </q-toolbar>
@@ -29,15 +29,15 @@
 
           <q-item class="col-3 q-pa-sm" dense>
             <q-item-section>
-              <q-item-label caption>Stok Masuk</q-item-label>
-              <q-item-label>{{ getStokBaru }} kg</q-item-label>
+              <q-item-label caption>Stok Keluar</q-item-label>
+              <q-item-label>{{ getModelNumber }} kg</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item class="col-3 q-pa-sm" dense>
             <q-item-section>
               <q-item-label caption>Stok Akhir</q-item-label>
-              <q-item-label lines="1">{{ getStokAkhir }} kg</q-item-label>
+              <q-item-label lines="1">{{ getStokAkhir }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -67,10 +67,7 @@
 
       <q-separator />
 
-      <q-card-section
-        style="height: calc(100% - 85.2px - 88px - 51px - 4px)"
-        class="scrollX"
-      >
+      <q-card-section class="scroll">
         <div class="row q-col-gutter-md">
           <div class="row col q-col-gutter-sm flex justify-center">
             <div class="col-4">
@@ -171,7 +168,7 @@
 import { ref } from "vue";
 
 import { mapState } from "pinia";
-import { usePengirimanStore } from "src/stores/pengiriman-store";
+import { useCheckInStore } from "src/stores/checkin-store";
 
 export default {
   setup() {
@@ -190,16 +187,25 @@ export default {
   //   this.isBtnCommaUsed();
   // },
   computed: {
-    ...mapState(usePengirimanStore, ["getStrukItemID"]),
+    ...mapState(useCheckInStore, ["getStrukItemID"]),
     getStokAkhir() {
       let _model = JSON.parse(JSON.stringify(this.model));
       _model = _model.replace(",", ".");
 
-      return Number(this.item?.stock) + Number(_model);
+      const sum = Number(this.item?.stock) - Number(_model);
+      return sum >= 0 ? sum + " kg" : "Tidak Cukup";
     },
-    getStokBaru() {
+    getSum() {
       let _model = JSON.parse(JSON.stringify(this.model));
-      return _model.replace(",", ".");
+      _model = _model.replace(",", ".");
+
+      // console.log(_model, _model.replace(",", "."));
+      return Math.round(Number(this.item?.price) * Number(_model), 2);
+    },
+    getModelNumber() {
+      let _model = JSON.parse(JSON.stringify(this.model));
+      _model = _model.replace(",", ".");
+      return Number(_model);
     },
   },
   watch: {
@@ -229,10 +235,10 @@ export default {
       let _model = JSON.parse(JSON.stringify(this.model));
       _model = _model.replace(",", ".");
 
-      if (_model === "0")
+      if (Number(_model) > Number(this.item?.stock))
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Tidak boleh kosong",
+          caption: "Berat melebih stok tersedia",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -240,13 +246,14 @@ export default {
 
       this.fixed = false;
 
+      if (_model === "0") return;
+
       this.$emit("onBubbleEvent", {
         ...this.item,
         id: this.getStrukItemID,
         produk_id: this.item?.id,
         qty: Number(_model),
-        stock_awal: Number(_model),
-        stock_akhir: Number(this.item?.stock) + Number(_model),
+        subtotal: Math.round(Number(_model) * Number(this.item?.price)),
       });
     },
     onOpen(item) {

@@ -13,7 +13,7 @@
       <q-btn @click="onDelete" icon="delete" round outline></q-btn>
     </template>
 
-    <q-item dense class="q-px-sm">
+    <q-item class="q-px-sm">
       <q-item-section>
         <q-item-label class="text-bold text-capitalize">{{ item?.name }}</q-item-label>
       </q-item-section>

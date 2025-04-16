@@ -253,6 +253,8 @@ export default {
         id: this.getStrukItemID,
         produk_id: this.item?.id,
         qty: Number(_model),
+        stock_awal: Number(_model),
+        stock_akhir: Number(this.item?.stock) + Number(_model),
         subtotal: Math.round(Number(_model) * Number(this.item?.price)),
       });
     },

@@ -3,6 +3,25 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 export const usePengaturanStore = defineStore('PengaturanStore', {
   state: () => ({
     balance: 100000,
+    cabang: {
+      id: 1,
+      nama: "JAKARTA",
+      deskripsi: "nama cabang",
+    }, // active cabang
+    cashier: {
+      id: 1,
+      nama: "Admin",
+      deskripsi: "nama kasir",
+      pin: 1234,
+    }, // active cashier
+    shift: {
+      id: 1,
+      nama: 'A',
+      jam_mulai: '08:30',
+      jam_selesai: '12:30',
+      jam_login: '09:00',
+      status: 'on time'
+    }, // active shift
     position: {
         //   "Latitude: " +
         //     position.coords.latitude +
@@ -29,6 +48,8 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
         //     position.timestamp +
         //     "\n"
     },
+
+
     pengiriman_cashier: {
       label: "Admin",
       value: "Admin",
@@ -66,32 +87,32 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
       {
         label: "Google",
         value: "Google",
-        description: "Search engine",
+        description: "password: 1234",
         icon: "mail",
         pin: 1234,
       },
       {
         label: "Facebook",
         value: "Facebook",
-        description: "Social media",
+        description: "password: 1234",
         icon: "bluetooth",
-        pin: 5678
+        pin: 1234
       },
     ],
     list_courirs: [
       {
         label: "Google",
         value: "Google",
-        description: "Search engine",
+        description: "password: 1234",
         icon: "mail",
         pin: 1234,
       },
       {
         label: "Facebook",
         value: "Facebook",
-        description: "Social media",
+        description: "password: 1234",
         icon: "bluetooth",
-        pin: 5678
+        pin: 1234
       },
     ],
   }),

@@ -11,6 +11,11 @@
         @onBubbleEvent="onBubbleEventDialogBayarPenjualan"
       ></DialogBayarPenjualan>
 
+      <DialogCatatan
+        @onBubbleEvent="struk.catatan = $event"
+        ref="dialog_catatan"
+      ></DialogCatatan>
+
       <div class="col-12">
         <q-banner dense class="bg-positive text-white">
           <template v-slot:avatar>
@@ -112,14 +117,27 @@
         </q-item-section>
       </q-item>
 
-      <q-btn
-        @click="openDialogBayarPenjualan"
-        color="pink"
-        class="full-width q-mt-sm text-h5"
-        style="height: 50px"
-        label="bayar"
-        icon-right="shopping_cart"
-      />
+      <div class="full-width q-mt-sm col-12 row q-col-gutter-sm">
+        <div class="col q-pl-none q-pt-none">
+          <q-btn
+            @click="openDialogBayarPenjualan"
+            color="pink"
+            class="text-h6 full-width"
+            style="height: 50px"
+            label="bayar"
+            icon-right="shopping_cart"
+          />
+        </div>
+        <div class="col-auto q-pt-none">
+          <q-btn
+            @click="openDialogCatatan"
+            color="teal"
+            class="text-h6"
+            style="height: 50px"
+            icon-right="edit_document"
+          />
+        </div>
+      </div>
     </q-page-sticky>
   </q-page>
 </template>
@@ -130,6 +148,7 @@ import { ref } from "vue";
 import SlideItemPenjualan from "src/components/SlideItemPenjualan.vue";
 import DialogCalculatorPenjualan from "src/components/DialogCalculatorPenjualan.vue";
 import DialogBayarPenjualan from "src/components/DialogBayarPenjualan.vue";
+import DialogCatatan from "src/components/DialogCatatan.vue";
 
 // const items = ref();
 </script>
@@ -189,6 +208,17 @@ export default {
       updateLocalStorage: "updateLocalStorage",
       updateLocalStorageItems: "updateLocalStorageItems",
     }),
+    openDialogCatatan() {
+      if (!this.struk?.id)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Struk tidak bisa kosong",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      this.$refs.dialog_catatan?.onOpen(this.struk.catatan);
+    },
     openDialogCalculatorPenjualan(item) {
       this.$refs.dialog_calculator?.onOpen(item);
     },
@@ -225,6 +255,8 @@ export default {
     onBubbleEventDialogBayarPenjualan() {},
     onBubbleEventSlideItemPenjualan(item, index) {
       this.struk?.items.splice(index, 1);
+
+      if (this.struk?.items.length <= 0) this.struk = null;
 
       // tidak usah, karena items dikurangi setelah bayar saja
       // this.items.forEach((el) => {

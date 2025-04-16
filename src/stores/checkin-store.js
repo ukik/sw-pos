@@ -15,23 +15,39 @@ function uuidv4() {
   );
 }
 
-export const useMutasiStore = defineStore('MutasiStore', {
+export const useCheckInStore = defineStore('CheckInStore', {
   state: () => ({
-    struk: {},
+    struk: {
+    },
     struks: [],
     invoice: null,
   }),
 
   getters: {
-    //doubleCount: (state) => state.counter * 2
-    // getItems: (state) => state.items,
+    isCheckDone: ({ struks }) => { // jadi harus di check apa kasir sudah check stok, sehari 1 kali saja
+      let temp = false
+      struks.forEach(el => {
+        if(el.tanggal == tanggalString) {
+          temp = true
+        }
+      });
+      return temp
+    },
+    getCheckDone: ({ struks }) => { // jadi harus di check apa kasir sudah check stok, sehari 1 kali saja
+      let temp = false
+      struks.forEach(el => {
+        if(el.tanggal == tanggalString) {
+          temp = el
+        }
+      });
+      return temp
+    },
     getStruk: (state) => state.struk,
     getStruks: (state) => state.struks,
     getStruksModify: ({ struks }) => {
       let _temp = JSON.parse(JSON.stringify(struks))
 
       _temp.forEach(el => {
-        el.courir_confirm = el.courir_confirm ? 'Setuju' : 'Tidak Setuju'
         el.cashier_confirm = el.cashier_confirm ? 'Setuju' : 'Tidak Setuju'
       });
 
@@ -60,19 +76,15 @@ export const useMutasiStore = defineStore('MutasiStore', {
   },
 
   actions: {
-    setCourir(val) {
-      // if(!this.struk?.courir ) return
-      let _model = JSON.parse(JSON.stringify(this.struk));
-      _model.courir = val
-      this.struk = _model
-      console.log('this.struk.courir',  this.struk, _model)
-    },
     addItemToStruk() {
 
       const { balance, position } = usePengaturanStore()
 
       let _struk = {
         ...this.struk,
+        // qty:
+        // stok_awal:
+        // stok_akhir:
         tanggal: tanggalString,
         waktu: waktuString,
         created_at: formattedString,
@@ -94,15 +106,13 @@ export const useMutasiStore = defineStore('MutasiStore', {
           id: this.getStruksLength + 1,
           code: "#" + uuidv4(),
           cabang: cabang?.nama,
-          type: "MUTASI",
+          type: "CHECK-BUKA",
           cashier: cashier?.nama,
-          courir: '',
           shift: shift?.nama,
           status: "",
           stok_akhir: 0,
           stok_awal: 0,
           qty: this.getTotal?.qty,
-          courir_confirm: false,
           cashier_confirm: false,
           items: [],
           catatan: null,
@@ -116,7 +126,7 @@ export const useMutasiStore = defineStore('MutasiStore', {
       }
     },
     updateLocalStorage() {
-      const storage_name = 'MUTASI-STRUKS-'+date.formatDate(timeStamp, "YYYY-MM-DD")
+      const storage_name = 'CHECK-BUKA-STRUKS-'+date.formatDate(timeStamp, "YYYY-MM-DD")
 
       // let model = JSON.parse(JSON.stringify(localStorage.getItem(storage_name)));
       let model = []
@@ -135,14 +145,14 @@ export const useMutasiStore = defineStore('MutasiStore', {
       this.invoice = this.struk
     },
     initLocalStorage() {
-      if(localStorage.getItem('MUTASI-STRUK')) {
-        this.struk = JSON.parse(localStorage.getItem('MUTASI-STRUK'));
+      if(localStorage.getItem('CHECK-BUKA-STRUK')) {
+        this.struk = JSON.parse(localStorage.getItem('CHECK-BUKA-STRUK'));
       }
     },
     loadLocalStorageStruks(set_date) {
-      const storage_name = 'MUTASI-STRUKS-'+set_date
+      const storage_name = 'CHECK-BUKA-STRUKS-'+set_date
 
-      console.log('loadLocalStorageStruks MUTASI', storage_name)
+      console.log('loadLocalStorageStruks CHECK-BUKA', storage_name)
       if(localStorage.getItem(storage_name)) {
         this.struks = JSON.parse(localStorage.getItem(storage_name));
       } else {
@@ -154,5 +164,5 @@ export const useMutasiStore = defineStore('MutasiStore', {
 })
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useMutasiStore, import.meta.hot))
+  import.meta.hot.accept(acceptHMRUpdate(useCheckInStore, import.meta.hot))
 }

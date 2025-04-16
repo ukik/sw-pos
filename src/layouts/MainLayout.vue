@@ -22,9 +22,9 @@
         <q-separator vertical color="white"></q-separator>
         <q-route-tab :to="{ name: 'pengiriman' }" label="Pengiriman" />
         <q-route-tab :to="{ name: 'mutasi' }" label="Mutasi" />
-        <q-route-tab :to="{ name: 'rotasi' }" label="Rotasi" />
-        <q-route-tab :to="{ name: 'check-in' }" label="Cek Buka" />
-        <q-route-tab :to="{ name: 'check-out' }" label="Cek Tutup" />
+        <q-route-tab :to="{ name: 'check-in' }" label="Check Buka" />
+        <q-route-tab :to="{ name: 'check-out' }" label="Check Tutup" />
+        <q-route-tab :to="{ name: 'check-rotasi' }" label="Check Rotasi" />
         <q-route-tab :to="{ name: 'riwayat_pengiriman' }" label="Riwayat Pengiriman" />
         <q-separator vertical color="white"></q-separator>
         <!-- <q-route-tab to="/page3" label="Tutup" /> -->
@@ -38,12 +38,18 @@
 
     <q-drawer v-model="rightDrawerOpen" side="right" bordered>
       <!-- drawer content -->
-      {{ position }}
+      {{ tanggalString }}
+      <br />
+      {{ CHECKIN_struks }}
     </q-drawer>
 
     <q-page-container>
       <DialogInvoicePenjualan ref="dialog_invoice_penjualan"></DialogInvoicePenjualan>
+      <DialogInvoicePengiriman ref="dialog_invoice_pengiriman"></DialogInvoicePengiriman>
       <DialogInvoiceMutasi ref="dialog_invoice_mutasi"></DialogInvoiceMutasi>
+      <DialogInvoiceRotasi ref="dialog_invoice_rotasi"></DialogInvoiceRotasi>
+      <DialogInvoiceCheckIn ref="dialog_invoice_checkin"></DialogInvoiceCheckIn>
+      <DialogInvoiceCheckOut ref="dialog_invoice_checkout"></DialogInvoiceCheckOut>
 
       <router-view />
     </q-page-container>
@@ -52,6 +58,7 @@
 
 <script>
 import { ref } from "vue";
+import { date } from "quasar";
 
 import { mapActions, mapState, mapWritableState } from "pinia";
 import { usePenjualanStore } from "src/stores/penjualan-store";
@@ -61,11 +68,26 @@ import { useMutasiStore } from "src/stores/mutasi-store";
 
 import DialogInvoicePenjualan from "src/components/DialogInvoicePenjualan.vue";
 import DialogInvoiceMutasi from "src/components/DialogInvoiceMutasi.vue";
+import { useRotasiStore } from "src/stores/rotasi-store";
+import { useCheckInStore } from "src/stores/checkin-store";
+import { useCheckOutStore } from "src/stores/checkout-store";
+import DialogInvoiceRotasi from "src/components/DialogInvoiceRotasi.vue";
+import DialogInvoiceCheckIn from "src/components/DialogInvoiceCheckIn.vue";
+import DialogInvoiceCheckOut from "src/components/DialogInvoiceCheckOut.vue";
+import DialogInvoicePengiriman from "src/components/DialogInvoicePengiriman.vue";
+
+const timeStamp = Date.now();
+// const formattedString = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm:ss");
+const tanggalString = date.formatDate(timeStamp, "YYYY-MM-DD");
 
 export default {
   components: {
     DialogInvoicePenjualan,
+    DialogInvoicePengiriman,
     DialogInvoiceMutasi,
+    DialogInvoiceRotasi,
+    DialogInvoiceCheckIn,
+    DialogInvoiceCheckOut,
   },
   setup() {
     const leftDrawerOpen = ref(false);
@@ -85,6 +107,7 @@ export default {
   },
   data() {
     return {
+      tanggalString,
       // position: null,
     };
   },
@@ -98,17 +121,51 @@ export default {
       PENJUALAN_invoice: "invoice",
     }),
     ...mapState(usePengirimanStore, {
-      PENGIRIMAN_items: "items",
+      // PENGIRIMAN_items: "items",
       PENGIRIMAN_struk: "struk",
       PENGIRIMAN_invoice: "invoice",
     }),
     ...mapState(useMutasiStore, {
-      MUTASI_items: "items",
+      // MUTASI_items: "items",
       MUTASI_struk: "struk",
       MUTASI_invoice: "invoice",
     }),
+    ...mapState(useRotasiStore, {
+      // ROTASI_items: "items",
+      ROTASI_struk: "struk",
+      ROTASI_invoice: "invoice",
+    }),
+    ...mapState(useCheckInStore, {
+      // CHECKIN_items: "items",
+      CHECKIN_struk: "struk",
+      CHECKIN_struks: "struks",
+      CHECKIN_invoice: "invoice",
+    }),
+    ...mapState(useCheckOutStore, {
+      // CHECKOUT_items: "items",
+      CHECKOUT_struk: "struk",
+      CHECKOUT_invoice: "invoice",
+    }),
   },
   watch: {
+    // jika di halaman check-in/check-out/check-rotasi
+    "$route.name": {
+      deep: true,
+      immediate: true,
+      handler(val) {
+        switch (val) {
+          case "check-rotasi":
+            this.ROTASI_loadLocalStorageStruks(tanggalString);
+            break;
+          case "check-in":
+            this.CHECKIN_loadLocalStorageStruks(tanggalString);
+            break;
+          case "check-out":
+            this.CHECKOUT_loadLocalStorageStruks(tanggalString);
+            break;
+        }
+      },
+    },
     // ---------------------------- //
     PENJUALAN_items(val) {
       console.log("MAINLAYOUT PENJUALAN_items");
@@ -160,6 +217,57 @@ export default {
       console.log("MAINLAYOUT MUTASI_invoice");
       localStorage.setItem("MUTASI-INVOICE", JSON.stringify(val));
     },
+    // ---------------------------- //
+    ROTASI_items(val) {
+      console.log("MAINLAYOUT ROTASI_items");
+      localStorage.setItem("ROTASI-ITEMS", JSON.stringify(val));
+    },
+    ROTASI_struk: {
+      deep: true,
+      handler(val) {
+        console.log("MAINLAYOUT ROTASI_struk");
+        localStorage.setItem("ROTASI-STRUK", JSON.stringify(val));
+        localStorage.setItem("ROTASI-ITEMS", JSON.stringify(this.PENJUALAN_items));
+      },
+    },
+    ROTASI_invoice(val) {
+      console.log("MAINLAYOUT ROTASI_invoice");
+      localStorage.setItem("ROTASI-INVOICE", JSON.stringify(val));
+    },
+    // ---------------------------- //
+    CHECKIN_items(val) {
+      console.log("MAINLAYOUT CHECKIN_items");
+      localStorage.setItem("CHECK-BUKA-ITEMS", JSON.stringify(val));
+    },
+    CHECKIN_struk: {
+      deep: true,
+      handler(val) {
+        console.log("MAINLAYOUT CHECKIN_struk");
+        localStorage.setItem("CHECK-BUKA-STRUK", JSON.stringify(val));
+        localStorage.setItem("CHECK-BUKA-ITEMS", JSON.stringify(this.PENJUALAN_items));
+      },
+    },
+    CHECKIN_invoice(val) {
+      console.log("MAINLAYOUT CHECKIN_invoice");
+      localStorage.setItem("CHECK-BUKA-INVOICE", JSON.stringify(val));
+    },
+    // ---------------------------- //
+    CHECKOUT_items(val) {
+      console.log("MAINLAYOUT CHECKOUT_items");
+      localStorage.setItem("CHECK-TUTUP-ITEMS", JSON.stringify(val));
+    },
+    CHECKOUT_struk: {
+      deep: true,
+      handler(val) {
+        console.log("MAINLAYOUT CHECKOUT_struk");
+        localStorage.setItem("CHECK-TUTUP-STRUK", JSON.stringify(val));
+        localStorage.setItem("CHECK-TUTUP-ITEMS", JSON.stringify(this.PENJUALAN_items));
+      },
+    },
+    CHECKOUT_invoice(val) {
+      console.log("MAINLAYOUT CHECKOUT_invoice");
+      localStorage.setItem("CHECK-TUTUP-INVOICE", JSON.stringify(val));
+    },
   },
   methods: {
     ...mapActions(usePenjualanStore, {
@@ -175,6 +283,22 @@ export default {
       MUTASI_initLocalStorage: "initLocalStorage",
       MUTASI_updateLocalStorage: "updateLocalStorage",
     }),
+    ...mapActions(useRotasiStore, {
+      ROTASI_initLocalStorage: "initLocalStorage",
+      ROTASI_updateLocalStorage: "updateLocalStorage",
+      ROTASI_loadLocalStorageStruks: "loadLocalStorageStruks",
+    }),
+    ...mapActions(useCheckInStore, {
+      CHECKIN_initLocalStorage: "initLocalStorage",
+      CHECKIN_updateLocalStorage: "updateLocalStorage",
+      CHECKIN_loadLocalStorageStruks: "loadLocalStorageStruks",
+    }),
+    ...mapActions(useCheckOutStore, {
+      CHECKOUT_initLocalStorage: "initLocalStorage",
+      CHECKOUT_updateLocalStorage: "updateLocalStorage",
+      CHECKOUT_loadLocalStorageStruks: "loadLocalStorageStruks",
+    }),
+
     onSwal(item, route_name, title) {
       const vm = this;
 
@@ -199,14 +323,21 @@ export default {
         },
       }).then((result) => {
         if (result.isConfirmed) {
-          if (route_name == "riwayat_pengiriman") {
-            vm.$router.push({
-              name: route_name,
-            });
+          if (route_name == "riwayat_penjualan") {
+            // vm.$router.push({
+            //   name: route_name,
+            // });
+            vm.$refs.dialog_invoice_penjualan?.onOpen();
+          } else if (route_name == "riwayat_pengiriman") {
+            vm.$refs.dialog_invoice_pengiriman?.onOpen();
           } else if (route_name == "riwayat_mutasi") {
             vm.$refs.dialog_invoice_mutasi?.onOpen();
-          } else if (route_name == "riwayat_penjualan") {
-            vm.$refs.dialog_invoice_penjualan?.onOpen();
+          } else if (route_name == "riwayat_rotasi") {
+            vm.$refs.dialog_invoice_rotasi?.onOpen();
+          } else if (route_name == "riwayat_checkin") {
+            vm.$refs.dialog_invoice_checkin?.onOpen();
+          } else if (route_name == "riwayat_checkout") {
+            vm.$refs.dialog_invoice_checkout?.onOpen();
           }
         }
       });
@@ -225,32 +356,6 @@ export default {
 
       function onSuccess(position) {
         vm.position = position;
-        // alert(
-        //   "Latitude: " +
-        //     position.coords.latitude +
-        //     "\n" +
-        //     "Longitude: " +
-        //     position.coords.longitude +
-        //     "\n" +
-        //     "Altitude: " +
-        //     position.coords.altitude +
-        //     "\n" +
-        //     "Accuracy: " +
-        //     position.coords.accuracy +
-        //     "\n" +
-        //     "Altitude Accuracy: " +
-        //     position.coords.altitudeAccuracy +
-        //     "\n" +
-        //     "Heading: " +
-        //     position.coords.heading +
-        //     "\n" +
-        //     "Speed: " +
-        //     position.coords.speed +
-        //     "\n" +
-        //     "Timestamp: " +
-        //     position.timestamp +
-        //     "\n"
-        // );
       }
 
       function onError(error) {
@@ -273,32 +378,6 @@ export default {
 
       function onSuccess(position) {
         vm.position = position;
-        // alert(
-        //   "Latitude: " +
-        //     position.coords.latitude +
-        //     "\n" +
-        //     "Longitude: " +
-        //     position.coords.longitude +
-        //     "\n" +
-        //     "Altitude: " +
-        //     position.coords.altitude +
-        //     "\n" +
-        //     "Accuracy: " +
-        //     position.coords.accuracy +
-        //     "\n" +
-        //     "Altitude Accuracy: " +
-        //     position.coords.altitudeAccuracy +
-        //     "\n" +
-        //     "Heading: " +
-        //     position.coords.heading +
-        //     "\n" +
-        //     "Speed: " +
-        //     position.coords.speed +
-        //     "\n" +
-        //     "Timestamp: " +
-        //     position.timestamp +
-        //     "\n"
-        // );
       }
 
       function onError(error) {
@@ -306,12 +385,16 @@ export default {
       }
     },
   },
-  mounted() {
-    const vm = this;
-
+  created() {
     this.PENJUALAN_initLocalStorage();
     this.PENGIRIMAN_initLocalStorage();
     this.MUTASI_initLocalStorage();
+    this.ROTASI_initLocalStorage();
+    this.CHECKIN_initLocalStorage();
+    this.CHECKOUT_initLocalStorage();
+  },
+  mounted() {
+    const vm = this;
 
     console.log("navigator?.geolocation", navigator?.geolocation);
 
@@ -323,18 +406,30 @@ export default {
     this.$global.$off("MainLayout");
     this.$global.$on("MainLayout", function (event) {
       switch (event?.label) {
-        case "DialogConfirmMutasi":
-          vm.MUTASI_updateLocalStorage();
-          vm.onSwal(event.value, "riwayat_mutasi", "MUTASI SELESAI");
+        case "DialogBayarPenjualan":
+          vm.PENJUALAN_updateLocalStorage();
+          vm.onBayar();
+          vm.onSwal(event.value, "riwayat_penjualan", "PENJUALAN SELESAI");
           break;
         case "DialogConfirmPengiriman":
           vm.PENGIRIMAN_updateLocalStorage();
           vm.onSwal(event.value, "riwayat_pengiriman", "PENGIRIMAN SELESAI");
           break;
-        case "DialogBayarPenjualan":
-          vm.PENJUALAN_updateLocalStorage();
-          vm.onBayar();
-          vm.onSwal(event.value, "riwayat_penjualan", "PENJUALAN SELESAI");
+        case "DialogConfirmMutasi":
+          vm.MUTASI_updateLocalStorage();
+          vm.onSwal(event.value, "riwayat_mutasi", "MUTASI SELESAI");
+          break;
+        case "DialogConfirmRotasi":
+          vm.ROTASI_updateLocalStorage();
+          vm.onSwal(event.value, "riwayat_mutasi", "CHECK ROTASI SELESAI");
+          break;
+        case "DialogConfirmCheckIn":
+          vm.CHECKIN_updateLocalStorage();
+          vm.onSwal(event.value, "riwayat_mutasi", "CHECK BUKA SELESAI");
+          break;
+        case "DialogConfirmCheckOut":
+          vm.CHECKOUT_updateLocalStorage();
+          vm.onSwal(event.value, "riwayat_mutasi", "CHECK TUTUP SELESAI");
           break;
       }
     });

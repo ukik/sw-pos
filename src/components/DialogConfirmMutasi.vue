@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :persistent="false" full-width v-model="fixed">
+  <q-dialog :persistent="false" full-width full-height v-model="fixed">
     <q-card>
       <q-form @submit="onSubmit">
         <q-card-actions class="q-pa-none q-pl-xs">
@@ -11,20 +11,10 @@
 
         <q-separator />
 
-        <q-card-section style="" class="scroll q-pa-sm">
-          <!-- <q-input
-            class="q-mb-md"
-            hint="Wajib diisi"
-            :rules="[(val) => !!val || 'Wajib diisi']"
-            outlined
-            counter
-            clearable
-            maxlength="100"
-            v-model="item.courir"
-            label="Nama Kurir"
-          /> -->
-
-          <!-- <SelectCashier></SelectCashier> -->
+        <q-card-section
+          style="height: calc(100vh - 50px - 50px - 67.44px)"
+          class="scroll q-pa-sm"
+        >
           <q-select
             clearable
             class="q-mb-md"
@@ -54,9 +44,10 @@
           <div class="row q-col-gutter-md q-mb-md">
             <div class="col-6">
               <q-input
-                hint="Wajib diisi"
-                :rules="[(val) => !!val || 'Wajib diisi']"
-                mask="# # # #"
+                hint="Wajib diisi (4 digits)"
+                :rules="[(val) => !!val || 'Wajib diisi (4 digits)']"
+                type="password"
+                mask="####"
                 unmasked-value
                 outlined
                 clearable
@@ -66,9 +57,10 @@
             </div>
             <div class="col-6">
               <q-input
-                hint="Wajib diisi"
-                :rules="[(val) => !!val || 'Wajib diisi']"
-                mask="# # # #"
+                hint="Wajib diisi (4 digits)"
+                :rules="[(val) => !!val || 'Wajib diisi (4 digits)']"
+                type="password"
+                mask="####"
                 unmasked-value
                 outlined
                 clearable
@@ -252,6 +244,12 @@ export default {
     onOpen(item) {
       this.fixed = true;
       this.item = item;
+
+      this.pin1 = null;
+      this.pin2 = null;
+      this.mutasi_courir = null;
+      this.struk.courir_confirm = false;
+      this.struk.cashier_confirm = false;
     },
   },
 };

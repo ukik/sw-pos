@@ -303,12 +303,6 @@ export default {
 
       const _struk = {
         ...this.item,
-        // id: this.getStruksLength + 1,
-        // code: "#" + uuidv4(),
-        // type: "penjualan",
-        // cashier: "Nina",
-        // shift: "A",
-        // status: "",
         balance: this.balance,
         bill: this.getTotalStruk,
         bayar: this.model,

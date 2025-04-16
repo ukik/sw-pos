@@ -11,6 +11,11 @@
         @onBubbleEvent="onBubbleEventDialogConfirmPengiriman"
       ></DialogConfirmPengiriman>
 
+      <DialogCatatan
+        @onBubbleEvent="struk.catatan = $event"
+        ref="dialog_catatan"
+      ></DialogCatatan>
+
       <div class="col-12">
         <q-banner dense class="bg-positive text-white">
           <template v-slot:avatar>
@@ -111,14 +116,27 @@
         </q-item-section>
       </q-item>
 
-      <q-btn
-        @click="openDialogConfirmPengiriman"
-        color="pink"
-        class="full-width q-mt-sm text-h5"
-        style="height: 50px"
-        label="validasi"
-        icon-right="security"
-      />
+      <div class="full-width q-mt-sm col-12 row q-col-gutter-sm">
+        <div class="col q-pl-none q-pt-none">
+          <q-btn
+            @click="openDialogConfirmPengiriman"
+            color="pink"
+            class="text-h6 full-width"
+            style="height: 50px"
+            label="validasi"
+            icon-right="security"
+          />
+        </div>
+        <div class="col-auto q-pt-none">
+          <q-btn
+            @click="openDialogCatatan"
+            color="teal"
+            class="text-h6"
+            style="height: 50px"
+            icon-right="edit_document"
+          />
+        </div>
+      </div>
     </q-page-sticky>
   </q-page>
 </template>
@@ -129,6 +147,7 @@ import { ref } from "vue";
 import SlideItemPengiriman from "src/components/SlideItemPengiriman.vue";
 import DialogCalculatorPengiriman from "src/components/DialogCalculatorPengiriman.vue";
 import DialogConfirmPengiriman from "src/components/DialogConfirmPengiriman.vue";
+import DialogCatatan from "src/components/DialogCatatan.vue";
 
 // const items = ref();
 </script>
@@ -185,6 +204,17 @@ export default {
       addNewStruk: "addNewStruk",
       updateLocalStorage: "updateLocalStorage",
     }),
+    openDialogCatatan() {
+      if (!this.struk?.id)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Struk tidak bisa kosong",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      this.$refs.dialog_catatan?.onOpen(this.struk.catatan);
+    },
     openDialogCalculatorPengiriman(item) {
       this.$refs.dialog_calculator?.onOpen(item);
     },
@@ -207,6 +237,8 @@ export default {
 
       this.struk?.items?.push(item);
 
+      this.struk.qty = this.getTotal?.qty;
+
       // this.items.forEach((el) => {
       //   if (item?.id == el?.id) {
       //     el.stock = Number(el?.stock) - Number(item?.qty);
@@ -219,6 +251,7 @@ export default {
     onBubbleEventSlideItemPengiriman(item, index) {
       this.struk?.items?.splice(index, 1);
 
+      if (this.struk?.items.length <= 0) this.struk = null;
       // this.items.forEach((el) => {
       //   if (item?.produk_id == el?.produk_id) {
       //     el.stock = Number(el?.stock) + Number(item?.qty);

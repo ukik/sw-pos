@@ -84,26 +84,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
         price: 9000,
       },
     ],
-    struk: {
-      // id: this.getStruksLength + 1,
-      // code: "#" + uuidv4(),
-      // cabang: 'jogja',
-      // type: "PENJUALAN",
-      // cashier: "Nina",
-      // shift: "A",
-      // status: "",
-      // balance: 0,
-      // bill: 0,
-      // bayar: 0,
-      // change: 0,
-      // qty: 0,
-      // items: [],
-      // tanggal: tanggalString,
-      // waktu: waktuString,
-      // created_at: formattedString,
-      // latitude: position?.coords?.latitude, // Latitude will be stored here
-      // longitude: position?.coords?.longitude, // Longitude will be stored here
-    },
+    struk: {},
     struks: [],
     invoice: null,
   }),
@@ -179,16 +160,16 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
     },
     addNewStruk() {
 
-      const { balance, position } = usePengaturanStore()
+      const { balance, position, cabang, cashier, shift } = usePengaturanStore()
 
       if (!this.struk?.id) {
         this.struk = {
           id: this.getStruksLength + 1,
           code: "#" + uuidv4(),
-          cabang: 'jogja',
+          cabang: cabang?.nama,
           type: "PENJUALAN",
-          cashier: "Nina",
-          shift: "A",
+          cashier: cashier?.nama,
+          shift: shift?.nama,
           status: "",
           balance: 0,
           bill: 0,
@@ -196,6 +177,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
           change: 0,
           qty: 0,
           items: [],
+          catatan: null,
           tanggal: tanggalString,
           waktu: waktuString,
           created_at: formattedString,
@@ -227,6 +209,40 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
 
       localStorage.setItem("PENJUALAN-ITEMS", JSON.stringify(this.items));
     },
+    onSyncPenjualanRotasiItems(payload) {
+      this.items.forEach((el1, index1) => {
+        payload?.items.forEach((el2, index2) => {
+          if (el2.produk_id == el1.produk_id) {
+            el1.stock -= Number(el2.qty)
+          }
+        });
+      })
+
+      localStorage.setItem("PENJUALAN-ITEMS", JSON.stringify(this.items));
+    },
+    onSyncPenjualanCheckInItems(payload) {
+      this.items.forEach((el1, index1) => {
+        payload?.items.forEach((el2, index2) => {
+          if (el2.produk_id == el1.produk_id) {
+            el1.stock -= Number(el2.qty)
+          }
+        });
+      })
+
+      localStorage.setItem("PENJUALAN-ITEMS", JSON.stringify(this.items));
+    },
+    onSyncPenjualanCheckOutItems(payload) {
+      this.items.forEach((el1, index1) => {
+        payload?.items.forEach((el2, index2) => {
+          if (el2.produk_id == el1.produk_id) {
+            el1.stock -= Number(el2.qty)
+          }
+        });
+      })
+
+      localStorage.setItem("PENJUALAN-ITEMS", JSON.stringify(this.items));
+    },
+
     updateLocalStorage() {
       const storage_name = 'PENJUALAN-STRUKS-' + date.formatDate(timeStamp, "YYYY-MM-DD")
 

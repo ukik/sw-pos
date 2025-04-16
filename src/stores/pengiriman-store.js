@@ -17,83 +17,7 @@ function uuidv4() {
 
 export const usePengirimanStore = defineStore('PengirimanStore', {
   state: () => ({
-    // items: [
-    //   {
-    //     id: 0,
-    //     produk_id: 0,
-    //     name: "daging",
-    //     stock: 50,
-    //   },
-    //   {
-    //     id: 1,
-    //     produk_id: 1,
-    //     name: "paha",
-    //     stock: 50,
-    //   },
-    //   {
-    //     id: 2,
-    //     produk_id: 2,
-    //     name: "sayap",
-    //     stock: 50,
-    //   },
-    //   {
-    //     id: 3,
-    //     produk_id: 3,
-    //     name: "kepala",
-    //     stock: 50,
-    //   },
-    //   {
-    //     id: 4,
-    //     produk_id: 4,
-    //     name: "ceker",
-    //     stock: 50,
-    //   },
-    //   {
-    //     id: 5,
-    //     produk_id: 5,
-    //     name: "ati",
-    //     stock: 50,
-    //   },
-    //   {
-    //     id: 6,
-    //     produk_id: 6,
-    //     name: "usus",
-    //     stock: 50,
-    //   },
-    //   {
-    //     id: 7,
-    //     produk_id: 7,
-    //     name: "kulit",
-    //     stock: 50,
-    //   },
-    //   {
-    //     id: 8,
-    //     produk_id: 8,
-    //     name: "telur",
-    //     stock: 50,
-    //   },
-    // ],
-    struk: {
-      // id: this.getStruksLength + 1,
-      // code: "#" + uuidv4(),
-      // cabang: 'jogja',
-      // type: "PENGIRIMAN",
-      // cashier: "Nina",
-      // courir: '',
-      // shift: "A",
-      // status: "",
-      // stok_akhir: 0,
-      // stok_awal: 0,
-      // qty: this.getTotal?.qty,
-      // courir_confirm: false,
-      // cashier_confirm: false,
-      // items: [],
-      // tanggal: tanggalString,
-      // waktu: waktuString,
-      // created_at: formattedString,
-      // latitude: position?.coords?.latitude, // Latitude will be stored here
-      // longitude: position?.coords?.longitude, // Longitude will be stored here
-    },
+    struk: {},
     struks: [],
     invoice: null,
   }),
@@ -162,18 +86,18 @@ export const usePengirimanStore = defineStore('PengirimanStore', {
     },
     addNewStruk() {
 
-      const { balance, position } = usePengaturanStore()
+      const { balance, position, cabang, cashier, shift } = usePengaturanStore()
 
       console.log(!this.struk?.id)
       if(!this.struk?.id) {
         this.struk = {
           id: this.getStruksLength + 1,
           code: "#" + uuidv4(),
-          cabang: 'jogja',
+          cabang: cabang?.nama,
           type: "PENGIRIMAN",
-          cashier: "Nina",
+          cashier: cashier?.nama,
           courir: '',
-          shift: "A",
+          shift: shift?.nama,
           status: "",
           stok_akhir: 0,
           stok_awal: 0,
@@ -181,6 +105,7 @@ export const usePengirimanStore = defineStore('PengirimanStore', {
           courir_confirm: false,
           cashier_confirm: false,
           items: [],
+          catatan: null,
           tanggal: tanggalString,
           waktu: waktuString,
           created_at: formattedString,

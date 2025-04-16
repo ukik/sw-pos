@@ -1,7 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 
 import { date } from "quasar";
-import { usePenjualanStore } from './penjualan-store';
 import { usePengaturanStore } from './pengaturan-store';
 
 const timeStamp = Date.now();
@@ -18,34 +17,22 @@ function uuidv4() {
 
 export const useRotasiStore = defineStore('RotasiStore', {
   state: () => ({
-    struk: {
-      // id: this.getStruksLength + 1,
-      // code: "#" + uuidv4(),
-      // cabang: 'jogja',
-      // type: "pengiriman",
-      // cashier: "Nina",
-      // courir: '',
-      // shift: "A",
-      // status: "",
-      // stok_akhir: 0,
-      // stok_awal: 0,
-      // qty: this.getTotal?.qty,
-      // courir_confirm: false,
-      // cashier_confirm: false,
-      // items: [],
-      // tanggal: tanggalString,
-      // waktu: waktuString,
-      // created_at: formattedString,
-      // latitude: position?.coords?.latitude, // Latitude will be stored here
-      // longitude: position?.coords?.longitude, // Longitude will be stored here
-    },
+    struk: {},
     struks: [],
     invoice: null,
   }),
 
   getters: {
-    //doubleCount: (state) => state.counter * 2
-    // getItems: (state) => state.items,
+    isCheckDone: ({ struks }) => { // jadi harus di check apa kasir sudah check stok, sehari 1 kali saja
+      let temp = false
+      struks.forEach(el => {
+        if(el.tanggal == tanggalString) {
+          temp = true
+        }
+      });
+      return temp
+
+    },
     getStruk: (state) => state.struk,
     getStruks: (state) => state.struks,
     getStruksModify: ({ struks }) => {
@@ -81,6 +68,13 @@ export const useRotasiStore = defineStore('RotasiStore', {
   },
 
   actions: {
+    setCourir(val) {
+      // if(!this.struk?.courir ) return
+      let _model = JSON.parse(JSON.stringify(this.struk));
+      _model.courir = val
+      this.struk = _model
+      console.log('this.struk.courir',  this.struk, _model)
+    },
     addItemToStruk() {
 
       const { balance, position } = usePengaturanStore()
@@ -100,18 +94,18 @@ export const useRotasiStore = defineStore('RotasiStore', {
     },
     addNewStruk() {
 
-      const { balance, position } = usePengaturanStore()
+      const { balance, position, cabang, cashier, shift } = usePengaturanStore()
 
       console.log(!this.struk?.id)
       if(!this.struk?.id) {
         this.struk = {
           id: this.getStruksLength + 1,
           code: "#" + uuidv4(),
-          cabang: 'jogja',
-          type: "pengiriman",
-          cashier: "Nina",
+          cabang: cabang?.nama,
+          type: "CHECK-ROTASI",
+          cashier: cashier?.nama,
           courir: '',
-          shift: "A",
+          shift: shift?.nama,
           status: "",
           stok_akhir: 0,
           stok_awal: 0,
@@ -119,6 +113,7 @@ export const useRotasiStore = defineStore('RotasiStore', {
           courir_confirm: false,
           cashier_confirm: false,
           items: [],
+          catatan: null,
           tanggal: tanggalString,
           waktu: waktuString,
           created_at: formattedString,
@@ -129,7 +124,7 @@ export const useRotasiStore = defineStore('RotasiStore', {
       }
     },
     updateLocalStorage() {
-      const storage_name = 'PENGIRIMAN-STRUKS-'+date.formatDate(timeStamp, "YYYY-MM-DD")
+      const storage_name = 'CHECK-ROTASI-STRUKS-'+date.formatDate(timeStamp, "YYYY-MM-DD")
 
       // let model = JSON.parse(JSON.stringify(localStorage.getItem(storage_name)));
       let model = []
@@ -145,16 +140,17 @@ export const useRotasiStore = defineStore('RotasiStore', {
 
       this.struks = addModel
 
+      this.invoice = this.struk
     },
     initLocalStorage() {
-      if(localStorage.getItem('PENGIRIMAN-STRUK')) {
-        this.struk = JSON.parse(localStorage.getItem('PENGIRIMAN-STRUK'));
+      if(localStorage.getItem('CHECK-ROTASI-STRUK')) {
+        this.struk = JSON.parse(localStorage.getItem('CHECK-ROTASI-STRUK'));
       }
     },
     loadLocalStorageStruks(set_date) {
-      const storage_name = 'PENGIRIMAN-STRUKS-'+set_date
+      const storage_name = 'CHECK-ROTASI-STRUKS-'+set_date
 
-      console.log('loadLocalStorageStruks PENGIRIMAN', storage_name)
+      console.log('loadLocalStorageStruks CHECK-ROTASI', storage_name)
       if(localStorage.getItem(storage_name)) {
         this.struks = JSON.parse(localStorage.getItem(storage_name));
       } else {

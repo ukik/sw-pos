@@ -32,15 +32,7 @@ const routes = [
       },
       {
         meta: {
-          title: 'rotasi',
-        },
-        path: 'rotasi',
-        name: 'rotasi',
-        component: () => import ('pages/RotasiPage.vue'),
-      },
-      {
-        meta: {
-          title: 'cek buka',
+          title: 'check buka',
         },
         path: 'check-in',
         name: 'check-in',
@@ -48,11 +40,19 @@ const routes = [
       },
       {
         meta: {
-          title: 'cek tutup',
+          title: 'check tutup',
         },
         path: 'check-out',
         name: 'check-out',
-        component: () => import ('pages/CheckOutPage.vue'),
+        component: () => import ('pages/IndexPage.vue'),
+      },
+      {
+        meta: {
+          title: 'check rotasi',
+        },
+        path: 'check-rotasi',
+        name: 'check-rotasi',
+        component: () => import ('pages/IndexPage.vue'),
       },
 
 

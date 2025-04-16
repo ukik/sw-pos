@@ -1,29 +1,43 @@
 <template>
   <q-page id="page" class="q-pa-sm items-start row">
     <div class="q-col-gutter-sm row col-8" id="content">
-      <DialogCalculatorMutasi
+      <DialogCalculatorCheckIn
         ref="dialog_calculator"
-        @onBubbleEvent="onBubbleEventDialogCalculatorMutasi"
-      ></DialogCalculatorMutasi>
+        @onBubbleEvent="onBubbleEventDialogCalculatorCheckIn"
+      ></DialogCalculatorCheckIn>
 
-      <DialogConfirmMutasi
+      <DialogConfirmCheckIn
         ref="dialog_bayar"
-        @onBubbleEvent="onBubbleEventDialogConfirmMutasi"
-      ></DialogConfirmMutasi>
+        @onBubbleEvent="onBubbleEventDialogConfirmCheckIn"
+      ></DialogConfirmCheckIn>
+
+      <DialogCatatan
+        @onBubbleEvent="struk.catatan = $event"
+        ref="dialog_catatan"
+      ></DialogCatatan>
 
       <div class="col-12">
         <q-banner dense class="bg-positive text-white">
           <template v-slot:avatar>
             <q-icon name="info" color="white" />
           </template>
-          Stok berubah setelah konfirmasi MUTASI sukses
+          Stok berubah setelah konfirmasi CHECK BUKA sukses
+        </q-banner>
+        <q-banner dense class="bg-orange q-mt-sm text-white">
+          <template v-slot:avatar>
+            <q-icon name="warning" color="white" />
+          </template>
+          Hanya bisa dilakukan sekali dalam satu hari
+          <div v-if="isCheckDone" class="">
+            SELESAI PROSES: {{ getCheckDone?.created_at }}
+          </div>
         </q-banner>
       </div>
 
       <template v-for="(item, index) in items">
         <div class="col-4">
           <q-item
-            @click="openDialogCalculatorMutasi(item)"
+            @click="openDialogCalculatorCheckIn(item)"
             clickable
             v-ripple
             class="bg-sw text-white q-pa-none shadow-2 row"
@@ -63,17 +77,6 @@
               </q-item>
             </q-list>
           </q-item>
-
-          <!-- <q-btn-group square spread>
-            <q-btn
-              @click="openDialogCalculatorMutasi(item)"
-              dense
-              color="orange"
-              label="Stok-In"
-            />
-            <q-separator vertical></q-separator>
-            <q-btn dense color="blue" label="Mutasi" />
-          </q-btn-group> -->
         </div>
       </template>
     </div>
@@ -81,7 +84,7 @@
     <q-page-sticky class="q-pr-sm" position="top-right" :offset="[0, 0]">
       <q-item style="height: 35px" dense class="bg-sw flex flex-center text-white">
         <q-item-section>
-          <q-item-label class="text-center">STRUK PENGIRIMAN</q-item-label>
+          <q-item-label class="text-center">STRUK CHECK BUKA</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -91,11 +94,11 @@
       >
         <q-list bordered separator>
           <template v-for="(item, index) in struk?.items">
-            <SlideItemPengiriman
+            <SlideItemCheckIn
               :item="item"
-              @onBubbleEvent="onBubbleEventSlideItemPengiriman($event, index)"
+              @onBubbleEvent="onBubbleEventSlideItemCheckIn($event, index)"
             >
-            </SlideItemPengiriman>
+            </SlideItemCheckIn>
           </template>
         </q-list>
       </q-scroll-area>
@@ -111,14 +114,37 @@
         </q-item-section>
       </q-item>
 
-      <q-btn
-        @click="openDialogConfirmMutasi"
-        color="pink"
-        class="full-width q-mt-sm text-h5"
-        style="height: 50px"
-        label="validasi"
-        icon-right="security"
-      />
+      <div class="full-width q-mt-sm col-12 row q-col-gutter-sm">
+        <div class="col q-pl-none q-pt-none">
+          <q-btn
+            v-if="!isCheckDone"
+            @click="openDialogConfirmCheckIn"
+            color="pink"
+            class="text-h6 full-width"
+            style="height: 50px"
+            label="validasi"
+            icon-right="security"
+          />
+          <q-btn
+            v-else
+            @click="openDialogConfirmCheckInPreview"
+            color="cyan"
+            class="text-h6 full-width"
+            style="height: 50px"
+            label="lihat"
+            icon-right="assignment"
+          />
+        </div>
+        <div class="col-auto q-pt-none">
+          <q-btn
+            @click="openDialogCatatan"
+            color="teal"
+            class="text-h6"
+            style="height: 50px"
+            icon-right="edit_document"
+          />
+        </div>
+      </div>
     </q-page-sticky>
   </q-page>
 </template>
@@ -126,73 +152,75 @@
 <script setup>
 import { ref } from "vue";
 
-import SlideItemPengiriman from "src/components/SlideItemPengiriman.vue";
-import DialogCalculatorMutasi from "src/components/DialogCalculatorMutasi.vue";
-import DialogConfirmMutasi from "src/components/DialogConfirmMutasi.vue";
-
-// const items = ref();
+import SlideItemCheckIn from "src/components/SlideItemCheckIn.vue";
+import DialogCalculatorCheckIn from "src/components/DialogCalculatorCheckIn.vue";
+import DialogConfirmCheckIn from "src/components/DialogConfirmCheckIn.vue";
+import DialogCatatan from "src/components/DialogCatatan.vue";
 </script>
 
 <script>
 import { date } from "quasar";
 import { mapActions, mapWritableState, mapState } from "pinia";
-import { useMutasiStore } from "src/stores/mutasi-store";
+import { useCheckInStore } from "src/stores/checkin-store";
 import { usePenjualanStore } from "src/stores/penjualan-store";
-
-// const timeStamp = Date.now();
-// const formattedString = date.formatDate(timeStamp, "YYYY-MM-DDTHH:mm:ss.SSSZ");
-
-// console.log(formattedString);
 
 export default {
   data() {
     return {};
   },
   computed: {
-    ...mapState(useMutasiStore, {
-      // getStruk: "getStruk",
-      // getTotalStruk: "getTotalStruk",
-      // getStruksLength: "getStruksLength",
+    ...mapState(useCheckInStore, {
       getTotal: "getTotal",
+      isCheckDone: "isCheckDone",
+      getCheckDone: "getCheckDone",
     }),
     ...mapWritableState(usePenjualanStore, {
       items: "items",
     }),
-    ...mapWritableState(useMutasiStore, {
+    ...mapWritableState(useCheckInStore, {
       struk: "struk",
       struks: "struks",
     }),
-    // getTotal() {
-    //   let sum = {
-    //     stock: 0,
-    //     qty: 0,
-    //   };
-    //   this.struk?.items?.forEach((element) => {
-    //     sum.stock += element?.stock;
-    //     sum.qty += element?.qty;
-    //   });
-
-    //   console.log(sum);
-
-    //   return sum;
-    // },
     getTotalStruk() {
       return Number(this.getTotal?.qty);
     },
   },
   methods: {
-    ...mapActions(useMutasiStore, {
+    ...mapActions(useCheckInStore, {
       addNewStruk: "addNewStruk",
       updateLocalStorage: "updateLocalStorage",
     }),
-    openDialogCalculatorMutasi(item) {
+    openDialogCatatan() {
+      if (!this.struk?.id)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Struk tidak bisa kosong",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      this.$refs.dialog_catatan?.onOpen(this.struk.catatan);
+    },
+    openDialogCalculatorCheckIn(item) {
+      if (this.isCheckDone)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Maksimal 1 kali check buka",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+
       this.$refs.dialog_calculator?.onOpen(item);
     },
-    openDialogConfirmMutasi() {
+    openDialogConfirmCheckInPreview() {
+      if (this.isCheckDone) return this.$refs.dialog_bayar?.onOpen(this.struk);
+    },
+    openDialogConfirmCheckIn() {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Struk pengiriman kosong",
+          caption: "Struk check buka kosong",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -200,30 +228,21 @@ export default {
 
       this.$refs.dialog_bayar?.onOpen(this.struk);
     },
-    onBubbleEventDialogCalculatorMutasi(item) {
+    onBubbleEventDialogCalculatorCheckIn(item) {
       console.log(this.struk);
 
       this.addNewStruk();
 
       this.struk?.items?.push(item);
 
-      // this.items.forEach((el) => {
-      //   if (item?.id == el?.id) {
-      //     el.stock = Number(el?.stock) - Number(item?.qty);
-      //   }
-      // });
-
-      // localStorage.setItem("PENGIRIMAN-STRUK", JSON.stringify(this.struk));
+      // this.struk.bill = this.getTotalStruk;
+      this.struk.qty = this.getTotal?.qty;
     },
-    onBubbleEventDialogConfirmMutasi() {},
-    onBubbleEventSlideItemPengiriman(item, index) {
+    onBubbleEventDialogConfirmCheckIn() {},
+    onBubbleEventSlideItemCheckIn(item, index) {
       this.struk?.items?.splice(index, 1);
 
-      // this.items.forEach((el) => {
-      //   if (item?.produk_id == el?.produk_id) {
-      //     el.stock = Number(el?.stock) + Number(item?.qty);
-      //   }
-      // });
+      if (this.struk?.items.length <= 0) this.struk = null;
     },
   },
 };
