@@ -23,12 +23,13 @@
             outlined
             v-model="pengiriman_courir"
             :emit-value="false"
+            option-label="nama"
             :options="list_courirs"
             label="Pilih Kurir"
             color="teal"
             options-selected-class="text-deep-orange"
           >
-            <template v-slot:option="scope">
+            <!-- <template v-slot:option="scope">
               <q-item v-bind="scope.itemProps">
                 <q-item-section avatar>
                   <q-icon :name="scope.opt.icon" />
@@ -38,7 +39,7 @@
                   <q-item-label caption>{{ scope.opt.description }}</q-item-label>
                 </q-item-section>
               </q-item>
-            </template>
+            </template> -->
           </q-select>
 
           <div class="row q-col-gutter-md q-mb-md">
@@ -75,7 +76,7 @@
               <q-icon name="support_agent" color="white" />
             </template>
             Dengan melakukan centang "SETUJU", <br />
-            <b class="text-capitalize">{{ item?.cashier }} </b> sebagai KASIR sudah
+            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR sudah
             sepakat jumlah barang yang diterima valid
             <template v-slot:action>
               <q-checkbox
@@ -93,8 +94,8 @@
               <q-icon name="engineering" color="white" />
             </template>
             Dengan melakukan centang "SETUJU", <br />
-            <b class="text-capitalize">{{ item?.courir }} </b> sebagai KURIR sudah sepakat
-            jumlah barang yang diterima valid
+            <b class="text-capitalize">{{ item?.courir?.nama }} </b> sebagai KURIR sudah
+            sepakat jumlah barang yang diterima valid
             <template v-slot:action>
               <q-checkbox
                 keep-color
@@ -119,15 +120,27 @@
 
         <q-separator />
 
-        <q-card-actions align="center">
-          <q-btn
-            type="submit"
-            color="positive"
-            class="text-h6"
-            style="height: 50px"
-            label="konfirmasi"
-            icon-right="verified"
-          />
+        <q-card-actions class="q-col-gutter-md" align="center">
+          <div class="">
+            <q-btn
+              type="submit"
+              color="positive"
+              class="text-h6"
+              style="height: 50px"
+              label="konfirmasi"
+              icon-right="verified"
+            />
+          </div>
+          <div class="">
+            <q-btn
+              @click="$emit('onBubbleEventCatatan')"
+              color="teal"
+              class="text-h6"
+              style="height: 50px"
+              icon-right="edit_document"
+              label="catatan"
+            />
+          </div>
         </q-card-actions>
       </q-form>
     </q-card>
@@ -161,11 +174,10 @@ export default {
   computed: {
     ...mapState(usePengaturanStore, {
       list_courirs: "list_courirs",
-      list_cashiers: "list_cashiers",
+      cashier: "cashier",
     }),
     ...mapWritableState(usePengaturanStore, {
       pengiriman_courir: "pengiriman_courir",
-      pengiriman_cashier: "pengiriman_cashier",
     }),
     ...mapState(usePengirimanStore, {
       getTotal: "getTotal",
@@ -180,7 +192,11 @@ export default {
       handler(val) {
         this.setCourir(val?.value);
         console.log("pengiriman_courir", this.struk);
-        this.item = this.struk;
+
+        this.item = {
+          ...this.struk,
+          courir: this.pengiriman_courir,
+        };
       },
     },
   },
@@ -215,13 +231,11 @@ export default {
       );
       console.log(
         "this.pengiriman_courir?.pin !== this.pin2",
-        this.pengiriman_cashier?.pin,
+        this.cashier?.pin,
         this.pin2
       );
-      if (
-        this.pengiriman_courir?.pin != this.pin1 ||
-        this.pengiriman_cashier?.pin != this.pin2
-      ) {
+
+      if (this.pengiriman_courir?.pin != this.pin1 || this.cashier?.pin != this.pin2) {
         return this.$q.notify({
           message: "Peringatan",
           caption: "PIN tidak cocok",
@@ -232,6 +246,12 @@ export default {
       }
 
       this.fixed = false;
+
+      this.item.qty = this.getTotal?.qty;
+      this.item.stok_awal = this.getTotal?.stok_awal;
+      this.item.stok_akhir = this.getTotal?.stok_akhir;
+
+      this.struk = this.item;
 
       this.addItemToStruk();
 
@@ -251,9 +271,11 @@ export default {
 
       this.pin1 = null;
       this.pin2 = null;
+
       this.pengiriman_courir = null;
-      this.struk.courir_confirm = false;
-      this.struk.cashier_confirm = false;
+
+      if (this.struk?.courir_confirm) this.struk.courir_confirm = false;
+      if (this.struk?.cashier_confirm) this.struk.cashier_confirm = false;
     },
   },
 };

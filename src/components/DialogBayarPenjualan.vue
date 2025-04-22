@@ -12,7 +12,7 @@
 
       <q-card-section class="q-py-none">
         <q-form class="row q-col-gutter-md">
-          <div class="col-4">
+          <div class="col">
             <q-input
               borderless
               readonly
@@ -23,7 +23,8 @@
               <template v-slot:prepend> Rp. </template>
             </q-input>
           </div>
-          <div class="col-4">
+
+          <div class="col">
             <q-input
               borderless
               readonly
@@ -34,12 +35,25 @@
               <template v-slot:prepend> Rp. </template>
             </q-input>
           </div>
-          <div class="col-4">
+          <div class="col">
+            <q-input
+              borderless
+              type="number"
+              readonly
+              input-class="text-h6"
+              v-model="getPembulatanReceh"
+              label="Pembulatan"
+            >
+              <template v-slot:before> Rp. </template>
+            </q-input>
+          </div>
+
+          <div class="col">
             <q-input
               borderless
               readonly
               input-class="text-h6"
-              v-model="getChangeLabel"
+              v-model="getChangePembulatanLabel"
               label="Kembalian"
             >
               <template v-slot:prepend> Rp. </template>
@@ -166,13 +180,28 @@
             </div>
           </div>
 
-          <div class="col-3">
-            <q-btn @click="onClose" class="full-width full-height" dense color="teal">
-              <div class="items-center no-wrap">
-                <q-icon name="check_circle" size="50px"></q-icon>
-                <div class="text-center text-h6 q-mt-sm">SELESAI</div>
-              </div>
-            </q-btn>
+          <div class="col-3 row">
+            <div class="col-12" style="height: 35%">
+              <q-btn
+                @click="$emit('onBubbleEventCatatan')"
+                class="full-width full-height"
+                dense
+                color="orange"
+              >
+                <div class="items-center no-wrap">
+                  <q-icon name="edit_document" size="50px"></q-icon>
+                  <div class="text-center text-h6 q-mt-sm">CATATAN</div>
+                </div>
+              </q-btn>
+            </div>
+            <div class="col-12 q-pt-md" style="height: 65%">
+              <q-btn @click="onClose" class="full-width full-height" dense color="teal">
+                <div class="items-center no-wrap">
+                  <q-icon name="check_circle" size="50px"></q-icon>
+                  <div class="text-center text-h6 q-mt-sm">SELESAI</div>
+                </div>
+              </q-btn>
+            </div>
           </div>
         </div>
       </q-card-section>
@@ -250,11 +279,31 @@ export default {
       balance: "balance",
     }),
     getChange() {
-      if (!this.struk?.bayar) return 0;
-      return this.struk?.bayar - this.getTotalStruk;
+      // if (!this.struk?.bayar) return 0;
+      // const change_pembulatan = !this.struk?.change_pembulatan
+      //   ? 0
+      //   : this.struk?.change_pembulatan;
+
+      // console.log("kembalian_pembulatan", change_pembulatan);
+      return Number(this.struk?.bayar) - Number(this.getTotalStruk); //- change_pembulatan;
+    },
+    getChangePembulatan() {
+      // if (!this.struk?.bayar) return 0;
+      // const change_pembulatan = !this.struk?.change_pembulatan
+      //   ? 0
+      //   : this.struk?.change_pembulatan;
+
+      // console.log("kembalian_pembulatan", change_pembulatan);
+      return Number(this.struk?.bayar) - Number(this.getPembulatanReceh);
+    },
+    getPembulatanReceh() {
+      return this.$pembulatanReceh(this.getTotalStruk);
     },
     getChangeLabel() {
       return this.getChange < 0 ? "Tidak Cukup" : this.getChange;
+    },
+    getChangePembulatanLabel() {
+      return this.getChangePembulatan < 0 ? "Tidak Cukup" : this.getChangePembulatan;
     },
     getFirstModel() {
       return this.model.toString().charAt(0);
@@ -305,13 +354,23 @@ export default {
         ...this.item,
         balance: this.balance,
         bill: this.getTotalStruk,
-        bayar: this.model,
+        bill_pembulatan: this.getPembulatanReceh,
+        bayar: Number(this.model),
         change: this.getChange,
+        change_pembulatan: Number(
+          this.getTotalStruk - this.$pembulatanReceh(this.getTotalStruk)
+        ),
+        change_aktual: this.getChangePembulatan,
         qty: this.getTotal?.qty,
         created_at: formattedString,
       };
 
       this.struk = _struk;
+
+      this.struk.bill = this.getTotalStruk;
+      this.struk.qty = this.getTotal?.qty;
+      this.struk.stok_awal = this.getTotal?.stok_awal;
+      this.struk.stok_akhir = this.getTotal?.stok_akhir;
 
       this.addItemToStruk();
 
@@ -360,6 +419,9 @@ export default {
       this.item = item;
 
       this.model = 0;
+
+      if (this.struk?.change_pembulatan) this.struk.change_pembulatan = null;
+      if (this.struk?.bayar) this.struk.bayar = null;
 
       console.log("this.getStruksLength + 1,", this.getStruksLength + 1);
       console.log("onOpen", this.struks);

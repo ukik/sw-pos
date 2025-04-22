@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :persistent="false" full-width v-model="fixed">
+  <q-dialog :persistent="false" full-width :full-height="!isCheckDone" v-model="fixed">
     <q-card>
       <q-form @submit="onSubmit">
         <q-card-actions class="q-pa-none q-pl-xs">
@@ -11,52 +11,35 @@
 
         <q-separator />
 
-        <q-card-section style="" class="scroll q-pa-sm">
-          <!-- <q-input
-            class="q-mb-md"
-            hint="Wajib diisi"
-            :rules="[(val) => !!val || 'Wajib diisi']"
-            outlined
-            counter
-            clearable
-            maxlength="100"
-            v-model="item.courir"
-            label="Nama Kurir"
-          /> -->
+        <q-card-section
+          :style="isCheckDone ? '' : 'height: calc(100vh - 50px - 50px - 67.44px)'"
+          class="scroll q-pa-sm"
+        >
+          <q-list bordered class="q-mb-sm">
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-avatar>
+                  <img :src="cashier?.foto ? cashier?.foto : $defaultImage" />
+                </q-avatar>
+              </q-item-section>
 
-          <!-- <SelectCashier></SelectCashier> -->
-          <q-select
-            clearable
-            class="q-mb-md"
-            hint="Wajib diisi"
-            :rules="[(val) => !!val || 'Wajib diisi']"
-            outlined
-            v-model="checkout_courir"
-            :emit-value="false"
-            :options="list_courirs"
-            label="Pilih Kurir"
-            color="teal"
-            options-selected-class="text-deep-orange"
-          >
-            <template v-slot:option="scope">
-              <q-item v-bind="scope.itemProps">
-                <q-item-section avatar>
-                  <q-icon :name="scope.opt.icon" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  <q-item-label caption>{{ scope.opt.description }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-
-          <div class="row q-col-gutter-md q-mb-md">
-            <div class="col-6">
+              <q-item-section>
+                <q-item-label caption>Kasir</q-item-label>
+                <q-item-label>{{ cashier?.nama }}</q-item-label>
+                <!-- <q-item-label caption lines="1"
+                  >Shift ({{ shift?.nama }}) - Mulai: {{ shift?.jam_mulai }} - Selesai:
+                  {{ shift?.jam_selesai }}</q-item-label
+                > -->
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <div v-if="!isCheckDone" class="row q-col-gutter-md q-mb-md">
+            <div class="col-12">
               <q-input
-                hint="Wajib diisi"
-                :rules="[(val) => !!val || 'Wajib diisi']"
-                mask="# # # #"
+                type="password"
+                hint="Wajib diisi (4 digit)"
+                :rules="[(val) => !!val || 'Wajib diisi (4 digit)']"
+                mask="####"
                 unmasked-value
                 outlined
                 clearable
@@ -64,26 +47,38 @@
                 label="PIN Kasir"
               />
             </div>
-            <div class="col-6">
-              <q-input
-                hint="Wajib diisi"
-                :rules="[(val) => !!val || 'Wajib diisi']"
-                mask="# # # #"
-                unmasked-value
-                outlined
-                clearable
-                v-model="pin2"
-                label="PIN Kurir"
-              />
-            </div>
           </div>
 
-          <q-banner class="bg-primary text-white rounded-borders q-mb-sm">
+          <q-banner class="bg-orange q-mb-sm text-white">
+            <template v-slot:avatar>
+              <q-icon name="warning" color="white" />
+            </template>
+            Hanya bisa dilakukan sekali dalam satu hari
+            <template v-if="isCheckDone" v-slot:action>
+              <span class="">SELESAI PROSES: {{ getCheckDone?.created_at }}</span>
+            </template>
+          </q-banner>
+
+          <q-banner
+            v-if="isCheckDone"
+            class="bg-green text-white rounded-borders q-mb-sm"
+          >
+            <template v-slot:avatar>
+              <q-icon name="check_circle" color="white" />
+            </template>
+            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR sudah
+            sepakat jumlah barang yang diterima valid
+            <template v-slot:action>
+              <span class="">STOK TUTUP SUDAH DICEK</span>
+            </template>
+          </q-banner>
+
+          <q-banner v-else class="bg-primary text-white rounded-borders q-mb-sm">
             <template v-slot:avatar>
               <q-icon name="support_agent" color="white" />
             </template>
             Dengan melakukan centang "SETUJU", <br />
-            <b class="text-capitalize">{{ item?.cashier }} </b> sebagai KASIR sudah
+            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR sudah
             sepakat jumlah barang yang diterima valid
             <template v-slot:action>
               <q-checkbox
@@ -96,46 +91,43 @@
             </template>
           </q-banner>
 
-          <q-banner class="bg-primary text-white rounded-borders">
-            <template v-slot:avatar>
-              <q-icon name="engineering" color="white" />
-            </template>
-            Dengan melakukan centang "SETUJU", <br />
-            <b class="text-capitalize">{{ item?.courir }} </b> sebagai KURIR sudah sepakat
-            jumlah barang yang diterima valid
-            <template v-slot:action>
-              <q-checkbox
-                keep-color
-                :color="item.courir_confirm ? 'primary' : 'white'"
-                dark
-                v-model="item.courir_confirm"
-                label="SETUJU"
-              />
-            </template>
-          </q-banner>
-
           <q-banner inline-actions class="bg-red text-white rounded-borders q-mt-sm">
             <template v-slot:avatar>
               <q-icon name="scale" color="white" />
             </template>
-            Total berat barang diterima
+            Total berat barang menyusut
             <template v-slot:action>
-              <span class="text-h6">{{ this.getTotal?.qty }} kg</span>
+              <span class="text-h6"
+                >{{ isCheckDone ? getCheckDone?.qty : getTotal?.qty }} kg</span
+              >
             </template>
           </q-banner>
         </q-card-section>
 
-        <q-separator />
+        <q-separator v-if="!isCheckDone" />
 
-        <q-card-actions align="center">
-          <q-btn
-            type="submit"
-            color="positive"
-            class="text-h6"
-            style="height: 50px"
-            label="konfirmasi"
-            icon-right="verified"
-          />
+        <q-card-actions v-if="!isCheckDone" class="q-col-gutter-md" align="center">
+          <div class="">
+            <q-btn
+              :disable="isCheckDone"
+              type="submit"
+              color="positive"
+              class="text-h6"
+              style="height: 50px"
+              label="konfirmasi"
+              icon-right="verified"
+            />
+          </div>
+          <div class="">
+            <q-btn
+              @click="$emit('onBubbleEventCatatan')"
+              color="teal"
+              class="text-h6"
+              style="height: 50px"
+              icon-right="edit_document"
+              label="catatan"
+            />
+          </div>
         </q-card-actions>
       </q-form>
     </q-card>
@@ -168,44 +160,41 @@ export default {
   },
   computed: {
     ...mapState(usePengaturanStore, {
-      list_courirs: "list_courirs",
-      list_cashiers: "list_cashiers",
+      cashier: "cashier",
+      courir: "courir",
+      shift: "shift",
     }),
-    ...mapWritableState(usePengaturanStore, {
-      checkout_courir: "checkout_courir",
-      checkout_cashier: "checkout_cashier",
-    }),
+    ...mapWritableState(usePengaturanStore, {}),
     ...mapState(useCheckOutStore, {
+      struks: "struks",
       getTotal: "getTotal",
+      isCheckDone: "isCheckDone",
+      getCheckDone: "getCheckDone",
     }),
     ...mapWritableState(useCheckOutStore, {
       struk: "struk",
     }),
   },
-  watch: {
-    checkout_courir: {
-      deep: true,
-      handler(val) {
-        this.setCourir(val?.value);
-        console.log("checkout_courir", this.struk);
-        this.item = this.struk;
-      },
-    },
-  },
+  watch: {},
   methods: {
     ...mapActions(useCheckOutStore, {
       addItemToStruk: "addItemToStruk",
-      setCourir: "setCourir",
     }),
     ...mapActions(usePenjualanStore, {
       onSyncPenjualanCheckOutItems: "onSyncPenjualanCheckOutItems",
     }),
     onSubmit() {
-      if (
-        !this.item?.courir_confirm ||
-        !this.item?.cashier_confirm ||
-        !this.item?.courir
-      ) {
+      if (this.isCheckDone) {
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Maksimal check tutup 1 kali sehari",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      }
+
+      if (!this.item?.cashier_confirm) {
         return this.$q.notify({
           message: "Peringatan",
           caption: "Lengkapi formulir",
@@ -215,20 +204,7 @@ export default {
         });
       }
 
-      console.log(
-        "this.checkout_courir?.pin !== this.pin1",
-        this.checkout_courir?.pin,
-        this.pin1
-      );
-      console.log(
-        "this.checkout_courir?.pin !== this.pin2",
-        this.checkout_cashier?.pin,
-        this.pin2
-      );
-      if (
-        this.checkout_courir?.pin != this.pin1 ||
-        this.checkout_cashier?.pin != this.pin2
-      ) {
+      if (this.checkout_cashier?.pin != this.pin2) {
         return this.$q.notify({
           message: "Peringatan",
           caption: "PIN tidak cocok",
@@ -239,6 +215,12 @@ export default {
       }
 
       this.fixed = false;
+
+      this.item.stok_awal = this.getTotal?.stok_awal;
+      this.item.stok_akhir = this.getTotal?.stok_akhir;
+      this.item.qty = this.getTotal?.qty;
+
+      this.struk = this.item;
 
       this.addItemToStruk();
 
@@ -255,6 +237,10 @@ export default {
     onOpen(item) {
       this.fixed = true;
       this.item = item;
+
+      this.pin1 = null;
+
+      if (this.struk?.cashier_confirm) this.struk.cashier_confirm = false;
     },
   },
 };

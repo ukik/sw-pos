@@ -1,10 +1,10 @@
 <template>
-  <q-dialog v-model="medium">
-    <q-card style="width: 700px; max-width: 80vw">
+  <q-dialog position="top" persistent full-width v-model="medium">
+    <q-card class="q-mt-md" style="width: 700px; max-width: 80vw">
       <q-card-section class="bg-sw text-white q-py-none">
         <q-toolbar class="q-px-none">
           <q-toolbar-title>
-            <div class="text-h6">CATATAN</div>
+            <div class="text-h6">CATATAN TAMBAHAN</div>
           </q-toolbar-title>
 
           <q-btn v-close-popup flat dense color="white" rounded icon="close"></q-btn>
@@ -12,12 +12,13 @@
       </q-card-section>
       <q-separator></q-separator>
 
-      <q-card-section class="">
+      <q-card-section style="height: calc(100% - 55px - 50px)">
         <q-input
           clearable
           dense
           outlined
           type="textarea"
+          rows="15"
           hint="Tambahkan catatan jika perlu"
           v-model="text"
         />

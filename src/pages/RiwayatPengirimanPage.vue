@@ -11,6 +11,8 @@
       :locale="myLocale"
       :options="optionsFn"
       today-btn
+      :events="event"
+      event-color="pink"
     />
   </q-page>
 </template>
@@ -49,6 +51,7 @@ export default {
   setup() {
     return {
       date: ref(formattedString),
+      event: [formattedString],
 
       options: ["2019/02/01", "2019/02/05", "2019/02/06", "2019/02/09", "2019/02/23"],
 

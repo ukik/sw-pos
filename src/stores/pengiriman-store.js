@@ -49,10 +49,14 @@ export const usePengirimanStore = defineStore('PengirimanStore', {
       let sum = {
         stock: 0,
         qty: 0,
+        stok_awal: 0,
+        stok_akhir: 0,
       };
       struk?.items?.forEach((element) => {
         sum.stock += element?.stock;
         sum.qty += element?.qty;
+        sum.stok_awal += element?.stok_awal;
+        sum.stok_akhir += element?.stok_akhir;
       });
 
       return sum;
@@ -93,10 +97,14 @@ export const usePengirimanStore = defineStore('PengirimanStore', {
         this.struk = {
           id: this.getStruksLength + 1,
           code: "#" + uuidv4(),
-          cabang: cabang?.nama,
+          cabang: {
+            ...cabang
+          },
           type: "PENGIRIMAN",
-          cashier: cashier?.nama,
-          courir: '',
+          cashier: {
+            ...cashier
+          },
+          courir: {},
           shift: shift?.nama,
           status: "",
           stok_akhir: 0,

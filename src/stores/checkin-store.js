@@ -24,6 +24,15 @@ export const useCheckInStore = defineStore('CheckInStore', {
   }),
 
   getters: {
+    getInvoiceSelected: ({struks}) => {
+      return function (date) {
+        let temp = null
+        struks.forEach(element => {
+          if(element.tanggal == date) temp = element
+        });
+        return temp
+      }
+    },
     isCheckDone: ({ struks }) => { // jadi harus di check apa kasir sudah check stok, sehari 1 kali saja
       let temp = false
       struks.forEach(el => {
@@ -65,10 +74,14 @@ export const useCheckInStore = defineStore('CheckInStore', {
       let sum = {
         stock: 0,
         qty: 0,
+        stok_awal: 0,
+        stok_akhir: 0,
       };
       struk?.items?.forEach((element) => {
         sum.stock += element?.stock;
         sum.qty += element?.qty;
+        sum.stok_awal += element?.stok_awal;
+        sum.stok_akhir += element?.stok_akhir;
       });
 
       return sum;
@@ -105,10 +118,19 @@ export const useCheckInStore = defineStore('CheckInStore', {
         this.struk = {
           id: this.getStruksLength + 1,
           code: "#" + uuidv4(),
-          cabang: cabang?.nama,
+
+          // shift: {
+          //   ...shift
+          // },
+          cabang: {
+            ...cabang
+          },
           type: "CHECK-BUKA",
-          cashier: cashier?.nama,
-          shift: shift?.nama,
+          cashier: {
+            ...cashier
+          },
+          // courir: {},
+
           status: "",
           stok_akhir: 0,
           stok_awal: 0,

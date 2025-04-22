@@ -9,7 +9,13 @@
       <DialogConfirmRotasi
         ref="dialog_bayar"
         @onBubbleEvent="onBubbleEventDialogConfirmRotasi"
+        @onBubbleEventCatatan="openDialogCatatan"
       ></DialogConfirmRotasi>
+
+      <DialogCatatan
+        @onBubbleEvent="struk.catatan = $event"
+        ref="dialog_catatan"
+      ></DialogCatatan>
 
       <div class="col-12">
         <q-banner dense class="bg-positive text-white">
@@ -23,6 +29,9 @@
             <q-icon name="warning" color="white" />
           </template>
           Hanya bisa dilakukan sekali dalam satu hari
+          <div v-if="isCheckDone" class="">
+            SELESAI PROSES: {{ getCheckDone?.created_at }}
+          </div>
         </q-banner>
       </div>
 
@@ -69,17 +78,6 @@
               </q-item>
             </q-list>
           </q-item>
-
-          <!-- <q-btn-group square spread>
-            <q-btn
-              @click="openDialogCalculatorRotasi(item)"
-              dense
-              color="orange"
-              label="Stok-In"
-            />
-            <q-separator vertical></q-separator>
-            <q-btn dense color="blue" label="Mutasi" />
-          </q-btn-group> -->
         </div>
       </template>
     </div>
@@ -120,6 +118,7 @@
       <div class="full-width q-mt-sm col-12 row q-col-gutter-sm">
         <div class="col q-pl-none q-pt-none">
           <q-btn
+            v-if="!isCheckDone"
             @click="openDialogConfirmRotasi"
             color="pink"
             class="text-h6 full-width"
@@ -127,10 +126,19 @@
             label="validasi"
             icon-right="security"
           />
+          <q-btn
+            v-else
+            @click="openDialogConfirmRotasiPreview"
+            color="cyan"
+            class="text-h6 full-width"
+            style="height: 50px"
+            label="lihat"
+            icon-right="assignment"
+          />
         </div>
         <div class="col-auto q-pt-none">
           <q-btn
-            @click="openDialogConfirmRotasi"
+            @click="openDialogCatatan"
             color="teal"
             class="text-h6"
             style="height: 50px"
@@ -148,8 +156,7 @@ import { ref } from "vue";
 import SlideItemRotasi from "src/components/SlideItemRotasi.vue";
 import DialogCalculatorRotasi from "src/components/DialogCalculatorRotasi.vue";
 import DialogConfirmRotasi from "src/components/DialogConfirmRotasi.vue";
-
-// const items = ref();
+import DialogCatatan from "src/components/DialogCatatan.vue";
 </script>
 
 <script>
@@ -158,21 +165,15 @@ import { mapActions, mapWritableState, mapState } from "pinia";
 import { useRotasiStore } from "src/stores/rotasi-store";
 import { usePenjualanStore } from "src/stores/penjualan-store";
 
-// const timeStamp = Date.now();
-// const formattedString = date.formatDate(timeStamp, "YYYY-MM-DDTHH:mm:ss.SSSZ");
-
-// console.log(formattedString);
-
 export default {
   data() {
     return {};
   },
   computed: {
     ...mapState(useRotasiStore, {
-      // getStruk: "getStruk",
-      // getTotalStruk: "getTotalStruk",
-      // getStruksLength: "getStruksLength",
       getTotal: "getTotal",
+      isCheckDone: "isCheckDone",
+      getCheckDone: "getCheckDone",
     }),
     ...mapWritableState(usePenjualanStore, {
       items: "items",
@@ -190,14 +191,37 @@ export default {
       addNewStruk: "addNewStruk",
       updateLocalStorage: "updateLocalStorage",
     }),
+    openDialogCatatan() {
+      if (!this.struk?.id)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Struk tidak bisa kosong",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      this.$refs.dialog_catatan?.onOpen(this.struk.catatan);
+    },
     openDialogCalculatorRotasi(item) {
+      if (this.isCheckDone)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Maksimal 1 kali check tutup",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+
       this.$refs.dialog_calculator?.onOpen(item);
+    },
+    openDialogConfirmRotasiPreview() {
+      if (this.isCheckDone) return this.$refs.dialog_bayar?.onOpen(this.struk);
     },
     openDialogConfirmRotasi() {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Struk check rotasi kosong",
+          caption: "Struk check tutup kosong",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -212,24 +236,16 @@ export default {
 
       this.struk?.items?.push(item);
 
-      // this.items.forEach((el) => {
-      //   if (item?.id == el?.id) {
-      //     el.stock = Number(el?.stock) - Number(item?.qty);
-      //   }
-      // });
-
-      // localStorage.setItem("CHECK-ROTASI-STRUK", JSON.stringify(this.struk));
+      // // this.struk.bill = this.getTotalStruk;
+      // this.struk.qty = this.getTotal?.qty;
+      // this.struk.stok_awal = this.getTotal?.stok_awal;
+      // this.struk.stok_akhir = this.getTotal?.stok_akhir;
     },
     onBubbleEventDialogConfirmRotasi() {},
     onBubbleEventSlideItemRotasi(item, index) {
       this.struk?.items?.splice(index, 1);
 
       if (this.struk?.items.length <= 0) this.struk = null;
-      // this.items.forEach((el) => {
-      //   if (item?.produk_id == el?.produk_id) {
-      //     el.stock = Number(el?.stock) + Number(item?.qty);
-      //   }
-      // });
     },
   },
 };

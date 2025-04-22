@@ -9,7 +9,13 @@
       <DialogConfirmCheckOut
         ref="dialog_bayar"
         @onBubbleEvent="onBubbleEventDialogConfirmCheckOut"
+        @onBubbleEventCatatan="openDialogCatatan"
       ></DialogConfirmCheckOut>
+
+      <DialogCatatan
+        @onBubbleEvent="struk.catatan = $event"
+        ref="dialog_catatan"
+      ></DialogCatatan>
 
       <div class="col-12">
         <q-banner dense class="bg-positive text-white">
@@ -23,6 +29,9 @@
             <q-icon name="warning" color="white" />
           </template>
           Hanya bisa dilakukan sekali dalam satu hari
+          <div v-if="isCheckDone" class="">
+            SELESAI PROSES: {{ getCheckDone?.created_at }}
+          </div>
         </q-banner>
       </div>
 
@@ -109,6 +118,7 @@
       <div class="full-width q-mt-sm col-12 row q-col-gutter-sm">
         <div class="col q-pl-none q-pt-none">
           <q-btn
+            v-if="!isCheckDone"
             @click="openDialogConfirmCheckOut"
             color="pink"
             class="text-h6 full-width"
@@ -116,10 +126,19 @@
             label="validasi"
             icon-right="security"
           />
+          <q-btn
+            v-else
+            @click="openDialogConfirmCheckOutPreview"
+            color="cyan"
+            class="text-h6 full-width"
+            style="height: 50px"
+            label="lihat"
+            icon-right="assignment"
+          />
         </div>
         <div class="col-auto q-pt-none">
           <q-btn
-            @click="openDialogConfirmCheckOut"
+            @click="openDialogCatatan"
             color="teal"
             class="text-h6"
             style="height: 50px"
@@ -137,6 +156,7 @@ import { ref } from "vue";
 import SlideItemCheckOut from "src/components/SlideItemCheckOut.vue";
 import DialogCalculatorCheckOut from "src/components/DialogCalculatorCheckOut.vue";
 import DialogConfirmCheckOut from "src/components/DialogConfirmCheckOut.vue";
+import DialogCatatan from "src/components/DialogCatatan.vue";
 </script>
 
 <script>
@@ -152,6 +172,8 @@ export default {
   computed: {
     ...mapState(useCheckOutStore, {
       getTotal: "getTotal",
+      isCheckDone: "isCheckDone",
+      getCheckDone: "getCheckDone",
     }),
     ...mapWritableState(usePenjualanStore, {
       items: "items",
@@ -169,14 +191,37 @@ export default {
       addNewStruk: "addNewStruk",
       updateLocalStorage: "updateLocalStorage",
     }),
+    openDialogCatatan() {
+      if (!this.struk?.id)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Struk tidak bisa kosong",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      this.$refs.dialog_catatan?.onOpen(this.struk.catatan);
+    },
     openDialogCalculatorCheckOut(item) {
+      if (this.isCheckDone)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Maksimal 1 kali check buka",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+
       this.$refs.dialog_calculator?.onOpen(item);
+    },
+    openDialogConfirmCheckOutPreview() {
+      if (this.isCheckDone) return this.$refs.dialog_bayar?.onOpen(this.struk);
     },
     openDialogConfirmCheckOut() {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Struk check tutup kosong",
+          caption: "Struk check buka kosong",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -190,6 +235,10 @@ export default {
       this.addNewStruk();
 
       this.struk?.items?.push(item);
+      // this.struk.stok_awal = this.getTotal?.stok_awal;
+      // this.struk.stok_akhir = this.getTotal?.stok_akhir;
+      // // this.struk.bill = this.getTotalStruk;
+      // this.struk.qty = this.getTotal?.qty;
     },
     onBubbleEventDialogConfirmCheckOut() {},
     onBubbleEventSlideItemCheckOut(item, index) {

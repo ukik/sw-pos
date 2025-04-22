@@ -9,6 +9,7 @@
       <DialogBayarPenjualan
         ref="dialog_bayar"
         @onBubbleEvent="onBubbleEventDialogBayarPenjualan"
+        @onBubbleEventCatatan="openDialogCatatan"
       ></DialogBayarPenjualan>
 
       <DialogCatatan
@@ -83,7 +84,7 @@
 
       <q-scroll-area
         class="border-1"
-        :style="`height: calc(${$q.screen.height}px - 98px - 50px - 50px - 50px + 15px); width: 250px`"
+        :style="`height: calc(${$q.screen.height}px - 98px - 50px - 50px - 50px + 15px - 35px); width: 250px`"
       >
         <q-list bordered separator>
           <template v-for="(item, index) in struk?.items">
@@ -113,6 +114,17 @@
         <q-item-section side>
           <q-item-label lines="1" class="text-left text-white text-h6"
             >Rp. {{ getTotalStruk }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-item style="height: 35px" dense class="bg-sw items-center text-white">
+        <q-item-section>
+          <q-item-label class="text-left text-white" caption>PEMBULATAN </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-item-label lines="1" class="text-left text-white text-h6"
+            >Rp. {{ $pembulatanReceh(getTotalStruk) }}
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -239,8 +251,10 @@ export default {
 
       this.struk?.items.push(item);
 
-      this.struk.bill = this.getTotalStruk;
-      this.struk.qty = this.getTotal?.qty;
+      // this.struk.bill = this.getTotalStruk;
+      // this.struk.qty = this.getTotal?.qty;
+      // this.struk.stok_awal = this.getTotal?.stok_awal;
+      // this.struk.stok_akhir = this.getTotal?.stok_akhir;
 
       console.log("onBubbleEventDialogCalculatorPenjualan", item, this.items);
 

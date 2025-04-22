@@ -1,131 +1,286 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 
+import Swal from 'sweetalert2/dist/sweetalert2';
+
+
+import { date } from "quasar";
+
+const timeStamp = Date.now();
+const formattedString = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm:ss");
+const tanggalString = date.formatDate(timeStamp, "YYYY-MM-DD");
+const waktuString = date.formatDate(timeStamp, "HH:mm:ss");
+
+
 export const usePengaturanStore = defineStore('PengaturanStore', {
   state: () => ({
-    balance: 100000,
+    balance: 0,
     cabang: {
       id: 1,
       nama: "JAKARTA",
-      deskripsi: "nama cabang",
+      alamat: "nama cabang",
     }, // active cabang
-    cashier: {
-      id: 1,
-      nama: "Admin",
-      deskripsi: "nama kasir",
-      pin: 1234,
-    }, // active cashier
+    // cashier: {
+    //   id: 1,
+    //   nama: "Admin",
+    //   alamat: 'Jl. ini itu',
+    //   pin: 1234,
+    //   foto: '',
+    // }, // active cashier
+    cashier: null,
     shift: {
-      id: 1,
-      nama: 'A',
-      jam_mulai: '08:30',
-      jam_selesai: '12:30',
-      jam_login: '09:00',
-      status: 'on time'
+      // id: 1,
+      // nama: 'A',
+      // description: "Shift A",
+      // jam_mulai: '08:30',
+      // jam_selesai: '12:30',
+      // status: 'on time'
     }, // active shift
     position: {
-        //   "Latitude: " +
-        //     position.coords.latitude +
-        //     "\n" +
-        //     "Longitude: " +
-        //     position.coords.longitude +
-        //     "\n" +
-        //     "Altitude: " +
-        //     position.coords.altitude +
-        //     "\n" +
-        //     "Accuracy: " +
-        //     position.coords.accuracy +
-        //     "\n" +
-        //     "Altitude Accuracy: " +
-        //     position.coords.altitudeAccuracy +
-        //     "\n" +
-        //     "Heading: " +
-        //     position.coords.heading +
-        //     "\n" +
-        //     "Speed: " +
-        //     position.coords.speed +
-        //     "\n" +
-        //     "Timestamp: " +
-        //     position.timestamp +
-        //     "\n"
+      //   "Latitude: " +
+      //     position.coords.latitude +
+      //     "\n" +
+      //     "Longitude: " +
+      //     position.coords.longitude +
+      //     "\n" +
+      //     "Altitude: " +
+      //     position.coords.altitude +
+      //     "\n" +
+      //     "Accuracy: " +
+      //     position.coords.accuracy +
+      //     "\n" +
+      //     "Altitude Accuracy: " +
+      //     position.coords.altitudeAccuracy +
+      //     "\n" +
+      //     "Heading: " +
+      //     position.coords.heading +
+      //     "\n" +
+      //     "Speed: " +
+      //     position.coords.speed +
+      //     "\n" +
+      //     "Timestamp: " +
+      //     position.timestamp +
+      //     "\n"
     },
 
+    shift_login: '',
 
-    pengiriman_cashier: {
-      label: "Admin",
-      value: "Admin",
-      description: "Search engine",
-      icon: "mail",
-      pin: 1234,
-    },
+    //pengiriman_cashier: null,
     pengiriman_courir: null,
-
-    mutasi_cashier: {
-      label: "Admin",
-      value: "Admin",
-      description: "Search engine",
-      icon: "mail",
-      pin: 1234,
-    },
     mutasi_courir: null,
 
-    rotasi_cashier_1: {
-      label: "Admin",
-      value: "Admin",
-      description: "Search engine",
-      icon: "mail",
-      pin: 1234,
-    },
-    rotasi_cashier_2: {
-      label: "Admin",
-      value: "Admin",
-      description: "Search engine",
-      icon: "mail",
-      pin: 1234,
-    },
+    rotasi_cashier_pemberi: null,
+    rotasi_cashier_penerima: null,
+    // rotasi_shift_pemberi: null,
+    // rotasi_shift_penerima: null,
+
+    // list_shifts: [ // tidak diperlukan
+    //   {
+    //     id: 1,
+    //     nama: 'Shift A',
+    //     value:'A',
+    //     description: "Shift A",
+    //     jam_mulai: '08:30',
+    //     jam_selesai: '12:30',
+    //   },
+    //   {
+    //     id: 2,
+    //     nama: 'Shift B',
+    //     value:'B',
+    //     description: "Shift A",
+    //     jam_mulai: '08:30',
+    //     jam_selesai: '12:30',
+    //   },
+    // ],
 
     list_cashiers: [
       {
-        label: "Google",
-        value: "Google",
-        description: "password: 1234",
-        icon: "mail",
+        id: 1,
+        nama: 'Yuli',
+        alamat: 'Jl. ini itu',
         pin: 1234,
+        foto: 'https://cdn.quasar.dev/img/mountains.jpg',
+
       },
       {
-        label: "Facebook",
-        value: "Facebook",
-        description: "password: 1234",
-        icon: "bluetooth",
-        pin: 1234
+        id: 2,
+        nama: 'Zigas',
+        alamat: 'Jl. macan',
+        pin: 1234,
+        foto: 'https://cdn.quasar.dev/img/mountains.jpg',
+
       },
     ],
     list_courirs: [
       {
-        label: "Google",
-        value: "Google",
-        description: "password: 1234",
-        icon: "mail",
+        id: 1,
+        nama: 'JOKO',
+        alamat: 'Jl. ini itu',
         pin: 1234,
+        foto: 'https://cdn.quasar.dev/img/mountains.jpg',
       },
       {
-        label: "Facebook",
-        value: "Facebook",
-        description: "password: 1234",
-        icon: "bluetooth",
-        pin: 1234
+        id: 2,
+        nama: 'PRABOWO',
+        alamat: 'Jl. ini itu',
+        pin: 1234,
+        foto: 'https://cdn.quasar.dev/img/mountains.jpg',
       },
     ],
   }),
 
   getters: {
     getBalance: (state) => state.balance,
-    getBalance: (state) => state.balance
+    // getBalance: (state) => state.balance
+    getShiftData: ({ list_shifts }) => {
+      return function (payload) {
+        let temp = null
+        list_shifts.forEach(el => {
+          if (el.value == payload) {
+            return temp = el
+          }
+        });
+        return temp
+      }
+    },
   },
 
   actions: {
-    // increment() {
-    //   this.counter++
-    // }
+    onEditCashier(payload, tipe) {
+      console.log('onEditCashier', tipe)
+
+      let temp = JSON.parse(JSON.stringify(this.list_cashiers));
+      let _temp = JSON.parse(JSON.stringify(payload));
+
+      if (tipe == 'UPDATE') {
+        // kalo foreach gak bisa, ini bisa
+        for (let i = 0; i < temp.length; i++) {
+          if (temp[i].id == _temp.id) {
+            temp[i] = _temp;
+            console.log("onBubbleEventOK onEditCashier", temp[i], _temp);
+          }
+        }
+      }
+      if(tipe == 'CREATE') {
+        temp.push(payload)
+      }
+
+      this.list_cashiers = temp;
+
+      Swal.fire({
+        icon: "success",
+        title: `Kasir ${payload?.nama}`,
+        text: `Berhasil di sunting`,
+        showConfirmButton: false,
+        timer: 2500,
+      })
+    },
+    onEditCourir(payload, tipe) {
+      console.log('onEditCashier', tipe)
+
+      let temp = JSON.parse(JSON.stringify(this.list_courirs));
+      let _temp = JSON.parse(JSON.stringify(payload));
+
+      if (tipe == 'UPDATE') {
+        // kalo foreach gak bisa, ini bisa
+        for (let i = 0; i < temp.length; i++) {
+          if (temp[i].id == _temp.id) {
+            temp[i] = _temp;
+            console.log("onBubbleEventOK onEditCourir", temp[i], _temp);
+          }
+        }
+      }
+
+      if(tipe == 'CREATE') {
+        temp.push(payload)
+      }
+
+      this.list_courirs = temp;
+
+      Swal.fire({
+        icon: "success",
+        title: `Kurir ${payload?.nama}`,
+        text: `Berhasil di sunting`,
+        showConfirmButton: false,
+        timer: 2500,
+      })
+    },
+
+    updateLocalStorageCourir() {
+      const storage_name = 'PENGATURAN-DAFTAR-KURIR-' + date.formatDate(timeStamp, "YYYY-MM-DD")
+
+      let model = []
+
+      if (localStorage.getItem(storage_name)) model = JSON.parse(localStorage.getItem(storage_name));
+
+      let addModel = [
+        ...model,
+        this.struk,
+      ]
+
+      localStorage.setItem(storage_name, JSON.stringify(addModel))
+
+      this.list_courirs = addModel
+    },
+    updateLocalStorageCashier() {
+      const storage_name = 'PENGATURAN-DAFTAR-KASIR-' + date.formatDate(timeStamp, "YYYY-MM-DD")
+
+      let model = []
+
+      if (localStorage.getItem(storage_name)) model = JSON.parse(localStorage.getItem(storage_name));
+
+      let addModel = [
+        ...model,
+        this.struk,
+      ]
+
+      localStorage.setItem(storage_name, JSON.stringify(addModel))
+
+      this.list_cashiers = addModel
+    },
+
+
+    // onEditShift(payload) {
+    //   let temp = JSON.parse(JSON.stringify(this.list_shifts));
+    //   let _temp = JSON.parse(JSON.stringify(payload));
+
+
+    //   // kalo foreach gak bisa, ini bisa
+    //   for (let i = 0; i < temp.length; i++) {
+    //     if (temp[i].id == _temp.id) {
+    //       temp[i] = _temp;
+    //       console.log("onBubbleEventOK onEditShift", temp[i], _temp);
+    //     }
+    //   }
+
+    //   this.list_shifts = temp;
+
+    //   Swal.fire({
+    //     icon: "success",
+    //     title: `Shift ${payload?.value}`,
+    //     text: `Berhasil di sunting`,
+    //     showConfirmButton: false,
+    //     timer: 2500,
+    //   })
+    // },
+
+    initLocalStorage() {
+      if (localStorage.getItem('PENGATURAN-DAFTAR-KASIR')) {
+        this.list_cashiers = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-KASIR'));
+      }
+      if (localStorage.getItem('PENGATURAN-DAFTAR-KURIR')) {
+        this.list_courirs = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-KURIR'));
+      }
+      // if (localStorage.getItem('PENGATURAN-DAFTAR-SHIFT')) {
+      //   this.list_shifts = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-SHIFT'));
+      // }
+      if (localStorage.getItem('PENGATURAN-DAFTAR-CABANG')) {
+        this.cabang = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-CABANG'));
+      }
+      if (localStorage.getItem('PENGATURAN-BALANCE')) {
+        this.cabang = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-CABANG'));
+      }
+
+    },
   }
 })
 

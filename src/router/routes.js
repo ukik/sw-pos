@@ -1,18 +1,35 @@
+const INDEX = () => import('pages/IndexPage.vue')
+
 const routes = [
   {
     path: '/',
-    component: () => import ('layouts/MainLayout.vue'),
+    component: () => import('layouts/MainLayout.vue'),
     redirect: {
       name: 'penjualan',
     },
     children: [
       {
         meta: {
+          title: 'absensi',
+        },
+        path: 'absensi',
+        name: 'absensi',
+        components: {
+          default: () => import('pages/AbsensiPage.vue'),
+          index: INDEX
+        },
+      },
+
+      {
+        meta: {
           title: 'penjualan',
         },
         path: 'penjualan',
         name: 'penjualan',
-        component: () => import ('pages/PenjualanPage.vue'),
+        components: {
+          default: () => import('pages/PenjualanPage.vue'),
+          index: INDEX
+        }
       },
       {
         meta: {
@@ -20,7 +37,10 @@ const routes = [
         },
         path: 'pengiriman',
         name: 'pengiriman',
-        component: () => import ('pages/PengirimanPage.vue'),
+        components: {
+          default: () => import('pages/PengirimanPage.vue'),
+          index: INDEX
+        }
       },
       {
         meta: {
@@ -28,7 +48,10 @@ const routes = [
         },
         path: 'mutasi',
         name: 'mutasi',
-        component: () => import ('pages/MutasiPage.vue'),
+        components: {
+          default: () => import('pages/MutasiPage.vue'),
+          index: INDEX
+        }
       },
       {
         meta: {
@@ -36,7 +59,10 @@ const routes = [
         },
         path: 'check-in',
         name: 'check-in',
-        component: () => import ('pages/CheckInPage.vue'),
+        components: {
+          default: () => import('pages/CheckInPage.vue'),
+          index: INDEX
+        }
       },
       {
         meta: {
@@ -44,7 +70,10 @@ const routes = [
         },
         path: 'check-out',
         name: 'check-out',
-        component: () => import ('pages/IndexPage.vue'),
+        components: {
+          default: () => import('pages/CheckOutPage.vue'),
+          index: INDEX
+        }
       },
       {
         meta: {
@@ -52,7 +81,83 @@ const routes = [
         },
         path: 'check-rotasi',
         name: 'check-rotasi',
-        component: () => import ('pages/IndexPage.vue'),
+        components: {
+          default: () => import('pages/CheckRotasiPage.vue'),
+          index: INDEX
+        }
+      },
+
+
+
+      {
+        meta: {
+          title: 'pengaturan produk',
+        },
+        path: 'pengaturan-produk',
+        name: 'pengaturan_produk',
+        components: {
+          default: () => import('pages/PengaturanProdukPage.vue'),
+          index: INDEX
+        }
+      },
+
+      {
+        meta: {
+          title: 'pengaturan kasir',
+        },
+        path: 'pengaturan-kasir',
+        name: 'pengaturan_kasir',
+        components: {
+          default: () => import('pages/PengaturanCashierPage.vue'),
+          index: INDEX
+        }
+      },
+
+      {
+        meta: {
+          title: 'pengaturan kurir',
+        },
+        path: 'pengaturan-kurir',
+        name: 'pengaturan_kurir',
+        components: {
+          default: () => import('pages/PengaturanCourirPage.vue'),
+          index: INDEX
+        }
+      },
+
+      // {
+      //   meta: {
+      //     title: 'pengaturan shift',
+      //   },
+      //   path: 'pengaturan-shift',
+      //   name: 'pengaturan_shift',
+      //   components: {
+      //     default: () => import('pages/PengaturanShiftPage.vue'),
+      //     index: INDEX
+      //   }
+      // },
+      // {
+      //   meta: {
+      //     title: 'pengaturan outlet',
+      //   },
+      //   path: 'pengaturan-outlet',
+      //   name: 'pengaturan_outlet',
+      //   components: {
+      //     default: () => import('pages/PengaturanOutletPage.vue'),
+      //     index: INDEX
+      //   }
+      // },
+
+      {
+        meta: {
+          title: 'pengaturan outlet',
+        },
+        path: 'pengaturan-outlet',
+        name: 'pengaturan_outlet',
+        components: {
+          default: () => import('pages/PengaturanOutletPage.vue'),
+          index: INDEX
+        }
       },
 
 
@@ -65,7 +170,10 @@ const routes = [
         },
         path: 'riwayat-penjualan',
         name: 'riwayat_penjualan',
-        component: () => import ('pages/RiwayatPenjualanPage.vue'),
+        components: {
+          default: () => import('pages/RiwayatPenjualanPage.vue'),
+          index: INDEX
+        }
       },
       {
         meta: {
@@ -73,24 +181,65 @@ const routes = [
         },
         path: 'riwayat-pengiriman',
         name: 'riwayat_pengiriman',
-        component: () => import ('pages/RiwayatPengirimanPage.vue'),
+        components: {
+          default: () => import('pages/RiwayatPengirimanPage.vue'),
+          index: INDEX
+        }
       },
-
-
-
-
-
-
-
-
       {
         meta: {
-          title: 'generate',
+          title: 'riwayat mutasi',
         },
-        path: 'generate',
-        name: 'generate',
-        component: () => import ('pages/InvoicePenjualanPage.vue'),
+        path: 'riwayat-mutasi',
+        name: 'riwayat_mutasi',
+        components: {
+          default: () => import('pages/RiwayatMutasiPage.vue'),
+          index: INDEX
+        }
       },
+      {
+        meta: {
+          title: 'riwayat check buka',
+        },
+        path: 'riwayat-checkin',
+        name: 'riwayat_checkin',
+        components: {
+          default: () => import('pages/RiwayatCheckInPage.vue'),
+          index: INDEX
+        }
+      },
+      {
+        meta: {
+          title: 'riwayat check tutup',
+        },
+        path: 'riwayat-checkout',
+        name: 'riwayat_checkout',
+        components: {
+          default: () => import('pages/RiwayatCheckOutPage.vue'),
+          index: INDEX
+        }
+      },
+      {
+        meta: {
+          title: 'riwayat check rotasi',
+        },
+        path: 'riwayat-rotasi',
+        name: 'riwayat_rotasi',
+        components: {
+          default: () => import('pages/RiwayatCheckRotasiPage.vue'),
+          index: INDEX
+        }
+      },
+
+
+      // {
+      //   meta: {
+      //     title: 'generate',
+      //   },
+      //   path: 'generate',
+      //   name: 'generate',
+      //   component: () => import ('pages/InvoicePenjualanPage.vue'),
+      // },
 
     ],
   },
@@ -99,7 +248,7 @@ const routes = [
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import ('pages/ErrorNotFound.vue'),
+    component: () => import('pages/ErrorNotFound.vue'),
   },
 ];
 

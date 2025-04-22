@@ -3,48 +3,18 @@
   <q-table
     :hide-header="false"
     class="my-sticky-header-table"
-    :style="`height:calc(100vh - 65px); border: 1px solid rgba(29, 29, 29, 0.12)`"
+    :style="`height:calc(100vh - 65px - 50px); border: 1px solid rgba(29, 29, 29, 0.12)`"
     flat
     bordered
-    title="PENGIRIMAN"
     :rows="rows"
     :columns="columns"
-    row-key="name"
+    row-key="field"
+    row-label="label"
     :pagination="initialPagination"
     :grid="false"
     rows-per-page-label="catatan per halaman:"
     @row-click="onRowClick"
   >
-    <template v-slot:item="props">
-      <div
-        class="q-px-xs q-py-none q-pb-xs col-12 grid-style-transition"
-        :style="props.selected ? 'transform: scale(0.95);' : ''"
-      >
-        <q-card
-          bordered
-          flat
-          :class="props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
-        >
-          <!-- <q-card-section>
-              <q-checkbox dense v-model="props.selected" :label="props.row.name" />
-            </q-card-section>
-            <q-separator /> -->
-          <q-list dense>
-            <q-item
-              v-for="col in props.cols.filter((col) => col.name !== 'desc')"
-              :key="col.name"
-            >
-              <q-item-section>
-                <q-item-label>{{ col.label }}</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-item-label caption>{{ col.value }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card>
-      </div>
-    </template>
   </q-table>
 </template>
 
@@ -54,6 +24,94 @@ import { usePengirimanStore } from "src/stores/pengiriman-store";
 import DialogInvoicePengiriman from "./DialogInvoicePengiriman.vue";
 
 const columns = [
+  {
+    label: "id",
+    field: "id",
+  },
+  {
+    label: "code",
+    field: "code",
+  },
+  {
+    label: "cabang",
+    field: "cabang",
+  },
+  {
+    label: "tipe",
+    field: "type",
+  },
+  {
+    label: "kasir",
+    field: "cashier",
+  },
+  {
+    label: "karir",
+    field: "courir",
+  },
+  {
+    label: "shift",
+    field: "shift",
+  },
+  // {
+  //   label: "status",
+  //   field: "status",
+  // },
+  {
+    label: "stok akhir",
+    field: "stok_akhir",
+    format: (val, row) => `${val} kg`,
+  },
+  {
+    label: "stok awal",
+    field: "stok_awal",
+    format: (val, row) => `${val} kg`,
+  },
+  {
+    label: "bobot",
+    field: "qty",
+    format: (val, row) => `${val} kg`,
+  },
+  {
+    label: "kurir konfirmasi",
+    field: "courir_confirm",
+    format: (val, row) => `${val ? "Setuju" : "Tidak Setuju"}`,
+  },
+  {
+    label: "kasir konfirmasi",
+    field: "cashier_confirm",
+    format: (val, row) => `${val ? "Setuju" : "Tidak Setuju"}`,
+  },
+  // {
+  //   label: "items",
+  //   field: "items",
+  // },
+  // {
+  //   label: "catatan",
+  //   field: "catatan",
+  // },
+  {
+    label: "tanggal",
+    field: "tanggal",
+  },
+  {
+    label: "waktu",
+    field: "waktu",
+  },
+  {
+    label: "dibuat pada",
+    field: "created_at",
+  },
+  {
+    label: "latitude",
+    field: "latitude",
+  },
+  {
+    label: "longitude",
+    field: "longitude",
+  },
+];
+
+const columnsX = [
   // tanggal: tanggalString,
   // waktu: waktuString,
   // created_at: formattedString,

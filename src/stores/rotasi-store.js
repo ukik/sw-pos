@@ -17,12 +17,22 @@ function uuidv4() {
 
 export const useRotasiStore = defineStore('RotasiStore', {
   state: () => ({
-    struk: {},
+    struk: {
+    },
     struks: [],
     invoice: null,
   }),
 
   getters: {
+    getInvoiceSelected: ({struks}) => {
+      return function (date) {
+        let temp = null
+        struks.forEach(element => {
+          if(element.tanggal == date) temp = element
+        });
+        return temp
+      }
+    },
     isCheckDone: ({ struks }) => { // jadi harus di check apa kasir sudah check stok, sehari 1 kali saja
       let temp = false
       struks.forEach(el => {
@@ -31,16 +41,25 @@ export const useRotasiStore = defineStore('RotasiStore', {
         }
       });
       return temp
-
     },
+    getCheckDone: ({ struks }) => { // jadi harus di check apa kasir sudah check stok, sehari 1 kali saja
+      let temp = false
+      struks.forEach(el => {
+        if(el.tanggal == tanggalString) {
+          temp = el
+        }
+      });
+      return temp
+    },
+
     getStruk: (state) => state.struk,
     getStruks: (state) => state.struks,
     getStruksModify: ({ struks }) => {
       let _temp = JSON.parse(JSON.stringify(struks))
 
       _temp.forEach(el => {
-        el.courir_confirm = el.courir_confirm ? 'Setuju' : 'Tidak Setuju'
-        el.cashier_confirm = el.cashier_confirm ? 'Setuju' : 'Tidak Setuju'
+        el.cashier_1_confirm = el.cashier_1_confirm ? 'Setuju' : 'Tidak Setuju'
+        el.cashier_2_confirm = el.cashier_2_confirm ? 'Setuju' : 'Tidak Setuju'
       });
 
       return _temp
@@ -57,10 +76,14 @@ export const useRotasiStore = defineStore('RotasiStore', {
       let sum = {
         stock: 0,
         qty: 0,
+        stok_awal: 0,
+        stok_akhir: 0,
       };
       struk?.items?.forEach((element) => {
         sum.stock += element?.stock;
         sum.qty += element?.qty;
+        sum.stok_awal += element?.stok_awal;
+        sum.stok_akhir += element?.stok_akhir;
       });
 
       return sum;
@@ -68,13 +91,6 @@ export const useRotasiStore = defineStore('RotasiStore', {
   },
 
   actions: {
-    setCourir(val) {
-      // if(!this.struk?.courir ) return
-      let _model = JSON.parse(JSON.stringify(this.struk));
-      _model.courir = val
-      this.struk = _model
-      console.log('this.struk.courir',  this.struk, _model)
-    },
     addItemToStruk() {
 
       const { balance, position } = usePengaturanStore()
@@ -101,17 +117,26 @@ export const useRotasiStore = defineStore('RotasiStore', {
         this.struk = {
           id: this.getStruksLength + 1,
           code: "#" + uuidv4(),
-          cabang: cabang?.nama,
+
+          // shift_pemberi: '',
+          // shift_penerima: '',
+          // shift: {
+          //   ...shift
+          // },
+          cabang: {
+            ...cabang
+          },
           type: "CHECK-ROTASI",
-          cashier: cashier?.nama,
-          courir: '',
-          shift: shift?.nama,
+          cashier_pemberi: {},
+          cashier_penerima: {},
+          // courir: {},
+
           status: "",
           stok_akhir: 0,
           stok_awal: 0,
-          qty: this.getTotal?.qty,
-          courir_confirm: false,
-          cashier_confirm: false,
+          qty: 0,
+          cashier_1_confirm: false,
+          cashier_2_confirm: false,
           items: [],
           catatan: null,
           tanggal: tanggalString,

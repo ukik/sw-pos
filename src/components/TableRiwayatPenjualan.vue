@@ -9,7 +9,6 @@
     :style="`height:calc(100vh - 65px - 50px); border: 1px solid rgba(29, 29, 29, 0.12)`"
     flat
     bordered
-    title="PENJUALAN"
     :rows="rows"
     row-key="name"
     :pagination="initialPagination"
@@ -18,36 +17,6 @@
     @row-click="onRowClick"
     :columns="columns"
   >
-    <template v-slot:item="props">
-      <div
-        class="q-px-xs q-py-none q-pb-xs col-12 grid-style-transition"
-        :style="props.selected ? 'transform: scale(0.95);' : ''"
-      >
-        <q-card
-          bordered
-          flat
-          :class="props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
-        >
-          <!-- <q-card-section>
-              <q-checkbox dense v-model="props.selected" :label="props.row.name" />
-            </q-card-section>
-            <q-separator /> -->
-          <q-list dense>
-            <q-item
-              v-for="col in props.cols.filter((col) => col.name !== 'desc')"
-              :key="col.name"
-            >
-              <q-item-section>
-                <q-item-label>{{ col.label }}</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-item-label caption>{{ col.value }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card>
-      </div>
-    </template>
   </q-table>
   <!-- </div> -->
 </template>
@@ -57,7 +26,7 @@ import { mapState, mapWritableState } from "pinia";
 import { usePenjualanStore } from "src/stores/penjualan-store";
 import DialogInvoicePenjualan from "./DialogInvoicePenjualan.vue";
 
-const columns = [
+const columnsX = [
   // latitude: position?.coords?.latitude, // Latitude will be stored here
   // longitude: position?.coords?.longitude, // Longitude will be stored here
   {
@@ -171,6 +140,118 @@ const columns = [
     label: "Dibuat Pada",
     field: "created_at",
     sortable: true,
+  },
+];
+
+const columns = [
+  {
+    label: "id",
+    field: "id",
+  },
+  {
+    label: "code",
+    field: "code",
+  },
+  {
+    label: "cabang",
+    field: "cabang",
+  },
+  {
+    label: "tipe",
+    field: "type",
+  },
+  {
+    label: "kasir",
+    field: "cashier",
+  },
+  {
+    label: "shift",
+    field: "shift",
+  },
+  // {
+  //   label: "status",
+  //   field: "status",
+  // },
+  {
+    label: "saldo",
+    field: "balance",
+    format: (val, row) => `Rp. ${val}`,
+  },
+  {
+    label: "tagihan",
+    field: "bill",
+    format: (val, row) => `Rp. ${val}`,
+  },
+  {
+    label: "tagihan pembulatan",
+    field: "bill_pembulatan",
+    format: (val, row) => `Rp. ${val}`,
+  },
+
+  {
+    label: "bayar",
+    field: "bayar",
+    format: (val, row) => `Rp. ${val}`,
+  },
+  {
+    label: "kebalian",
+    field: "change",
+    format: (val, row) => `Rp. ${val}`,
+  },
+  {
+    label: "kembalian pembulatan",
+    field: "change_pembulatan",
+    format: (val, row) => `Rp. ${val}`,
+  },
+  {
+    label: "kembalian aktual",
+    field: "change_aktual",
+    format: (val, row) => `Rp. ${val}`,
+    classes: "text-bold text-positive",
+  },
+
+  {
+    label: "stok akhir",
+    field: "stok_akhir",
+    format: (val, row) => `${val} kg`,
+  },
+  {
+    label: "stok awal",
+    field: "stok_awal",
+    format: (val, row) => `${val} kg`,
+  },
+  {
+    label: "bobot",
+    field: "qty",
+    format: (val, row) => `${val} kg`,
+  },
+  // {
+  //   label: "items",
+  //   field: "items",
+  // },
+  {
+    label: "catatan",
+    field: "catatan",
+  },
+  {
+    label: "tanggal",
+    field: "tanggal",
+  },
+  {
+    label: "waktu",
+    field: "waktu",
+  },
+  {
+    label: "dibuat pada",
+    field: "created_at",
+  },
+  {
+    label: "latitude",
+    field: "latitude",
+  },
+  {
+    label: "longitude",
+    field: "longitude",
   },
 ];
 

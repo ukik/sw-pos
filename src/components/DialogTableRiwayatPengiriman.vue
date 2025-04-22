@@ -2,20 +2,30 @@
   <q-dialog
     transition-show="slide-down"
     transition-hide="slide-up"
-    maximized
+    full-width
+    full-height
     :persistent="false"
     v-model="fixed"
   >
     <q-card>
-      <q-card-actions class="bg-sw text-white">
+      <!-- <q-card-actions class="bg-sw text-white">
         <q-btn v-close-popup class="col-auto" dense flat icon="arrow_back"></q-btn>
         <q-toolbar-title>{{ date }}</q-toolbar-title>
-        <!-- <div class="text-h6">Bayar</div> -->
+      </q-card-actions> -->
+
+      <q-card-actions class="bg-sw text-white q-py-none">
+        <q-toolbar-title>
+          <q-avatar class="">
+            <q-btn v-close-popup dense flat icon="arrow_back"></q-btn>
+          </q-avatar>
+
+          PENGIRIMAN: {{ date }}</q-toolbar-title
+        >
       </q-card-actions>
 
       <q-separator />
 
-      <q-card-section style="" class="scroll q-pa-sm">
+      <q-card-section style="height: calc(100% - 50px)" class="scroll q-pa-sm">
         <TableRiwayatPengiriman></TableRiwayatPengiriman>
       </q-card-section>
       <!--

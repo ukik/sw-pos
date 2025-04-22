@@ -9,6 +9,7 @@
       <DialogConfirmCheckIn
         ref="dialog_bayar"
         @onBubbleEvent="onBubbleEventDialogConfirmCheckIn"
+        @onBubbleEventCatatan="openDialogCatatan"
       ></DialogConfirmCheckIn>
 
       <DialogCatatan
@@ -234,9 +235,10 @@ export default {
       this.addNewStruk();
 
       this.struk?.items?.push(item);
-
-      // this.struk.bill = this.getTotalStruk;
-      this.struk.qty = this.getTotal?.qty;
+      // this.struk.stok_awal = this.getTotal?.stok_awal;
+      // this.struk.stok_akhir = this.getTotal?.stok_akhir;
+      // // this.struk.bill = this.getTotalStruk;
+      // this.struk.qty = this.getTotal?.qty;
     },
     onBubbleEventDialogConfirmCheckIn() {},
     onBubbleEventSlideItemCheckIn(item, index) {

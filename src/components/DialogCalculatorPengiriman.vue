@@ -67,10 +67,7 @@
 
       <q-separator />
 
-      <q-card-section
-        style="height: calc(100% - 85.2px - 88px - 51px - 4px)"
-        class="scrollX"
-      >
+      <q-card-section style="height: calc(70vh - 50px - 55px)" class="scroll">
         <div class="row q-col-gutter-md">
           <div class="row col q-col-gutter-sm flex justify-center">
             <div class="col-4">
@@ -245,8 +242,8 @@ export default {
         id: this.getStrukItemID,
         produk_id: this.item?.id,
         qty: Number(_model),
-        stock_awal: Number(_model),
-        stock_akhir: Number(this.item?.stock) + Number(_model),
+        stok_awal: Number(this.item?.stock),
+        stok_akhir: Number(this.item?.stock) + Number(_model),
       });
     },
     onOpen(item) {

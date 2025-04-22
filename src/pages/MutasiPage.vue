@@ -9,6 +9,7 @@
       <DialogConfirmMutasi
         ref="dialog_bayar"
         @onBubbleEvent="onBubbleEventDialogConfirmMutasi"
+        @onBubbleEventCatatan="openDialogCatatan"
       ></DialogConfirmMutasi>
 
       <DialogCatatan
@@ -237,7 +238,9 @@ export default {
 
       this.struk?.items?.push(item);
 
-      this.struk.qty = this.getTotal?.qty;
+      // this.struk.qty = this.getTotal?.qty;
+      // this.struk.stok_awal = this.getTotal?.stok_awal;
+      // this.struk.stok_akhir = this.getTotal?.stok_akhir;
 
       // this.items.forEach((el) => {
       //   if (item?.id == el?.id) {

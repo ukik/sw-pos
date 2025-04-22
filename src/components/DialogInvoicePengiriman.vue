@@ -1,5 +1,6 @@
 <template>
   <q-dialog
+    @show="show = true"
     full-width
     full-height
     v-model="fixed"
@@ -13,7 +14,7 @@
         <q-btn label="Cetak PDF" outline icon="print" @click="makePDFShare"></q-btn>
       </q-card-actions>
 
-      <q-card-actions>
+      <q-card-section v-if="show" class="scroll" style="height: calc(100% - 50px)">
         <div v-show="isCreateContent" id="createContent" v-html="createContent"></div>
         <table style="width: 100%; margin-bottom: 10px">
           <tbody>
@@ -93,7 +94,7 @@
             </tr>
           </tbody>
         </table>
-      </q-card-actions>
+      </q-card-section>
     </q-card>
   </q-dialog>
 </template>
@@ -259,6 +260,7 @@ export default {
   },
   data() {
     return {
+      show: false,
       fixed: false,
       isCreateContent: false,
     };
