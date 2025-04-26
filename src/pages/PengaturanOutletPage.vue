@@ -18,7 +18,7 @@
               outlined
               readonly
               type="textarea"
-              rows="10"
+              autogrow
               label="Alamat"
               v-model="cabang.alamat"
             />

@@ -11,29 +11,25 @@
           <q-banner
             inline-actions
             dense
-            class="bg-teal full-height text-white rounded-borders"
+            class="bg-white border-1 shadow-1 full-height text-white rounded-borders"
           >
-            <!-- <template v-slot:avatar>
-              <q-icon name="support_agent" color="white" />
-            </template> -->
-            <!-- KASIR piket sekarang: {{ cashier?.nama }} -->
             <q-item dense class="q-px-sm">
               <q-item-section avatar>
                 <q-avatar>
-                  <img :src="cashier?.foto ? cashier?.foto : $defaultImage" />
+                  <img :src="cashier?.foto ? cashier?.foto : $defaultImage1" />
                 </q-avatar>
               </q-item-section>
 
               <q-item-section>
-                <q-item-label caption class="text-white">KASIR PIKET</q-item-label>
-                <q-item-label class="text-capitalize text-h6">{{
+                <q-item-label caption class="text-dark">KASIR PIKET</q-item-label>
+                <q-item-label class="text-capitalize text-h6 text-dark">{{
                   cashier?.nama ? cashier?.nama : "Piket Kosong"
                 }}</q-item-label>
               </q-item-section>
             </q-item>
-            <template v-slot:action>
+            <!-- <template v-slot:action>
               <q-btn icon="support_agent" outline label="ganti piket" />
-            </template>
+            </template> -->
           </q-banner>
         </div>
         <div class="col">
@@ -88,11 +84,12 @@
         >
           <q-item-section avatar>
             <q-avatar>
-              <img :src="item?.absensi?.foto ? item?.absensi?.foto : $defaultImage" />
+              <img :src="item?.absensi?.foto ? item?.absensi?.foto : $defaultImage1" />
             </q-avatar>
           </q-item-section>
 
           <q-item-section>
+
             <q-item-label class="text-capitalize text-h6">{{ item?.nama }}</q-item-label>
             <q-item-label caption
               >CATATAN: {{ item?.absensi?.catatan_masuk }}</q-item-label
@@ -124,7 +121,7 @@
         >
           <q-item-section avatar>
             <q-avatar>
-              <img :src="item?.absensi?.foto ? item?.absensi?.foto : $defaultImage" />
+              <img :src="item?.absensi?.foto ? item?.absensi?.foto : $defaultImage1" />
             </q-avatar>
           </q-item-section>
 
@@ -140,7 +137,7 @@
               <q-item-section>
                 <q-item-label caption lines="1">Jam Selesai</q-item-label>
                 <q-item-label class="text-capitalize text-h6">{{
-                  item?.jam_selesai
+                  item?.absensi?.jam_selesai
                 }}</q-item-label>
               </q-item-section>
             </q-item>
@@ -171,8 +168,8 @@ import DatePicker from "./AbsensiPage/DatePicker.vue";
 import { useAbsensiStore } from "src/stores/absensi-store";
 
 const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, "YYYY/MM/DD");
-const waktuString = date.formatDate(timeStamp, "HH:mm:ss");
+const formattedString = date.formatDate(Date.now(), "YYYY/MM/DD");
+const waktuString = date.formatDate(Date.now(), "HH:mm:ss");
 
 export default {
   components: {
@@ -190,7 +187,7 @@ export default {
     };
   },
   mounted() {
-    this.today = formattedString;
+    this.today = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
   },
   computed: {
     ...mapState(usePengaturanStore, {
@@ -246,6 +243,19 @@ export default {
       addNewStruk: "addNewStruk",
     }),
     openDialogAbsensi(item, title) {
+
+      console.log(item?.id, this.cashier?.id, this.item?.id != this.cashier?.id)
+
+      if (item?.id != this.cashier?.id) {
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Salah profile kasir",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      }
+
       let temp = {};
 
       if (item?.id == this.struk?.cashier_id) {

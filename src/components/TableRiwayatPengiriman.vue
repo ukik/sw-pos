@@ -1,5 +1,8 @@
 <template>
   <DialogInvoicePengiriman ref="dialog_invoice_penjualan"></DialogInvoicePengiriman>
+
+  <TableRiwayatPengirimanPDF ref="riwayat" :date="date" :getTotalStokItems="getTotalStokItems" :columns="columns" :rows="rows"></TableRiwayatPengirimanPDF>
+
   <q-table
     :hide-header="false"
     class="my-sticky-header-table"
@@ -23,225 +26,16 @@ import { mapState, mapWritableState } from "pinia";
 import { usePengirimanStore } from "src/stores/pengiriman-store";
 import DialogInvoicePengiriman from "./DialogInvoicePengiriman.vue";
 
-const columns = [
-  {
-    label: "id",
-    field: "id",
-  },
-  {
-    label: "code",
-    field: "code",
-  },
-  {
-    label: "cabang",
-    field: "cabang",
-  },
-  {
-    label: "tipe",
-    field: "type",
-  },
-  {
-    label: "kasir",
-    field: "cashier",
-  },
-  {
-    label: "karir",
-    field: "courir",
-  },
-  {
-    label: "shift",
-    field: "shift",
-  },
-  // {
-  //   label: "status",
-  //   field: "status",
-  // },
-  {
-    label: "stok akhir",
-    field: "stok_akhir",
-    format: (val, row) => `${val} kg`,
-  },
-  {
-    label: "stok awal",
-    field: "stok_awal",
-    format: (val, row) => `${val} kg`,
-  },
-  {
-    label: "bobot",
-    field: "qty",
-    format: (val, row) => `${val} kg`,
-  },
-  {
-    label: "kurir konfirmasi",
-    field: "courir_confirm",
-    format: (val, row) => `${val ? "Setuju" : "Tidak Setuju"}`,
-  },
-  {
-    label: "kasir konfirmasi",
-    field: "cashier_confirm",
-    format: (val, row) => `${val ? "Setuju" : "Tidak Setuju"}`,
-  },
-  // {
-  //   label: "items",
-  //   field: "items",
-  // },
-  // {
-  //   label: "catatan",
-  //   field: "catatan",
-  // },
-  {
-    label: "tanggal",
-    field: "tanggal",
-  },
-  {
-    label: "waktu",
-    field: "waktu",
-  },
-  {
-    label: "dibuat pada",
-    field: "created_at",
-  },
-  {
-    label: "latitude",
-    field: "latitude",
-  },
-  {
-    label: "longitude",
-    field: "longitude",
-  },
-];
+import columns from 'src/helpers/colums-riwayat-pengiriman'
 
-const columnsX = [
-  // tanggal: tanggalString,
-  // waktu: waktuString,
-  // created_at: formattedString,
-  // latitude: position?.coords?.latitude, // Latitude will be stored here
-  // longitude: position?.coords?.longitude, // Longitude will be stored here
-  {
-    name: "id",
-    align: "left",
-    label: "ID",
-    field: "id",
-    sortable: true,
-  },
-  {
-    name: "code",
-    align: "left",
-    label: "Code",
-    field: "code",
-    sortable: true,
-  },
-  {
-    name: "cabang",
-    align: "left",
-    label: "Cabang",
-    field: "cabang",
-    sortable: true,
-  },
-  {
-    name: "type",
-    align: "left",
-    label: "Tipe",
-    field: "type",
-    sortable: true,
-  },
-  {
-    name: "courir",
-    align: "left",
-    label: "Kurir",
-    field: "courir",
-    sortable: true,
-  },
-  {
-    name: "cashier",
-    align: "left",
-    label: "Kasir",
-    field: "cashier",
-    sortable: true,
-  },
-  {
-    name: "shift",
-    align: "left",
-    label: "Shift",
-    field: "shift",
-    sortable: true,
-  },
-  {
-    name: "stok_awal",
-    align: "left",
-    label: "Stok Awal",
-    field: "stok_awal",
-    sortable: true,
-    sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  },
-  {
-    name: "stok_akhir",
-    align: "left",
-    label: "Stok Akhir",
-    field: "stok_akhir",
-    sortable: true,
-    sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  },
-  {
-    name: "qty",
-    align: "left",
-    label: "Bobot",
-    field: "qty",
-    sortable: true,
-    sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  },
-  {
-    name: "courir_confirm",
-    align: "left",
-    label: "Konfirmasi Kurir",
-    field: "courir_confirm",
-    sortable: true,
-    sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  },
-  {
-    name: "cashier_confirm",
-    align: "left",
-    label: "Konfirmasi Kasir",
-    field: "cashier_confirm",
-    sortable: true,
-    sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  },
-
-  {
-    name: "latitude",
-    label: "Lat",
-    field: "latitude",
-    sortable: true,
-  },
-  {
-    name: "longitude",
-    label: "Long",
-    field: "longitude",
-    sortable: true,
-  },
-  {
-    name: "tanggal",
-    label: "Tanggal",
-    field: "tanggal",
-    sortable: true,
-  },
-  {
-    name: "waktu",
-    label: "Waktu",
-    field: "waktu",
-    sortable: true,
-  },
-  {
-    name: "created_at",
-    label: "Dibuat Pada",
-    field: "created_at",
-    sortable: true,
-  },
-];
+import TableRiwayatPengirimanPDF from "./TableRiwayatPengirimanPDF.vue";
+import { usePenjualanStore } from "src/stores/penjualan-store";
 
 export default {
+  props:['date'],
   components: {
     DialogInvoicePengiriman,
+    TableRiwayatPengirimanPDF,
   },
   setup() {
     return {
@@ -261,6 +55,9 @@ export default {
     };
   },
   computed: {
+    ...mapState(usePenjualanStore, {
+      getTotalStokItems: 'getTotalStokItems',
+    }),
     ...mapState(usePengirimanStore, {
       rows: "getStruksModify",
     }),
@@ -274,6 +71,9 @@ export default {
       this.invoice = row;
       this.$refs.dialog_invoice_penjualan?.onOpen(row, index);
     },
+    onPrint() {
+      this.$refs.riwayat.makePDFShare()
+    }
   },
 };
 </script>

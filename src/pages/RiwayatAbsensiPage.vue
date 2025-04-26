@@ -1,12 +1,10 @@
 <template>
   <q-page class="q-pa-sm row">
-    <!-- <DialogTableRiwayatCheckIn
-      ref="dialog_table_riwayat_CheckIn"
-    ></DialogTableRiwayatCheckIn> -->
-    <DialogInvoiceCheckIn ref="dialog_invoice_checkin"></DialogInvoiceCheckIn>
-
+    <DialogTableRiwayatAbsensi
+      ref="dialog_table_riwayat_absensi"
+    ></DialogTableRiwayatAbsensi>
     <q-date
-      subtitle="CHECK BUKA"
+      subtitle="ABSENSI"
       class="full-width"
       color=" bg-sw"
       v-model="date"
@@ -23,35 +21,23 @@
 import { ref } from "vue";
 
 import { date } from "quasar";
-// import DialogTableRiwayatCheckIn from "src/components/DialogTableRiwayatCheckIn.vue";
-import DialogInvoiceCheckIn from "src/components/DialogInvoiceCheckIn.vue";
-import { mapActions, mapState, mapWritableState } from "pinia";
-import { useCheckInStore } from "src/stores/checkin-store";
+import DialogTableRiwayatAbsensi from "src/components/DialogTableRiwayatAbsensi.vue";
 
 const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, "YYYY/MM/DD");
+const getToday = date.formatDate(Date.now(), "YYYY/MM/DD");
 
 export default {
   components: {
-    // DialogTableRiwayatCheckIn,
-    DialogInvoiceCheckIn,
+    DialogTableRiwayatAbsensi,
   },
   watch: {
-    async date(val) {
+    date(val) {
       console.log(val);
       if (!val) this.date = this.last_date;
       this.last_date = val;
 
       if (!this.date) return;
-
-      console.log(val, val?.split("/").join("-"));
-
-      this.$refs.dialog_invoice_checkin.onOpen(this.date);
-
-      // TAMBAHAN khusus karena hanya 1x sehari
-      const _date = val?.split("/").join("-");
-      this.loadLocalStorageStruks(_date);
-      this.invoice = this.getInvoiceSelected(_date);
+      this.$refs.dialog_table_riwayat_absensi.onOpen(this.date);
     },
   },
   data() {
@@ -62,28 +48,15 @@ export default {
   mounted() {
     this.last_date = this.date;
   },
-  computed: {
-    ...mapState(useCheckInStore, {
-      getInvoiceSelected: "getInvoiceSelected",
-    }),
-    ...mapWritableState(useCheckInStore, {
-      invoice: "invoice",
-    }),
-  },
-  methods: {
-    ...mapActions(useCheckInStore, {
-      loadLocalStorageStruks: "loadLocalStorageStruks",
-    }),
-  },
   setup() {
     return {
-      date: ref(formattedString),
-      event: [formattedString],
+      date: ref(getToday),
+      event: [getToday],
 
       options: ["2019/02/01", "2019/02/05", "2019/02/06", "2019/02/09", "2019/02/23"],
 
       optionsFn(date) {
-        return date <= formattedString;
+        return date <= getToday;
         // return date >= '2019/02/03' && date <= '2019/02/15'
       },
 

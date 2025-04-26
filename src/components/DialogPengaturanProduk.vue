@@ -12,9 +12,9 @@
 
       <q-separator></q-separator>
 
-      <q-card-section class="row q-col-gutter-md">
-        <div class="col">
-          <q-input
+      <q-card-section class="row q-col-gutter-md q-pb-none">
+        <div class="col q-pb-none">
+          <q-input class="q-pb-md"
             mask="Rp. ###############"
             unmasked-value
             readonly
@@ -54,9 +54,9 @@
 
       <q-separator />
 
-      <q-card-section class="scrollx">
-        <div class="row q-col-gutter-md full-height">
-          <div class="row col q-col-gutter-sm flex justify-center">
+      <q-card-section class="scroll" style="height:calc(100vh - 100px - 150px)">
+        <div class="row q-col-gutter-md full-height ">
+          <div class="row col q-col-gutter-sm flex justify-center q-mb-md">
             <div class="col-4">
               <q-btn @click="onAdd(1)" class="full-width full-height" dense color="dark">
                 <span class="text-h4 q-py-sm">1</span>
@@ -150,7 +150,7 @@
                 label="catatan"
               />
             </div> -->
-            <div class="col-12" style="height: 100%">
+            <div class="col-12 q-pb-md" style="height: 100%">
               <q-btn @click="onClose" class="full-width full-height" dense color="teal">
                 <div class="items-center no-wrap">
                   <q-icon name="check_circle" size="50px"></q-icon>
@@ -172,7 +172,7 @@ import { mapActions, mapState, mapWritableState } from "pinia";
 import { ref } from "vue";
 
 const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm:ss");
+const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
 
 export default {
   setup() {

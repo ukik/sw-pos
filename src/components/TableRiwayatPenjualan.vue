@@ -3,6 +3,9 @@
   <!-- :style="`height: calc(${$q.screen.height}px - 120px); border: 1px solid rgba(29, 29, 29, 0.12)`" -->
   <DialogInvoicePenjualan ref="dialog_invoice_penjualan"></DialogInvoicePenjualan>
   <!-- :visible-columns="visibleColumns" -->
+
+  <TableRiwayatPenjualanPDF ref="riwayat" :date="date" :getTotalStokItems="getTotalStokItems" :columns="columns" :rows="rows"></TableRiwayatPenjualanPDF>
+
   <q-table
     :hide-header="false"
     class="my-sticky-header-table"
@@ -26,238 +29,15 @@ import { mapState, mapWritableState } from "pinia";
 import { usePenjualanStore } from "src/stores/penjualan-store";
 import DialogInvoicePenjualan from "./DialogInvoicePenjualan.vue";
 
-const columnsX = [
-  // latitude: position?.coords?.latitude, // Latitude will be stored here
-  // longitude: position?.coords?.longitude, // Longitude will be stored here
-  {
-    name: "id",
-    align: "left",
-    label: "ID",
-    field: "id",
-    sortable: true,
-  },
-  {
-    name: "code",
-    align: "left",
-    label: "Code",
-    field: "code",
-    sortable: true,
-  },
-  {
-    name: "cabang",
-    align: "left",
-    label: "Cabang",
-    field: "cabang",
-    sortable: true,
-  },
-  {
-    name: "type",
-    align: "left",
-    label: "Tipe",
-    field: "type",
-    sortable: true,
-  },
-  {
-    name: "cashier",
-    align: "left",
-    label: "Kasir",
-    field: "cashier",
-    sortable: true,
-  },
-  {
-    name: "shift",
-    align: "left",
-    label: "Shift",
-    field: "shift",
-    sortable: true,
-  },
-  {
-    name: "qty",
-    align: "left",
-    label: "Bobot",
-    field: "qty",
-    sortable: true,
-    sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  },
-  // {
-  //   name: "balance",
-  //   align: "left",
-  //   label: "Saldo",
-  //   field: "balance",
-  //   sortable: true,
-  //   sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  // },
-  {
-    name: "bill",
-    align: "left",
-    label: "Tagihan",
-    field: "bill",
-    sortable: true,
-    sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  },
-  {
-    name: "bayar",
-    align: "left",
-    label: "Bayar",
-    field: "bayar",
-    sortable: true,
-    sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-  },
-  {
-    name: "change",
-    align: "left",
-    label: "Kembalian",
-    field: "change",
-    sortable: true,
-  },
+import columns from 'src/helpers/colums-riwayat-penjualan'
 
-  {
-    name: "latitude",
-    label: "Lat",
-    field: "latitude",
-    sortable: true,
-  },
-  {
-    name: "longitude",
-    label: "Long",
-    field: "longitude",
-    sortable: true,
-  },
-  {
-    name: "tanggal",
-    label: "Tanggal",
-    field: "tanggal",
-    sortable: true,
-  },
-  {
-    name: "waktu",
-    label: "Waktu",
-    field: "waktu",
-    sortable: true,
-  },
-  {
-    name: "created_at",
-    label: "Dibuat Pada",
-    field: "created_at",
-    sortable: true,
-  },
-];
-
-const columns = [
-  {
-    label: "id",
-    field: "id",
-  },
-  {
-    label: "code",
-    field: "code",
-  },
-  {
-    label: "cabang",
-    field: "cabang",
-  },
-  {
-    label: "tipe",
-    field: "type",
-  },
-  {
-    label: "kasir",
-    field: "cashier",
-  },
-  {
-    label: "shift",
-    field: "shift",
-  },
-  // {
-  //   label: "status",
-  //   field: "status",
-  // },
-  {
-    label: "saldo",
-    field: "balance",
-    format: (val, row) => `Rp. ${val}`,
-  },
-  {
-    label: "tagihan",
-    field: "bill",
-    format: (val, row) => `Rp. ${val}`,
-  },
-  {
-    label: "tagihan pembulatan",
-    field: "bill_pembulatan",
-    format: (val, row) => `Rp. ${val}`,
-  },
-
-  {
-    label: "bayar",
-    field: "bayar",
-    format: (val, row) => `Rp. ${val}`,
-  },
-  {
-    label: "kebalian",
-    field: "change",
-    format: (val, row) => `Rp. ${val}`,
-  },
-  {
-    label: "kembalian pembulatan",
-    field: "change_pembulatan",
-    format: (val, row) => `Rp. ${val}`,
-  },
-  {
-    label: "kembalian aktual",
-    field: "change_aktual",
-    format: (val, row) => `Rp. ${val}`,
-    classes: "text-bold text-positive",
-  },
-
-  {
-    label: "stok akhir",
-    field: "stok_akhir",
-    format: (val, row) => `${val} kg`,
-  },
-  {
-    label: "stok awal",
-    field: "stok_awal",
-    format: (val, row) => `${val} kg`,
-  },
-  {
-    label: "bobot",
-    field: "qty",
-    format: (val, row) => `${val} kg`,
-  },
-  // {
-  //   label: "items",
-  //   field: "items",
-  // },
-  {
-    label: "catatan",
-    field: "catatan",
-  },
-  {
-    label: "tanggal",
-    field: "tanggal",
-  },
-  {
-    label: "waktu",
-    field: "waktu",
-  },
-  {
-    label: "dibuat pada",
-    field: "created_at",
-  },
-  {
-    label: "latitude",
-    field: "latitude",
-  },
-  {
-    label: "longitude",
-    field: "longitude",
-  },
-];
+import TableRiwayatPenjualanPDF from "./TableRiwayatPenjualanPDF.vue";
 
 export default {
+  props:['date'],
   components: {
     DialogInvoicePenjualan,
+    TableRiwayatPenjualanPDF,
   },
   setup() {
     return {
@@ -267,26 +47,6 @@ export default {
   },
   data() {
     return {
-      visibleColumns: [
-        "id",
-        "code",
-        "cabang",
-        "type",
-        "cashier",
-        "shift",
-        // 'status',
-        "balance",
-        "bill",
-        "bayar",
-        "change",
-        "qty",
-        // "items",
-        "tanggal",
-        "waktu",
-        // "created_at",
-        "latitude",
-        "longitude",
-      ],
       initialPagination: {
         sortBy: "desc",
         descending: false,
@@ -299,6 +59,7 @@ export default {
   computed: {
     ...mapState(usePenjualanStore, {
       rows: "getStruks",
+      getTotalStokItems: 'getTotalStokItems',
     }),
     ...mapWritableState(usePenjualanStore, {
       invoice: "invoice",
@@ -310,6 +71,9 @@ export default {
       this.invoice = row;
       this.$refs.dialog_invoice_penjualan?.onOpen(row, index);
     },
+    onPrint() {
+      this.$refs.riwayat.makePDFShare()
+    }
   },
 };
 </script>

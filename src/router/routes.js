@@ -55,7 +55,7 @@ const routes = [
       },
       {
         meta: {
-          title: 'check buka',
+          title: 'cek buka',
         },
         path: 'check-in',
         name: 'check-in',
@@ -66,7 +66,7 @@ const routes = [
       },
       {
         meta: {
-          title: 'check tutup',
+          title: 'cek tutup',
         },
         path: 'check-out',
         name: 'check-out',
@@ -77,12 +77,24 @@ const routes = [
       },
       {
         meta: {
-          title: 'check rotasi',
+          title: 'cek rotasi',
         },
         path: 'check-rotasi',
         name: 'check-rotasi',
         components: {
           default: () => import('pages/CheckRotasiPage.vue'),
+          index: INDEX
+        }
+      },
+
+      {
+        meta: {
+          title: 'saldo',
+        },
+        path: 'balance',
+        name: 'balance',
+        components: {
+          default: () => import('pages/BalancePage.vue'),
           index: INDEX
         }
       },
@@ -177,6 +189,32 @@ const routes = [
       },
       {
         meta: {
+          title: 'riwayat absensi',
+        },
+        path: 'riwayat-absensi',
+        name: 'riwayat_absensi',
+        components: {
+          default: () => import('pages/RiwayatAbsensiPage.vue'),
+          index: INDEX
+        }
+      },
+      {
+        meta: {
+          title: 'riwayat saldo',
+        },
+        path: 'riwayat-balance',
+        name: 'riwayat_balance',
+        components: {
+          default: () => import('pages/RiwayatBalancePage.vue'),
+          index: INDEX
+        }
+      },
+
+
+
+
+      {
+        meta: {
           title: 'riwayat pengiriman',
         },
         path: 'riwayat-pengiriman',
@@ -199,7 +237,7 @@ const routes = [
       },
       {
         meta: {
-          title: 'riwayat check buka',
+          title: 'riwayat cek buka',
         },
         path: 'riwayat-checkin',
         name: 'riwayat_checkin',
@@ -210,7 +248,7 @@ const routes = [
       },
       {
         meta: {
-          title: 'riwayat check tutup',
+          title: 'riwayat cek tutup',
         },
         path: 'riwayat-checkout',
         name: 'riwayat_checkout',
@@ -221,7 +259,7 @@ const routes = [
       },
       {
         meta: {
-          title: 'riwayat check rotasi',
+          title: 'riwayat cek rotasi',
         },
         path: 'riwayat-rotasi',
         name: 'riwayat_rotasi',
@@ -241,6 +279,14 @@ const routes = [
       //   component: () => import ('pages/InvoicePenjualanPage.vue'),
       // },
 
+      {
+        meta: {
+          title: 'camera',
+        },
+        path: 'camera',
+        name: 'camera',
+        component: () => import ('pages/CameraPage.vue'),
+      },
     ],
   },
 

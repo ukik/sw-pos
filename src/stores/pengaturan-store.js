@@ -6,13 +6,14 @@ import Swal from 'sweetalert2/dist/sweetalert2';
 import { date } from "quasar";
 
 const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm:ss");
-const tanggalString = date.formatDate(timeStamp, "YYYY-MM-DD");
-const waktuString = date.formatDate(timeStamp, "HH:mm:ss");
+const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
+const tanggalString = date.formatDate(Date.now(), "YYYY-MM-DD");
+const waktuString = date.formatDate(Date.now(), "HH:mm:ss");
 
 
 export const usePengaturanStore = defineStore('PengaturanStore', {
   state: () => ({
+    pin_master: 2233,
     balance: 0,
     cabang: {
       id: 1,
@@ -93,42 +94,44 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
     // ],
 
     list_cashiers: [
-      {
-        id: 1,
-        nama: 'Yuli',
-        alamat: 'Jl. ini itu',
-        pin: 1234,
-        foto: 'https://cdn.quasar.dev/img/mountains.jpg',
+      // {
+      //   id: 1,
+      //   nama: 'Yuli',
+      //   alamat: 'Jl. ini itu',
+      //   pin: 1234,
+      //   foto: 'https://cdn.quasar.dev/img/mountains.jpg',
 
-      },
-      {
-        id: 2,
-        nama: 'Zigas',
-        alamat: 'Jl. macan',
-        pin: 1234,
-        foto: 'https://cdn.quasar.dev/img/mountains.jpg',
+      // },
+      // {
+      //   id: 2,
+      //   nama: 'Zigas',
+      //   alamat: 'Jl. macan',
+      //   pin: 1234,
+      //   foto: 'https://cdn.quasar.dev/img/mountains.jpg',
 
-      },
+      // },
     ],
     list_courirs: [
-      {
-        id: 1,
-        nama: 'JOKO',
-        alamat: 'Jl. ini itu',
-        pin: 1234,
-        foto: 'https://cdn.quasar.dev/img/mountains.jpg',
-      },
-      {
-        id: 2,
-        nama: 'PRABOWO',
-        alamat: 'Jl. ini itu',
-        pin: 1234,
-        foto: 'https://cdn.quasar.dev/img/mountains.jpg',
-      },
+      // {
+      //   id: 1,
+      //   nama: 'JOKO',
+      //   alamat: 'Jl. ini itu',
+      //   pin: 1234,
+      //   foto: 'https://cdn.quasar.dev/img/mountains.jpg',
+      // },
+      // {
+      //   id: 2,
+      //   nama: 'PRABOWO',
+      //   alamat: 'Jl. ini itu',
+      //   pin: 1234,
+      //   foto: 'https://cdn.quasar.dev/img/mountains.jpg',
+      // },
     ],
   }),
 
   getters: {
+    getCashierLength: (state) => state.list_cashiers.length,
+    getCourirLength: (state) => state.list_courirs.length,
     getBalance: (state) => state.balance,
     // getBalance: (state) => state.balance
     getShiftData: ({ list_shifts }) => {
@@ -145,6 +148,12 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
   },
 
   actions: {
+    setPosition(payload) {
+      this.position = payload
+    },
+    onBalanceSync(payload) {
+      this.balance = payload
+    },
     onEditCashier(payload, tipe) {
       console.log('onEditCashier', tipe)
 
@@ -161,6 +170,8 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
         }
       }
       if(tipe == 'CREATE') {
+        payload.id = this.getCashierLength + 1
+
         temp.push(payload)
       }
 
@@ -191,6 +202,7 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
       }
 
       if(tipe == 'CREATE') {
+        payload.id = this.getCourirLength + 1
         temp.push(payload)
       }
 
@@ -206,7 +218,7 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
     },
 
     updateLocalStorageCourir() {
-      const storage_name = 'PENGATURAN-DAFTAR-KURIR-' + date.formatDate(timeStamp, "YYYY-MM-DD")
+      const storage_name = 'PENGATURAN-DAFTAR-KURIR-' + date.formatDate(Date.now(), "YYYY-MM-DD")
 
       let model = []
 
@@ -222,7 +234,7 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
       this.list_courirs = addModel
     },
     updateLocalStorageCashier() {
-      const storage_name = 'PENGATURAN-DAFTAR-KASIR-' + date.formatDate(timeStamp, "YYYY-MM-DD")
+      const storage_name = 'PENGATURAN-DAFTAR-KASIR-' + date.formatDate(Date.now(), "YYYY-MM-DD")
 
       let model = []
 
@@ -273,11 +285,14 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
       // if (localStorage.getItem('PENGATURAN-DAFTAR-SHIFT')) {
       //   this.list_shifts = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-SHIFT'));
       // }
-      if (localStorage.getItem('PENGATURAN-DAFTAR-CABANG')) {
-        this.cabang = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-CABANG'));
+      if (localStorage.getItem('PENGATURAN-CABANG')) {
+        this.cabang = JSON.parse(localStorage.getItem('PENGATURAN-CABANG'));
       }
       if (localStorage.getItem('PENGATURAN-BALANCE')) {
-        this.cabang = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-CABANG'));
+        this.balance = JSON.parse(localStorage.getItem('PENGATURAN-BALANCE'));
+      }
+      if (localStorage.getItem('PENGATURAN-KASIR')) {
+        this.cashier = JSON.parse(localStorage.getItem('PENGATURAN-KASIR'));
       }
 
     },

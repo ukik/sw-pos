@@ -23,6 +23,39 @@
       <q-item
         clickable
         v-ripple
+        :active="link === 'riwayat_absensi'"
+        @click="link = 'riwayat_absensi'"
+        active-class="bg-sw text-white"
+        :to="{ name: 'riwayat_absensi' }"
+      >
+        <q-item-section avatar>
+          <q-icon name="event" />
+        </q-item-section>
+
+        <q-item-section>Absensi</q-item-section>
+      </q-item>
+
+      <q-item
+        clickable
+        v-ripple
+        :active="link === 'riwayat_balance'"
+        @click="link = 'riwayat_balance'"
+        active-class="bg-sw text-white"
+        :to="{ name: 'riwayat_balance' }"
+      >
+        <q-item-section avatar>
+          <q-icon name="account_balance" />
+        </q-item-section>
+
+        <q-item-section>Saldo</q-item-section>
+      </q-item>
+
+
+      <q-separator spaced />
+
+      <q-item
+        clickable
+        v-ripple
         :active="link === 'riwayat_pengiriman'"
         @click="link = 'riwayat_pengiriman'"
         active-class="bg-sw text-white"
@@ -64,7 +97,7 @@
           <q-icon name="install_desktop" />
         </q-item-section>
 
-        <q-item-section>Check Buka</q-item-section>
+        <q-item-section>Cek Buka</q-item-section>
       </q-item>
 
       <q-item
@@ -79,7 +112,7 @@
           <q-icon name="content_paste_go" />
         </q-item-section>
 
-        <q-item-section>Check Tutup</q-item-section>
+        <q-item-section>Cek Tutup</q-item-section>
       </q-item>
 
       <q-item
@@ -94,7 +127,7 @@
           <q-icon name="event_repeat" />
         </q-item-section>
 
-        <q-item-section>Check Rotasi</q-item-section>
+        <q-item-section>Cek Rotasi</q-item-section>
       </q-item>
 
       <q-separator spaced />
@@ -202,6 +235,8 @@ export default {
           case "riwayat_checkin":
           case "riwayat_rotasi":
           case "riwayat_checkout":
+          case "riwayat_absensi":
+          case "riwayat_balance":
           case "pengaturan_produk":
           case "pengaturan_kasir":
           case "pengaturan_kurir":

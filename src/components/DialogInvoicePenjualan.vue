@@ -1,22 +1,26 @@
 <template>
-  <q-dialog
-    @show="show = true"
-    full-width
-    full-height
-    v-model="fixed"
-    transition-show="slide-down"
-    transition-hide="slide-up"
-  >
+  <q-dialog @show="show = true" full-width full-height v-model="fixed" transition-show="slide-down"
+    transition-hide="slide-up">
     <q-card id="contentToPrint">
-      <q-card-actions class="bg-sw text-white">
+      <!-- <q-card-actions class="bg-sw text-white">
         <q-btn v-close-popup class="col-auto" dense flat icon="arrow_back"></q-btn>
         <q-toolbar-title>INVOICE: {{ invoice?.code }}</q-toolbar-title>
-        <!-- <q-btn label="PDF" @click="onPDF"></q-btn> -->
-        <q-btn label="Cetak PDF" outline icon="print" @click="makePDFShare"></q-btn>
-        <!-- <q-btn label="Html2PDF" @click="Html2PDF"></q-btn> -->
+        <q-btn label="PDF" @click="onPDF"></q-btn>
+        <q-btn label="cetak invoice" outline icon="print" @click="makePDFShare"></q-btn>
+        <q-btn label="Html2PDF" @click="Html2PDF"></q-btn>
+      </q-card-actions> -->
+
+      <q-card-actions class="bg-sw text-white q-py-none">
+        <q-toolbar-title>
+          <q-avatar class="">
+            <q-btn v-close-popup dense flat icon="arrow_back"></q-btn>
+          </q-avatar>
+          INVOICE: {{ invoice?.code }}
+        </q-toolbar-title>
+        <q-btn label="cetak invoice" outline icon="print" @click="makePDFShare"></q-btn>
       </q-card-actions>
 
-      <q-card-section v-if="show" class="scroll" style="height: calc(100% - 50px)">
+      <q-card-section v-if="show" class="scroll" style="height: calc(100% - 52px)">
         <div v-show="isCreateContent" id="createContent" v-html="createContent"></div>
 
         <table style="width: 100%; margin-bottom: 10px">
@@ -26,8 +30,10 @@
                 <img height="60" :src="$logoBase64" />
               </td>
               <td style="text-align: left">
-                <div style="font-size: 24px"><b>FREEZTO-MART</b> GROSIR AYAM FRESH</div>
-                <div style="font-size: 16px">SEGAR SETIAP HARI</div>
+                <div style="font-size: 24px"><b>FREEZTO-MART</b></div>
+                <div style="font-size: 16px">
+                  <b>GROSIR AYAM FRESH</b> - SEGAR SETIAP HARI
+                </div>
               </td>
             </tr>
           </tbody>
@@ -36,37 +42,73 @@
         <table id="customers2">
           <tbody>
             <tr>
-              <td colspan="4">PENJUALAN</td>
+              <td colspan="4">{{ invoice?.type }} </td>
             </tr>
             <tr>
-              <td>Code:</td>
+              <td>ID</td>
+              <td>{{ invoice?.id }}</td>
+              <td>Code</td>
               <td>{{ invoice?.code }}</td>
-              <td>Shift:</td>
-              <td>{{ invoice?.shift }}</td>
             </tr>
             <tr>
-              <td>Kasir:</td>
-              <td>{{ invoice?.cashier }}</td>
-              <td>Cabang:</td>
-              <td>{{ invoice?.cabang }}</td>
+              <td>Kasir</td>
+              <td>{{ invoice?.cashier?.nama }}</td>
+              <td>Cabang</td>
+              <td>{{ invoice?.cabang?.nama }}</td>
+            </tr>
+
+            <tr>
+              <td>Saldo Awal</td>
+              <td>Rp. {{ invoice?.balance }}</td>
+              <td>Saldo Akhir</td>
+              <td>Rp. {{ invoice?.balance_akhir }}</td>
             </tr>
             <tr>
-              <td>Dibayar:</td>
+              <td>Tagihan</td>
+              <td>Rp. {{ invoice?.bill }}</td>
+              <td>Tagihan Pembulatan</td>
+              <td>Rp. {{ invoice?.bill_pembulatan }}</td>
+            </tr>
+            <tr>
+              <td>Dibayar</td>
               <td>Rp. {{ invoice?.bayar }}</td>
-              <td>Kembalian:</td>
+              <td>Kembalian</td>
               <td>Rp. {{ invoice?.change }}</td>
             </tr>
             <tr>
-              <td>Latitude:</td>
+              <td>Kembalian Pembulatan</td>
+              <td>Rp. {{ invoice?.change_pembulatan }}</td>
+              <td>Kembalian Aktual</td>
+              <td>Rp. {{ invoice?.change_aktual }}</td>
+            </tr>
+            <tr>
+              <td>Stok Awal</td>
+              <td>{{ invoice?.stok_awal }} Kg</td>
+              <td>Stok Akhir</td>
+              <td>{{ invoice?.stok_akhir }} Kg</td>
+            </tr>
+            <tr>
+              <td>Stok Keluar</td>
+              <td>{{ invoice?.qty }} Kg</td>
+              <td>Item</td>
+              <td>{{ invoice?.items?.length }}</td>
+            </tr>
+
+            <tr>
+              <td>Latitude</td>
               <td>{{ invoice?.latitude }}</td>
-              <td>Longitude:</td>
+              <td>Longitude</td>
               <td>{{ invoice?.longitude }}</td>
             </tr>
             <tr>
-              <td>Tanggal:</td>
+              <td>Tanggal</td>
               <td>{{ invoice?.tanggal }}</td>
-              <td>Waktu:</td>
+              <td>Waktu</td>
               <td>{{ invoice?.waktu }}</td>
+            </tr>
+            <tr>
+              <td colspan="1">Catatan</td>
+              <td colspan="3">{{ invoice?.catatan ? invoice?.catatan : "" }}</td>
             </tr>
           </tbody>
         </table>
@@ -114,7 +156,7 @@ export default {
       invoice: "invoice",
     }),
     getTotal() {
-      this.invoice?.items.forEach((element) => {});
+      this.invoice?.items?.forEach((element) => { });
     },
     createContent() {
       let invoice = this.invoice;
@@ -191,43 +233,92 @@ export default {
                                       </tr>
                                     </tbody>
                                   </table>
+
                                   <table id="customers2">
                                     <tbody>
                                       <tr>
-                                        <td colspan="4">PENJUALAN</td>
+                                        <td colspan="4">${ invoice?.type } </td>
                                       </tr>
                                       <tr>
-                                        <td>Code:</td>
-                                        <td>${invoice?.code}</td>
-                                        <td>Shift:</td>
-                                        <td>${invoice?.shift}</td>
+                                        <td>ID</td>
+                                        <td>${ invoice?.id }</td>
+                                        <td>Code</td>
+                                        <td>${ invoice?.code }</td>
                                       </tr>
                                       <tr>
-                                        <td>Kasir:</td>
-                                        <td>${invoice?.cashier}</td>
-                                        <td>Cabang:</td>
-                                        <td>${invoice?.cabang}</td>
+                                        <td>Kasir</td>
+                                        <td>${ invoice?.cashier?.nama }</td>
+                                        <td>Cabang</td>
+                                        <td>${ invoice?.cabang?.nama }</td>
+                                      </tr>
+
+
+
+                                      <tr>
+                                        <td>Saldo Awal</td>
+                                        <td>Rp. ${ invoice?.balance }</td>
+                                        <td>Saldo Akhir</td>
+                                        <td>Rp. ${ invoice?.balance_akhir }</td>
                                       </tr>
                                       <tr>
-                                        <td>Dibayar:</td>
-                                        <td>Rp. ${invoice?.bayar}</td>
-                                        <td>Kembalian:</td>
-                                        <td>Rp. ${invoice?.change}</td>
+                                        <td>Tagihan</td>
+                                        <td>Rp. ${ invoice?.bill }</td>
+                                        <td>Tagihan Pembulatan</td>
+                                        <td>Rp. ${ invoice?.bill_pembulatan }</td>
                                       </tr>
                                       <tr>
-                                        <td>Latitude:</td>
-                                        <td>${invoice?.latitude}</td>
-                                        <td>Longitude:</td>
-                                        <td>${invoice?.longitude}</td>
+                                        <td>Dibayar</td>
+                                        <td>Rp. ${ invoice?.bayar }</td>
+                                        <td>Kembalian</td>
+                                        <td>Rp. ${ invoice?.change }</td>
                                       </tr>
                                       <tr>
-                                        <td>Tanggal:</td>
-                                        <td>${invoice?.tanggal}</td>
-                                        <td>Waktu:</td>
-                                        <td>${invoice?.waktu}</td>
+                                        <td>Kembalian Pembulatan</td>
+                                        <td>Rp. ${ invoice?.change_pembulatan }</td>
+                                        <td>Kembalian Aktual</td>
+                                        <td>Rp. ${ invoice?.change_aktual }</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Stok Awal</td>
+                                        <td>${ invoice?.stok_awal } Kg</td>
+                                        <td>Stok Akhir</td>
+                                        <td>${ invoice?.stok_akhir } Kg</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Stok Keluar</td>
+                                        <td>${ invoice?.qty } Kg</td>
+                                        <td>Item</td>
+                                        <td>${ invoice?.items?.length }</td>
+                                      </tr>
+
+
+
+
+
+
+
+
+                                      <tr>
+                                        <td>Latitude</td>
+                                        <td>${ invoice?.latitude }</td>
+                                        <td>Longitude</td>
+                                        <td>${ invoice?.longitude }</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Tanggal</td>
+                                        <td>${ invoice?.tanggal }</td>
+                                        <td>Waktu</td>
+                                        <td>${ invoice?.waktu }</td>
+                                      </tr>
+                                      <tr>
+                                        <td colspan="1">Catatan</td>
+                                        <td colspan="3">${ invoice?.catatan ? invoice?.catatan : "" }</td>
                                       </tr>
                                     </tbody>
                                   </table>
+
+
+
 
                                   <table class="q-mt-md" id="customers" style="margin-top:10px">
                                     <thead>
@@ -241,19 +332,19 @@ export default {
                                     </thead>
                                     <tbody>
                                   `;
-      this.invoice?.items.forEach((item, i) => {
-        content += `
-                <tr class="text-capitalize" style="text-transform: capitalize;">
-                  <td>${i + 1}</td>
-                  <td>${item?.name}</td>
-                  <td>${item?.qty} Kg</td>
-                  <td>Rp. ${item?.price}</td>
-                  <td>Rp. ${item?.subtotal}</td>
-                </tr>
-            `;
-      });
+                                      this.invoice?.items?.forEach((item, i) => {
+                                        content += `
+                                                <tr class="text-capitalize" style="text-transform: capitalize;">
+                                                  <td>${item?.id}</td>
+                                                  <td>${item?.name}</td>
+                                                  <td>${item?.qty} Kg</td>
+                                                  <td>Rp. ${item?.price}</td>
+                                                  <td>Rp. ${item?.subtotal}</td>
+                                                </tr>
+                                            `;
+                                      });
 
-      content += `
+                                      content += `
                                       <tr>
                                         <td colspan="4">TOTAL</td>
                                         <td>Rp. ${invoice?.bill}</td>

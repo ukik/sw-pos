@@ -18,7 +18,7 @@
           dense
           outlined
           type="textarea"
-          rows="15"
+          rows="5"
           hint="Tambahkan catatan jika perlu"
           v-model="text"
         />

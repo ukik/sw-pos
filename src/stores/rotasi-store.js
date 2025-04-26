@@ -4,9 +4,9 @@ import { date } from "quasar";
 import { usePengaturanStore } from './pengaturan-store';
 
 const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm:ss");
-const tanggalString = date.formatDate(timeStamp, "YYYY-MM-DD");
-const waktuString = date.formatDate(timeStamp, "HH:mm:ss");
+const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
+const tanggalString = date.formatDate(Date.now(), "YYYY-MM-DD");
+const waktuString = date.formatDate(Date.now(), "HH:mm:ss");
 
 function uuidv4() {
   return "10000000".replace(/[018]/g, c =>
@@ -67,8 +67,8 @@ export const useRotasiStore = defineStore('RotasiStore', {
     },
     getStruksLength: (state) => state.struks.length,
     getStrukItemID: ({ struk }) => {
-      if(struk?.items) {
-        return struk?.items?.length + 1
+      if(struk?.items?.length) {
+        return Number(struk?.items?.length) + 1
       }
       return 1
     },
@@ -98,8 +98,8 @@ export const useRotasiStore = defineStore('RotasiStore', {
       let _struk = {
         ...this.struk,
         tanggal: tanggalString,
-        waktu: waktuString,
-        created_at: formattedString,
+        waktu: date.formatDate(Date.now(), "HH:mm:ss"),
+        created_at: date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss"),
         latitude: position?.coords?.latitude, // Latitude will be stored here
         longitude: position?.coords?.longitude, // Longitude will be stored here
       }
@@ -117,20 +117,12 @@ export const useRotasiStore = defineStore('RotasiStore', {
         this.struk = {
           id: this.getStruksLength + 1,
           code: "#" + uuidv4(),
-
-          // shift_pemberi: '',
-          // shift_penerima: '',
-          // shift: {
-          //   ...shift
-          // },
           cabang: {
             ...cabang
           },
-          type: "CHECK-ROTASI",
+          type: "CEK ROTASI",
           cashier_pemberi: {},
           cashier_penerima: {},
-          // courir: {},
-
           status: "",
           stok_akhir: 0,
           stok_awal: 0,
@@ -140,8 +132,8 @@ export const useRotasiStore = defineStore('RotasiStore', {
           items: [],
           catatan: null,
           tanggal: tanggalString,
-          waktu: waktuString,
-          created_at: formattedString,
+          waktu: date.formatDate(Date.now(), "HH:mm:ss"),
+          created_at: date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss"),
           latitude: position?.coords?.latitude, // Latitude will be stored here
           longitude: position?.coords?.longitude, // Longitude will be stored here
         }
@@ -149,7 +141,7 @@ export const useRotasiStore = defineStore('RotasiStore', {
       }
     },
     updateLocalStorage() {
-      const storage_name = 'CHECK-ROTASI-STRUKS-'+date.formatDate(timeStamp, "YYYY-MM-DD")
+      const storage_name = 'CHECK-ROTASI-STRUKS-'+date.formatDate(Date.now(), "YYYY-MM-DD")
 
       // let model = JSON.parse(JSON.stringify(localStorage.getItem(storage_name)));
       let model = []

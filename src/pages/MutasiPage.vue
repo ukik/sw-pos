@@ -160,7 +160,7 @@ import { useMutasiStore } from "src/stores/mutasi-store";
 import { usePenjualanStore } from "src/stores/penjualan-store";
 
 // const timeStamp = Date.now();
-// const formattedString = date.formatDate(timeStamp, "YYYY-MM-DDTHH:mm:ss.SSSZ");
+// const formattedString = date.formatDate(Date.now(), "YYYY-MM-DDTHH:mm:ss.SSSZ");
 
 // console.log(formattedString);
 

@@ -67,7 +67,10 @@
 
       <q-separator />
 
-      <q-card-section style="height: calc(70vh - 50px - 55px)" class="scroll">
+      <q-card-section
+        style="height: calc(100% - 86.2px - 88px - 25px - 30px)"
+        class="scroll"
+      >
         <div class="row q-col-gutter-md">
           <div class="row col q-col-gutter-sm flex justify-center">
             <div class="col-4">
@@ -120,7 +123,7 @@
               <q-btn
                 :disable="model === '0'"
                 @click="onRemove"
-                class="full-width q-mb-md"
+                class="full-width"
                 dense
                 color="pink"
               >
@@ -138,7 +141,7 @@
               <q-btn
                 @click="onAdd(',')"
                 :disable="is_btn_comma_used"
-                class="full-width q-mb-md"
+                class="full-width"
                 dense
                 color="primary"
               >
@@ -150,7 +153,7 @@
             </div>
           </div>
 
-          <div class="col-3 q-pb-md">
+          <div class="col-3">
             <q-btn @click="onClose" class="full-width full-height" dense color="teal">
               <div class="items-center no-wrap">
                 <q-icon name="check_circle" size="50px"></q-icon>

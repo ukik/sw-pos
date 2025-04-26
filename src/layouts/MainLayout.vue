@@ -5,9 +5,12 @@
         <!-- <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" /> -->
 
         <q-toolbar-title class="text-uppercase">
-          <q-avatar class="q-mr-sm">
+          <!-- <q-avatar class="q-mr-sm">
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-          </q-avatar>
+          </q-avatar> -->
+
+          <q-btn class="q-mr-sm" dense flat round icon="home" to="/" />
+
           {{ $route?.meta?.title }}
         </q-toolbar-title>
 
@@ -20,14 +23,31 @@
           </q-item-section>
         </q-item>
         <q-separator color="white" vertical></q-separator>
-        <q-btn
+
+
+        <!-- <q-btn
           class="q-mx-sm"
           dense
           flat
           round
           icon="support_agent"
           @click="onDialogGantiKasir"
-        />
+        /> -->
+      <q-item  @click="onDialogGantiKasir" clickable v-ripple dense class="q-px-sm q-mx-sm">
+        <q-item-section avatar>
+          <q-avatar>
+            <img :src="PENGATURAN_cashier?.foto ? PENGATURAN_cashier?.foto : $defaultImage1" />
+          </q-avatar>
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label caption class="text-white text-caption">KASIR PIKET</q-item-label>
+          <q-item-label class="text-capitalize text-white">{{
+            PENGATURAN_cashier?.nama ? PENGATURAN_cashier?.nama : "Piket Kosong"
+          }}</q-item-label>
+        </q-item-section>
+      </q-item>
+
         <q-separator color="white" vertical></q-separator>
         <q-btn class="q-ml-sm" dense flat round icon="menu" @click="toggleRightDrawer" />
       </q-toolbar>
@@ -37,6 +57,10 @@
       <q-tabs inline-label dense align="justify" class="bg-blue">
         <q-route-tab icon="event" :to="{ name: 'absensi' }" label="absensi" />
         <q-separator vertical color="white"></q-separator>
+        <q-route-tab icon="account_balance" :to="{ name: 'balance' }" label="Saldo" />
+
+
+        <q-separator vertical color="white"></q-separator>
         <q-route-tab icon="point_of_sale" :to="{ name: 'penjualan' }" label="Penjualan" />
         <q-separator vertical color="white"></q-separator>
         <q-route-tab icon="inventory_2" :to="{ name: 'pengiriman' }" label="Pengiriman" />
@@ -45,18 +69,18 @@
         <q-route-tab
           icon="install_desktop"
           :to="{ name: 'check-in' }"
-          label="Check Buka"
+          label="Cek Buka"
         />
         <q-route-tab
           icon="content_paste_go"
           :to="{ name: 'check-out' }"
-          label="Check Tutup"
+          label="Cek Tutup"
         />
         <q-separator vertical color="white"></q-separator>
         <q-route-tab
           icon="event_repeat"
           :to="{ name: 'check-rotasi' }"
-          label="Check Rotasi"
+          label="Cek Rotasi"
         />
         <!-- <q-route-tab :to="{ name: 'riwayat_penjualan' }" label="Riwayat Penjualan" />
         <q-route-tab :to="{ name: 'riwayat_pengiriman' }" label="Riwayat Pengiriman" />
@@ -80,10 +104,12 @@
       <DialogInvoiceCheckIn ref="dialog_invoice_checkin"></DialogInvoiceCheckIn>
       <DialogInvoiceCheckOut ref="dialog_invoice_checkout"></DialogInvoiceCheckOut>
       <DialogInvoiceAbsensi ref="dialog_invoice_absensi"></DialogInvoiceAbsensi>
+      <DialogInvoiceBalance ref="dialog_invoice_balance"></DialogInvoiceBalance>
       <DialogGantiKasir ref="dialog_ganti_kasir"></DialogGantiKasir>
 
       <router-view v-if="indexTerms" name="index" />
       <router-view v-else name="default" />
+
     </q-page-container>
   </q-layout>
 </template>
@@ -110,13 +136,15 @@ import DialogInvoiceCheckIn from "src/components/DialogInvoiceCheckIn.vue";
 import DialogInvoiceCheckOut from "src/components/DialogInvoiceCheckOut.vue";
 import DialogInvoicePengiriman from "src/components/DialogInvoicePengiriman.vue";
 import DialogInvoiceAbsensi from "src/components/DialogInvoiceAbsensi.vue";
+import DialogInvoiceBalance from "src/components/DialogInvoiceBalance.vue";
 import DialogGantiKasir from "src/components/DialogGantiKasir.vue";
 
 import ListRightDrawer from "src/components/ListRightDrawer.vue";
+import { useBalanceStore } from "src/stores/balance-store";
 
 const timeStamp = Date.now();
-// const formattedString = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm:ss");
-const tanggalString = date.formatDate(timeStamp, "YYYY-MM-DD");
+// const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
+const tanggalString = date.formatDate(Date.now(), "YYYY-MM-DD");
 
 export default {
   components: {
@@ -127,6 +155,7 @@ export default {
     DialogInvoiceCheckIn,
     DialogInvoiceCheckOut,
     DialogInvoiceAbsensi,
+    DialogInvoiceBalance,
     ListRightDrawer,
     DialogGantiKasir,
   },
@@ -195,15 +224,32 @@ export default {
     }),
     ...mapState(useAbsensiStore, {
       // CHECKOUT_items: "items",
+      ABSENSI_struks: "struks",
       ABSENSI_struk: "struk",
       ABSENSI_invoice: "invoice",
+      ABSENSI_getPiketSudahAbsensi: 'getPiketSudahAbsensi',
+    }),
+    ...mapState(useBalanceStore, {
+      // CHECKIN_items: "items",
+      BALANCE_struk: "struk",
+      BALANCE_struks: "struks",
+      BALANCE_invoice: "invoice",
     }),
     indexTerms() {
+      if(this.$route.name == "absensi") {
+        if (this.PENGATURAN_list_cashiers?.length <= 0) {
+          return true
+        } else {
+         return false
+        }
+      }
+
       if (
         this.$route.name == "pengaturan_produk" ||
         this.$route.name == "pengaturan_kasir" ||
         this.$route.name == "pengaturan_kurir" ||
         this.$route.name == "pengaturan_outlet"
+
       ) {
         return false;
       }
@@ -211,6 +257,7 @@ export default {
       if (!this.PENGATURAN_cashier) return true;
       if (this.PENGATURAN_list_cashiers?.length <= 0) return true;
       if (this.PENGATURAN_list_courirs?.length <= 0) return true;
+      if(!this.ABSENSI_getPiketSudahAbsensi?.id) return true;
     },
   },
   watch: {
@@ -220,8 +267,11 @@ export default {
       immediate: true,
       handler(val) {
         switch (val) {
-          case "check-rotasi":
-            this.ROTASI_loadLocalStorageStruks(tanggalString);
+          case "absensi":
+            this.ABSENSI_loadLocalStorageStruks(tanggalString);
+            break;
+          case "balance":
+            this.BALANCE_loadLocalStorageStruks(tanggalString);
             break;
           case "check-in":
             this.CHECKIN_loadLocalStorageStruks(tanggalString);
@@ -229,9 +279,19 @@ export default {
           case "check-out":
             this.CHECKOUT_loadLocalStorageStruks(tanggalString);
             break;
-          case "absensi":
-            this.ABSENSI_loadLocalStorageStruks(tanggalString);
+          case "mutasi":
+            this.MUTASI_loadLocalStorageStruks(tanggalString);
             break;
+          case "pengeriman":
+            this.PENGIRIMAN_loadLocalStorageStruks(tanggalString);
+            break;
+          case "penjualan":
+            this.PENJUALAN_loadLocalStorageStruks(tanggalString);
+            break;
+          case "rotasi":
+            this.ROTASI_loadLocalStorageStruks(tanggalString);
+            break;
+
         }
       },
     },
@@ -331,8 +391,17 @@ export default {
     },
 
     //
+    PENGATURAN_cashier(val) {
+      console.log("MAINLAYOUT PENGATURAN_cashier");
+      localStorage.setItem("PENGATURAN-KASIR", JSON.stringify(val));
+    },
     PENGATURAN_cabang(val) {
-      localStorage.setItem("PENGATURAN-DAFTAR-CABANG", JSON.stringify(val));
+      console.log("MAINLAYOUT PENGATURAN_cabang");
+      localStorage.setItem("PENGATURAN-CABANG", JSON.stringify(val));
+    },
+    PENGATURAN_balance(val) {
+      console.log("MAINLAYOUT PENGATURAN_balance");
+      localStorage.setItem("PENGATURAN-BALANCE", JSON.stringify(val));
     },
     PENGATURAN_list_cashiers(val) {
       console.log("MAINLAYOUT PENGATURAN_list_cashiers");
@@ -341,6 +410,19 @@ export default {
     PENGATURAN_list_courirs(val) {
       console.log("MAINLAYOUT PENGATURAN_list_courirs");
       localStorage.setItem("PENGATURAN-DAFTAR-KURIR", JSON.stringify(val));
+    },
+    // ---------------------------- //
+    BALANCE_struk: {
+      deep: true,
+      handler(val) {
+        console.log("MAINLAYOUT BALANCE_struk");
+        localStorage.setItem("BALANCE-STRUK", JSON.stringify(val));
+        localStorage.setItem("PENJUALAN-ITEMS", JSON.stringify(this.PENJUALAN_items));
+      },
+    },
+    BALANCE_invoice(val) {
+      console.log("MAINLAYOUT BALANCE_invoice");
+      localStorage.setItem("BALANCE-INVOICE", JSON.stringify(val));
     },
     // PENGATURAN_list_shifts(val) {
     //   console.log("MAINLAYOUT PENGATURAN_list_shifts");
@@ -351,15 +433,18 @@ export default {
     ...mapActions(usePenjualanStore, {
       PENJUALAN_initLocalStorage: "initLocalStorage",
       PENJUALAN_updateLocalStorage: "updateLocalStorage",
+      PENJUALAN_loadLocalStorageStruks: "loadLocalStorageStruks",
       onBayar: "onBayar",
     }),
     ...mapActions(usePengirimanStore, {
       PENGIRIMAN_initLocalStorage: "initLocalStorage",
       PENGIRIMAN_updateLocalStorage: "updateLocalStorage",
+      PENGIRIMAN_loadLocalStorageStruks: "loadLocalStorageStruks",
     }),
     ...mapActions(useMutasiStore, {
       MUTASI_initLocalStorage: "initLocalStorage",
       MUTASI_updateLocalStorage: "updateLocalStorage",
+      MUTASI_loadLocalStorageStruks: "loadLocalStorageStruks",
     }),
     ...mapActions(useRotasiStore, {
       ROTASI_initLocalStorage: "initLocalStorage",
@@ -383,6 +468,11 @@ export default {
       ABSENSI_initLocalStorage: "initLocalStorage",
       ABSENSI_updateLocalStorage: "updateLocalStorage",
       ABSENSI_loadLocalStorageStruks: "loadLocalStorageStruks",
+    }),
+    ...mapActions(useBalanceStore, {
+      BALANCE_initLocalStorage: "initLocalStorage",
+      BALANCE_updateLocalStorage: "updateLocalStorage",
+      BALANCE_loadLocalStorageStruks: "loadLocalStorageStruks",
     }),
     onDialogGantiKasir() {
       this.$refs.dialog_ganti_kasir.onOpen();
@@ -426,7 +516,13 @@ export default {
             vm.$refs.dialog_invoice_checkin?.onOpen();
           } else if (route_name == "riwayat_checkout") {
             vm.$refs.dialog_invoice_checkout?.onOpen();
+          } else if (route_name == "riwayat_absensi") {
+            vm.$refs.dialog_invoice_absensi?.onOpen();
+          } else if (route_name == "riwayat_balance") {
+            vm.$refs.dialog_invoice_balance?.onOpen();
           }
+
+
         }
       });
     },
@@ -474,6 +570,9 @@ export default {
     },
   },
   created() {
+    // ABSENSI dibutuhkan untuk restriction halaman
+    this.ABSENSI_loadLocalStorageStruks(tanggalString);
+
     this.PENJUALAN_initLocalStorage();
     this.PENGIRIMAN_initLocalStorage();
     this.MUTASI_initLocalStorage();
@@ -482,6 +581,7 @@ export default {
     this.CHECKOUT_initLocalStorage();
     this.PENGATURAN_initLocalStorage();
     this.ABSENSI_initLocalStorage();
+    this.BALANCE_initLocalStorage();
   },
   mounted() {
     const vm = this;
@@ -515,22 +615,27 @@ export default {
           break;
         case "DialogConfirmRotasi":
           vm.ROTASI_updateLocalStorage();
-          vm.onSwal(event.value, "riwayat_rotasi", "CHECK ROTASI SELESAI");
+          vm.onSwal(event.value, "riwayat_rotasi", "CEK ROTASI SELESAI");
           break;
         case "DialogConfirmCheckIn":
           vm.CHECKIN_updateLocalStorage();
-          vm.onSwal(event.value, "riwayat_checkin", "CHECK BUKA SELESAI");
+          vm.onSwal(event.value, "riwayat_checkin", "CEK BUKA SELESAI");
           break;
         case "DialogConfirmCheckOut":
           vm.CHECKOUT_updateLocalStorage();
-          vm.onSwal(event.value, "riwayat_checkout", "CHECK TUTUP SELESAI");
+          vm.onSwal(event.value, "riwayat_checkout", "CEK TUTUP SELESAI");
           break;
         case "DialogGantiKasir":
           vm.onDialogGantiKasir();
           break;
+        case "DialogConfirmBalance":
+          vm.BALANCE_updateLocalStorage();
+          vm.onSwal(event.value, "riwayat_balance", "SALDO SELESAI");
+          break;
       }
     });
 
+    return
     // setTimeout(() => {
     if ("geolocation" in navigator) {
       // Request the user's current position

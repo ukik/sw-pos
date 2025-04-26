@@ -35,7 +35,7 @@
       </template>
     </div>
 
-    <q-page-sticky v-if="false" position="bottom-right" :offset="[18, 18]">
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn
         @click="openDialogPengaturanCashier(null, 'CREATE')"
         fab

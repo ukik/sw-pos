@@ -6,9 +6,9 @@ import { usePengaturanStore } from './pengaturan-store';
 import Swal from 'sweetalert2/dist/sweetalert2';
 
 const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm:ss");
-const tanggalString = date.formatDate(timeStamp, "YYYY-MM-DD");
-const waktuString = date.formatDate(timeStamp, "HH:mm:ss");
+const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
+const tanggalString = date.formatDate(Date.now(), "YYYY-MM-DD");
+const waktuString = date.formatDate(Date.now(), "HH:mm:ss");
 
 function uuidv4() {
   return "10000000".replace(/[018]/g, c =>
@@ -103,12 +103,19 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
   getters: {
     //doubleCount: (state) => state.counter * 2
     getItems: (state) => state.items,
+    getTotalStokItems: ({items}) => {
+      let temp = 0
+      items.forEach(element => {
+        temp += Number(element?.stock)
+      });
+      return temp
+    },
     getStruk: (state) => state.struk,
     getStruks: (state) => state.struks,
     getStruksLength: (state) => state.struks.length,
     getStrukItemID: ({ struk }) => {
       if (struk?.items) {
-        return struk?.items?.length + 1
+        return Number(struk?.items?.length) + 1
       }
       return 1
     },
@@ -138,8 +145,21 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
     },
     getTotalStruk() {
       return this.getTotal?.subtotal
-      return Math.round(Number(this.getTotal?.qty) * Number(this.getTotal?.price));
+      // return Math.round(Number(this.getTotal?.qty) * Number(this.getTotal?.price));
     },
+
+
+    getTotalSaldo: ({struk}) => {
+      const { balance } = usePengaturanStore()
+      return Number(balance) - Number(struk?.bill_pembulatan)
+    },
+
+    // getPembulatanReceh() {
+    //   return pembulatanReceh(this.getTotalStruk);
+    // },
+    // getChangePembulatan:({struk, getPembulatanReceh}) => {
+    //   return Number(struk?.bayar) - Number(getPembulatanReceh);
+    // },
   },
 
   actions: {
@@ -190,8 +210,8 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
       let _struk = {
         ...this.struk,
         tanggal: tanggalString,
-        waktu: waktuString,
-        created_at: formattedString,
+        waktu: date.formatDate(Date.now(), "HH:mm:ss"),
+        created_at: date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss"),
         latitude: position?.coords?.latitude, // Latitude will be stored here
         longitude: position?.coords?.longitude, // Longitude will be stored here
       }
@@ -212,12 +232,16 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
         this.struk = {
           id: this.getStruksLength + 1,
           code: "#" + uuidv4(),
-          cabang: cabang?.nama,
+          cabang: {
+            ...cabang
+          },
           type: "PENJUALAN",
-          cashier: cashier?.nama,
-          shift: shift?.nama,
-          status: "",
+          cashier: {
+            ...cashier
+          },
+          // status: "",
           balance: 0,
+          balance_akhir: 0,
           bill: 0,
           bill_pembulatan: 0,
           bayar: 0,
@@ -230,8 +254,8 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
           items: [],
           catatan: null,
           tanggal: tanggalString,
-          waktu: waktuString,
-          created_at: formattedString,
+          waktu: date.formatDate(Date.now(), "HH:mm:ss"),
+          created_at: date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss"),
           latitude: position?.coords?.latitude, // Latitude will be stored here
           longitude: position?.coords?.longitude, // Longitude will be stored here
         }
@@ -295,7 +319,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
     },
 
     updateLocalStorage() {
-      const storage_name = 'PENJUALAN-STRUKS-' + date.formatDate(timeStamp, "YYYY-MM-DD")
+      const storage_name = 'PENJUALAN-STRUKS-' + date.formatDate(Date.now(), "YYYY-MM-DD")
 
       let model = []
 
@@ -309,6 +333,10 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
       localStorage.setItem(storage_name, JSON.stringify(addModel))
 
       this.struks = addModel
+
+      const { balance, onBalanceSync } = usePengaturanStore()
+      console.log(balance, this.struk?.balance_akhir, this.struk)
+      onBalanceSync(this.struk?.balance_akhir)
 
       this.invoice = this.struk
     },

@@ -17,7 +17,7 @@ import { ref } from "vue";
 import { date } from "quasar";
 
 const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, "YYYY/MM/DD");
+const getToday = date.formatDate(Date.now(), "YYYY/MM/DD");
 
 export default {
   props: ["prop_date"],
@@ -39,7 +39,7 @@ export default {
     };
   },
   mounted() {
-    // this.last_date = formattedString;
+    // this.last_date = getToday;
     const _arr = JSON.parse(JSON.stringify(this.prop_date.split("/")));
     const _time = date.buildDate({ year: _arr[0], months: _arr[1], date: _arr[2] });
 
@@ -58,11 +58,11 @@ export default {
   },
   setup() {
     return {
-      date: ref(formattedString),
-      event: [formattedString],
+      date: ref(getToday),
+      event: [getToday],
 
       optionsFn(date) {
-        return date <= formattedString;
+        return date <= getToday;
       },
 
       // can supply only what needed (the rest will be taken from current locale):

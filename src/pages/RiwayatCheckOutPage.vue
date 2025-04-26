@@ -6,7 +6,7 @@
     <DialogInvoiceCheckOut ref="dialog_invoice_checkout"></DialogInvoiceCheckOut>
 
     <q-date
-      subtitle="CHECK TUTUP"
+      subtitle="CEK TUTUP"
       class="full-width"
       color=" bg-sw"
       v-model="date"
@@ -29,7 +29,7 @@ import { mapActions, mapState, mapWritableState } from "pinia";
 import { useCheckOutStore } from "src/stores/checkout-store";
 
 const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, "YYYY/MM/DD");
+const getToday = date.formatDate(Date.now(), "YYYY/MM/DD");
 
 export default {
   components: {
@@ -77,13 +77,13 @@ export default {
   },
   setup() {
     return {
-      date: ref(formattedString),
-      event: [formattedString],
+      date: ref(getToday),
+      event: [getToday],
 
       options: ["2019/02/01", "2019/02/05", "2019/02/06", "2019/02/09", "2019/02/23"],
 
       optionsFn(date) {
-        return date <= formattedString;
+        return date <= getToday;
         // return date >= '2019/02/03' && date <= '2019/02/15'
       },
 

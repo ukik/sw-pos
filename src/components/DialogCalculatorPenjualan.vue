@@ -1,6 +1,16 @@
 <template>
   <q-dialog full-width full-height :persistent="false" v-model="fixed">
     <q-card>
+      <!-- <q-card-actions align="between" class="bg-swx overflow-hidden q-pa-none q-pl-xs">
+        <q-toolbar>
+          <q-toolbar-title>PENGIRIMAN</q-toolbar-title>
+          <q-btn @click="fixed = false" flat dense color="negative" rounded icon="close">
+          </q-btn>
+        </q-toolbar>
+      </q-card-actions>
+
+      <q-separator /> -->
+
       <q-card-section align="" class="row">
         <q-list class="col row" color="white" bordered>
           <q-item class="col-3 q-pa-sm" dense>
@@ -17,18 +27,22 @@
             </q-item-section>
           </q-item>
 
-          <q-item class="col-3 q-pa-sm" dense>
+          <q-item class="col q-pa-sm" dense>
             <q-item-section>
               <q-item-label caption>Stok Awal</q-item-label>
               <q-item-label>{{ item?.stock }} kg</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item class="col-3 q-pa-sm" dense>
+          <q-item class="col q-pa-sm" dense>
             <q-item-section>
               <q-item-label caption>Stok Akhir</q-item-label>
               <q-item-label lines="1">{{ getStokAkhir }}</q-item-label>
             </q-item-section>
+          </q-item>
+
+          <q-item class="col-1">
+            <q-btn @click="fixed = false" flat dense color="negative" rounded icon="close" />
           </q-item>
         </q-list>
       </q-card-section>
@@ -36,31 +50,40 @@
       <q-separator></q-separator>
 
       <q-card-section>
-        <q-input readonly v-model="model" type="text" input-class="text-h5" outlined>
-          <template v-slot:append>
-            <span class="text-h6">kg</span>
-          </template>
-          <template v-slot:before>
-            <span>Berat</span>
-          </template>
-          <template v-slot:after>
-            <q-btn
-              v-if="model !== '0'"
-              @click="model = '0'"
-              color="red"
-              class="full-height full-width"
-              icon="delete"
-            ></q-btn>
-          </template>
-        </q-input>
+        <div class="row q-col-gutter-md">
+          <div class="col-5">
+            <q-input readonly v-model="model" type="text" input-class="text-h5" outlined>
+              <template v-slot:append>
+                <span class="text-h6">kg</span>
+              </template>
+              <template v-slot:before>
+                <span>Berat</span>
+              </template>
+              <template v-slot:after>
+                <q-btn v-if="model !== '0'" @click="model = '0'" color="red" class="full-height full-width"
+                  icon="delete"></q-btn>
+              </template>
+            </q-input>
+          </div>
+          <div class="col-3">
+            <!-- {{ model }} kg x Rp. {{ item?.price }} = Rp. {{ getSum }} -->
+            <q-input readonly mask="Rp. ##########" v-model="item.price" type="text" input-class="text-h5" outlined>
+            </q-input>
+          </div>
+          <div class="col">
+            <!-- {{ model }} kg x Rp. {{ item?.price }} = Rp. {{ getSum }} -->
+            <q-input readonly mask="Rp. ##########" v-model="getSum" type="text" input-class="text-h5" outlined>
+              <template v-slot:before>
+                <span>=</span>
+              </template>
+            </q-input>
+          </div>
+        </div>
       </q-card-section>
 
       <q-separator />
 
-      <q-card-section
-        style="height: calc(100% - 85.2px - 88px - 51px - 0px)"
-        class="scroll"
-      >
+      <q-card-section style="height: calc(100% - 85.2px - 88px - 0px - 3px)" class="scroll">
         <div class="row q-col-gutter-md">
           <div class="row col q-col-gutter-sm flex justify-center">
             <div class="col-4">
@@ -110,13 +133,7 @@
             </div>
 
             <div class="col-4">
-              <q-btn
-                :disable="model === '0'"
-                @click="onRemove"
-                class="full-width q-mb-md"
-                dense
-                color="pink"
-              >
+              <q-btn :disable="model === '0'" @click="onRemove" class="full-width" dense color="pink">
                 <q-icon class="text-h4 q-py-sm" name="arrow_back" size="40px"></q-icon>
               </q-btn>
             </div>
@@ -128,22 +145,14 @@
             </div>
 
             <div class="col-4">
-              <q-btn
-                @click="onAdd(',')"
-                :disable="is_btn_comma_used"
-                class="full-width q-mb-md"
-                dense
-                color="primary"
-              >
-                <q-badge v-if="is_btn_comma_used" color="red" floating
-                  >Maksimal 1</q-badge
-                >
+              <q-btn @click="onAdd(',')" :disable="is_btn_comma_used" class="full-width" dense color="primary">
+                <q-badge v-if="is_btn_comma_used" color="red" floating>Maksimal 1</q-badge>
                 <span class="text-h4 q-py-sm">,</span>
               </q-btn>
             </div>
           </div>
 
-          <div class="col-3 q-pb-md">
+          <div class="col-3">
             <q-btn @click="onClose" class="full-width full-height" dense color="teal">
               <div class="items-center no-wrap">
                 <q-icon name="check_circle" size="50px"></q-icon>
@@ -156,22 +165,17 @@
 
       <q-separator />
 
-      <q-card-actions
-        align="right"
-        class="bg-sw text-white overflow-hidden row q-py-none"
-      >
+      <!-- <q-card-actions align="right" class="bg-sw text-white overflow-hidden row q-py-none">
         <div class="col-auto">
           <q-btn @click="fixed = false" flat borderless round icon="close"> </q-btn>
         </div>
         <q-item class="q-pa-none col text-right">
           <q-item-section>
-            <!-- <q-item-label>Sub-Total</q-item-label> -->
-            <q-item-label class="text-h6" lines="1"
-              >{{ model }} kg x Rp. {{ item?.price }} = Rp. {{ getSum }}
+            <q-item-label class="text-h6" lines="1">{{ model }} kg x Rp. {{ item?.price }} = Rp. {{ getSum }}
             </q-item-label>
           </q-item-section>
         </q-item>
-      </q-card-actions>
+      </q-card-actions> -->
     </q-card>
   </q-dialog>
 </template>

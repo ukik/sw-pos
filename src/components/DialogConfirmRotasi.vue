@@ -4,7 +4,7 @@
       <q-form @submit="onSubmit">
         <q-card-actions class="q-pa-none q-pl-xs">
           <q-toolbar class="bg-redx text-black">
-            <q-toolbar-title> KONFIRMASI CHECK ROTASI </q-toolbar-title>
+            <q-toolbar-title> KONFIRMASI CEK ROTASI </q-toolbar-title>
             <q-btn v-close-popup flat round dense color="red" outline icon="close" />
           </q-toolbar>
         </q-card-actions>
@@ -12,8 +12,8 @@
         <q-separator />
 
         <q-card-section
-          :style="isCheckDone ? '' : 'height: calc(100vh - 50px - 50px - 67.44px)'"
-          class="scroll q-pa-sm"
+          style="height: calc(100vh - 50px - 50px - 67.44px)"
+          class="scroll"
         >
           <div v-if="isCheckDone" class="row q-col-gutter-md">
             <div class="col-6 q-mb-sm">
@@ -25,7 +25,7 @@
                         :src="
                           item?.cashier_pemberi?.foto
                             ? item?.cashier_pemberi?.foto
-                            : $defaultImage
+                            : $defaultImage1
                         "
                       />
                     </q-avatar>
@@ -47,7 +47,7 @@
                         :src="
                           item?.cashier_penerima?.foto
                             ? item?.cashier_penerima?.foto
-                            : $defaultImage
+                            : $defaultImage1
                         "
                       />
                     </q-avatar>
@@ -182,7 +182,7 @@
                   :src="
                     item?.cashier_pemberi?.foto
                       ? item?.cashier_pemberi?.foto
-                      : $defaultImage
+                      : $defaultImage1
                   "
                 />
               </q-avatar>
@@ -214,7 +214,7 @@
                   :src="
                     item?.cashier_penerima?.foto
                       ? item?.cashier_penerima?.foto
-                      : $defaultImage
+                      : $defaultImage1
                   "
                 />
               </q-avatar>
@@ -373,7 +373,7 @@ export default {
       if (this.isCheckDone) {
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Maksimal check buka 1 kali sehari",
+          caption: "Maksimal cek buka 1 kali sehari",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -400,26 +400,6 @@ export default {
           position: "top",
         });
       }
-
-      // if (this.item?.shift_pemberi == this.item?.shift_penerima) {
-      //   return this.$q.notify({
-      //     message: "Peringatan",
-      //     caption: "Shift tidak boleh sama",
-      //     icon: "warning",
-      //     color: "negative",
-      //     position: "top",
-      //   });
-      // }
-
-      // if (this.item?.cashier_pemberi == this.item?.cashier_penerima) {
-      //   return this.$q.notify({
-      //     message: "Peringatan",
-      //     caption: "Kasir tidak boleh sama",
-      //     icon: "warning",
-      //     color: "negative",
-      //     position: "top",
-      //   });
-      // }
 
       this.fixed = false;
 

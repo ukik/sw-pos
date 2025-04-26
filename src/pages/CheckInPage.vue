@@ -22,7 +22,7 @@
           <template v-slot:avatar>
             <q-icon name="info" color="white" />
           </template>
-          Stok berubah setelah konfirmasi CHECK BUKA sukses
+          Stok berubah setelah konfirmasi CEK BUKA sukses
         </q-banner>
         <q-banner dense class="bg-orange q-mt-sm text-white">
           <template v-slot:avatar>
@@ -85,7 +85,7 @@
     <q-page-sticky class="q-pr-sm" position="top-right" :offset="[0, 0]">
       <q-item style="height: 35px" dense class="bg-sw flex flex-center text-white">
         <q-item-section>
-          <q-item-label class="text-center">STRUK CHECK BUKA</q-item-label>
+          <q-item-label class="text-center">STRUK CEK BUKA</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -206,7 +206,7 @@ export default {
       if (this.isCheckDone)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Maksimal 1 kali check buka",
+          caption: "Maksimal 1 kali cek buka",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -221,7 +221,7 @@ export default {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Struk check buka kosong",
+          caption: "Struk cek buka kosong",
           icon: "warning",
           color: "negative",
           position: "top",

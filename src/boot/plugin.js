@@ -1,14 +1,59 @@
 import { defineBoot } from '#q-app/wrappers'
 
+
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import { defineAsyncComponent } from 'vue'
 
-export default defineBoot(({ app }) => {
-  // app.config.globalProperties.$axios = axios
+import { usePengaturanStore } from "src/stores/pengaturan-store";
+
+
+export default defineBoot(async ({ app, router, store }) => {
+
+  const { setPosition, position } = usePengaturanStore(store) // inject disini ya
+
+  router.beforeEach(async (to, from, next) => {
+    // ✅ This will work because the router starts its navigation after
+    // the router is installed and pinia will be installed too
+
+    if ("geolocation" in navigator) {
+      // Request the user's current position
+      navigator?.geolocation?.getCurrentPosition(
+        (position) => {
+          setPosition(position)
+          app.config.globalProperties.$geolocation = position
+
+        },
+        (error) => {
+          // Error callback: handle different error cases
+        }
+      );
+    }
+
+    next()
+  })
+
 
   app.use(VueSweetalert2);
 
-  app.config.globalProperties.$defaultImage = 'https://cdn.quasar.dev/img/mountains.jpg'
+  app.component('CamerCordova',
+    defineAsyncComponent(() => import('src/components/commons/CamerCordova.vue'))
+  )
+
+  app.mixin({
+    computed: {
+      isCordova() {
+        return this.$q?.platform?.is?.cordova
+      }
+    }
+  })
+
+
+  app.config.globalProperties.$getSetuju = (value) => value ? 'Setuju' : 'Tidak Setuju'
+
+  app.config.globalProperties.$defaultImage = 'images/no-image.svg'
+  app.config.globalProperties.$defaultImage1 = 'images/user-1.png'
+  app.config.globalProperties.$defaultImage2 = 'images/user-2.png'
 
   app.config.globalProperties.$pembulatanReceh = function (nilai) {
     let sisa = nilai % 1000;

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="confirm" persistent>
+  <q-dialog full-height v-model="confirm" persistent>
     <q-card>
       <q-form @submit="onSubmit">
         <q-card-section class="row items-center text-white bg-primary q-py-none">
@@ -19,13 +19,11 @@
 
         <q-separator></q-separator>
 
-        <q-card-section style="min-width: 500px">
-          <q-banner dense class="bg-red full-height text-white q-mb-md">
+        <q-card-section class="scroll" style="height:calc(100vh - 50px - 105px); min-width: 500px">
+          <q-banner dense class="bg-red text-white q-mb-md">
             <template v-slot:avatar>
               <q-icon name="support_agent" color="white" />
             </template>
-            {{ _cashier }}
-
             Ganti kasir PIKET yang bertanggungjawab pada shift sekarang
           </q-banner>
 
@@ -34,7 +32,7 @@
               <q-item>
                 <q-item-section avatar>
                   <q-avatar>
-                    <img :src="cashier?.foto ? cashier?.foto : $defaultImage" />
+                    <img :src="cashier?.foto ? cashier?.foto : $defaultImage1" />
                   </q-avatar>
                 </q-item-section>
 
@@ -64,6 +62,7 @@
             >
             </q-select>
           </div>
+
           <div class="col-12">
             <q-input
               type="password"
@@ -117,8 +116,13 @@ export default {
     }),
     getPinLabel() {
       const name = this.cashier?.nama ? " - " + this.cashier?.nama : "";
-      return `Wajib diisi PIN ${name}`;
+      return `Wajib diisi PIN Kasir`;
     },
+  },
+  watch: {
+    cashier(val) {
+      this.pin = null
+    }
   },
   methods: {
     onOpen() {
@@ -127,6 +131,7 @@ export default {
       this.cashier = JSON.parse(JSON.stringify(this._cashier));
     },
     onSubmit() {
+      console.log(this.cashier, this.pin)
       if (this.cashier?.pin != this.pin) {
         return this.$q.notify({
           message: "Peringatan",
@@ -139,10 +144,12 @@ export default {
 
       this._cashier = this.cashier;
 
+      this.confirm = false
+
       this.$swal({
         // position: "top-end",
         icon: "success",
-        title: "KASIR PIKET SELESAI",
+        title: "KASIR PIKET",
         text: `Kasir Piket ${this._cashier?.nama}`,
         showConfirmButton: false,
         // confirmButtonText: `Invoice ${item.code}`,

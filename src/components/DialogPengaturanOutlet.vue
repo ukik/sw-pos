@@ -33,7 +33,7 @@
                 hint="Wajib diisi"
                 outlined
                 type="textarea"
-                rows="10"
+                rows="4"
                 label="Alamat"
                 v-model="form.alamat"
               />

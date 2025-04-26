@@ -4,7 +4,7 @@
       <q-form @submit="onSubmit">
         <q-card-actions class="q-pa-none q-pl-xs">
           <q-toolbar class="bg-redx text-black">
-            <q-toolbar-title> KONFIRMASI CHECK TUTUP </q-toolbar-title>
+            <q-toolbar-title> KONFIRMASI CEK TUTUP </q-toolbar-title>
             <q-btn v-close-popup flat round dense color="red" outline icon="close" />
           </q-toolbar>
         </q-card-actions>
@@ -12,14 +12,14 @@
         <q-separator />
 
         <q-card-section
-          :style="isCheckDone ? '' : 'height: calc(100vh - 50px - 50px - 67.44px)'"
-          class="scroll q-pa-sm"
+          style="height: calc(100vh - 50px - 50px - 67.44px)"
+          class="scroll"
         >
           <q-list bordered class="q-mb-sm">
             <q-item clickable v-ripple>
               <q-item-section avatar>
                 <q-avatar>
-                  <img :src="cashier?.foto ? cashier?.foto : $defaultImage" />
+                  <img :src="cashier?.foto ? cashier?.foto : $defaultImage1" />
                 </q-avatar>
               </q-item-section>
 
@@ -37,10 +37,10 @@
             <div class="col-12">
               <q-input
                 type="password"
-                hint="Wajib diisi (4 digit)"
-                :rules="[(val) => !!val || 'Wajib diisi (4 digit)']"
                 mask="####"
                 unmasked-value
+                hint="Wajib diisi (4 digit)"
+                :rules="[(val) => !!val || 'Wajib diisi (4 digit)']"
                 outlined
                 clearable
                 v-model="pin1"
@@ -66,8 +66,8 @@
             <template v-slot:avatar>
               <q-icon name="check_circle" color="white" />
             </template>
-            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR sudah
-            sepakat jumlah barang yang diterima valid
+            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR PIKET
+            sudah sepakat jumlah barang yang diterima valid
             <template v-slot:action>
               <span class="">STOK TUTUP SUDAH DICEK</span>
             </template>
@@ -78,8 +78,8 @@
               <q-icon name="support_agent" color="white" />
             </template>
             Dengan melakukan centang "SETUJU", <br />
-            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR sudah
-            sepakat jumlah barang yang diterima valid
+            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR PIKET
+            sudah sepakat jumlah barang yang diterima valid
             <template v-slot:action>
               <q-checkbox
                 keep-color
@@ -187,7 +187,7 @@ export default {
       if (this.isCheckDone) {
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Maksimal check tutup 1 kali sehari",
+          caption: "Maksimal cek tutup 1 kali sehari",
           icon: "warning",
           color: "negative",
           position: "top",

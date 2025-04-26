@@ -10,6 +10,7 @@
 
       <q-separator></q-separator>
 
+      <!-- {{ getChangePembulatanSisa }} == {{ getChangePembulatan }} -->
       <q-card-section class="q-py-none">
         <q-form class="row q-col-gutter-md">
           <div class="col">
@@ -18,7 +19,7 @@
               readonly
               input-class="text-h6"
               v-model="balance"
-              label="Saldo"
+              label="Saldo Awal"
             >
               <template v-slot:prepend> Rp. </template>
             </q-input>
@@ -65,6 +66,8 @@
       <q-separator></q-separator>
 
       <q-card-section>
+      <div class="row q-col-gutter-md">
+        <div :class="Number(model) > 0 ? 'col-auto' : 'col-12'">
         <q-input
           mask="Rp. ###############"
           unmasked-value
@@ -87,15 +90,29 @@
             ></q-btn>
           </template>
         </q-input>
+        </div>
+        <div v-if="Number(model) > 0" class="col">
+          <q-input
+              borderless
+              readonly
+              input-class="text-h6"
+              v-model="getTotalSaldo"
+              label="Saldo Akhir"
+            >
+              <template v-slot:prepend> Rp. </template>
+            </q-input>
+        </div>
+        </div>
       </q-card-section>
 
       <q-separator />
 
+
       <q-card-section
         style="height: calc(100% - 86.2px - 88px - 25px)"
-        class="scroll q-pb-none"
+        class="scroll"
       >
-        <div class="row q-col-gutter-md full-height">
+        <div class="row q-col-gutter-md">
           <div class="row col q-col-gutter-sm flex justify-center">
             <div class="col-4">
               <q-btn @click="onAdd(1)" class="full-width full-height" dense color="dark">
@@ -242,8 +259,8 @@ function uuidv4() {
 }
 
 const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm:ss");
-// const formattedString = date.formatDate(timeStamp, "YYYY-MM-DDTHH:mm:ss.SSSZ");
+const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
+// const formattedString = date.formatDate(Date.now(), "YYYY-MM-DDTHH:mm:ss.SSSZ");
 
 export default {
   setup() {
@@ -279,22 +296,15 @@ export default {
       balance: "balance",
     }),
     getChange() {
-      // if (!this.struk?.bayar) return 0;
-      // const change_pembulatan = !this.struk?.change_pembulatan
-      //   ? 0
-      //   : this.struk?.change_pembulatan;
-
-      // console.log("kembalian_pembulatan", change_pembulatan);
       return Number(this.struk?.bayar) - Number(this.getTotalStruk); //- change_pembulatan;
     },
     getChangePembulatan() {
-      // if (!this.struk?.bayar) return 0;
-      // const change_pembulatan = !this.struk?.change_pembulatan
-      //   ? 0
-      //   : this.struk?.change_pembulatan;
-
-      // console.log("kembalian_pembulatan", change_pembulatan);
       return Number(this.struk?.bayar) - Number(this.getPembulatanReceh);
+    },
+    getChangePembulatanSisa() {
+      return Number(
+          this.getTotalStruk - this.$pembulatanReceh(this.getTotalStruk)
+        )
     },
     getPembulatanReceh() {
       return this.$pembulatanReceh(this.getTotalStruk);
@@ -308,11 +318,23 @@ export default {
     getFirstModel() {
       return this.model.toString().charAt(0);
     },
+
+    getTotalSaldo() {
+      const { balance } = usePengaturanStore()
+      return Number(balance) + Number(this.model) - Number(this.getChangePembulatan)
+    },
   },
   watch: {
     model(val) {
       this.struk.bayar = val;
     },
+    item: {
+      deep: true,
+      handler(val) {
+        console.log('item', val)
+
+      }
+    }
   },
   methods: {
     ...mapActions(usePenjualanStore, {
@@ -353,16 +375,15 @@ export default {
       const _struk = {
         ...this.item,
         balance: this.balance,
+        balance_akhir: this.getTotalSaldo,
         bill: this.getTotalStruk,
         bill_pembulatan: this.getPembulatanReceh,
         bayar: Number(this.model),
         change: this.getChange,
-        change_pembulatan: Number(
-          this.getTotalStruk - this.$pembulatanReceh(this.getTotalStruk)
-        ),
+        change_pembulatan: this.getChangePembulatanSisa, //Number(this.getTotalStruk - this.$pembulatanReceh(this.getTotalStruk)),
         change_aktual: this.getChangePembulatan,
         qty: this.getTotal?.qty,
-        created_at: formattedString,
+        created_at: date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss"),
       };
 
       this.struk = _struk;

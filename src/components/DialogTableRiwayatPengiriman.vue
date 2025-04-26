@@ -21,12 +21,13 @@
 
           PENGIRIMAN: {{ date }}</q-toolbar-title
         >
+        <q-btn label="cetak laporan" @click="onPrint" outline icon="print"></q-btn>
       </q-card-actions>
 
       <q-separator />
 
       <q-card-section style="height: calc(100% - 50px)" class="scroll q-pa-sm">
-        <TableRiwayatPengiriman></TableRiwayatPengiriman>
+        <TableRiwayatPengiriman :date="date" ref="riwayat"></TableRiwayatPengiriman>
       </q-card-section>
       <!--
       <q-separator />
@@ -77,6 +78,9 @@ export default {
 
       // loadLocalStorageStruks
     },
+    onPrint() {
+      this.$refs.riwayat.onPrint()
+    }
   },
 };
 </script>
