@@ -24,9 +24,11 @@
           </template>
           Stok berkurang setelah pembayaran PENJUALAN sukses
         </q-banner>
+
+        <FilterProdukList></FilterProdukList>
       </div>
 
-      <template v-for="(item, index) in items">
+      <template v-for="(item, index) in getItemsByStok">
         <div class="col-4">
           <q-item
             @click="openDialogCalculatorPenjualan(item)"
@@ -37,7 +39,7 @@
             <q-list class="full-width" color="white" bordered>
               <q-item class="q-pa-sm" dense>
                 <q-item-section>
-                  <q-item-label class="text-h6 text-capitalize">{{
+                  <q-item-label lines="1" class="text-produk text-capitalize">{{
                     item?.name
                   }}</q-item-label>
                 </q-item-section>
@@ -186,10 +188,12 @@ export default {
       getTotalStruk: "getTotalStruk",
       getStruksLength: "getStruksLength",
       getTotal: "getTotal",
+      getItemsByStok: "getItemsByStok",
     }),
     ...mapWritableState(usePenjualanStore, {
       items: "items",
       struk: "struk",
+      mode: "mode",
     }),
     ...mapWritableState(usePengaturanStore, {
       balance: "balance",

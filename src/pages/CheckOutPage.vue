@@ -33,9 +33,10 @@
             SELESAI PROSES: {{ getCheckDone?.created_at }}
           </div>
         </q-banner>
+        <FilterProdukList></FilterProdukList>
       </div>
 
-      <template v-for="(item, index) in items">
+      <template v-for="(item, index) in getItemsByStok">
         <div class="col-4">
           <q-item
             @click="openDialogCalculatorCheckOut(item)"
@@ -46,7 +47,7 @@
             <q-list class="full-width col-12" color="white" bordered>
               <q-item class="q-pa-sm" dense>
                 <q-item-section>
-                  <q-item-label class="text-h6 text-capitalize">{{
+                  <q-item-label lines="1" class="text-produk text-capitalize">{{
                     item?.name
                   }}</q-item-label>
                 </q-item-section>
@@ -177,6 +178,7 @@ export default {
     }),
     ...mapWritableState(usePenjualanStore, {
       items: "items",
+      getItemsByStok: "getItemsByStok",
     }),
     ...mapWritableState(useCheckOutStore, {
       struk: "struk",

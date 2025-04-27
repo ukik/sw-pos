@@ -13,14 +13,14 @@
 
       <q-card-section align="" class="row">
         <q-list class="col row" color="white" bordered>
-          <q-item class="col-3 q-pa-sm" dense>
+          <q-item class="col-4 q-pa-sm" dense>
             <q-item-section>
               <q-item-label caption>Nama Produk</q-item-label>
               <q-item-label class="text-capitalize">{{ item?.name }}</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item class="col-3 q-pa-sm" dense>
+          <q-item class="col q-pa-sm" dense>
             <q-item-section>
               <q-item-label caption>Harga</q-item-label>
               <q-item-label>Rp. {{ item?.price }}</q-item-label>
@@ -42,7 +42,14 @@
           </q-item>
 
           <q-item class="col-1">
-            <q-btn @click="fixed = false" flat dense color="negative" rounded icon="close" />
+            <q-btn
+              @click="fixed = false"
+              flat
+              dense
+              color="negative"
+              rounded
+              icon="close"
+            />
           </q-item>
         </q-list>
       </q-card-section>
@@ -60,19 +67,38 @@
                 <span>Berat</span>
               </template>
               <template v-slot:after>
-                <q-btn v-if="model !== '0'" @click="model = '0'" color="red" class="full-height full-width"
-                  icon="delete"></q-btn>
+                <q-btn
+                  v-if="model !== '0'"
+                  @click="model = '0'"
+                  color="red"
+                  class="full-height full-width"
+                  icon="delete"
+                ></q-btn>
               </template>
             </q-input>
           </div>
           <div class="col-3">
             <!-- {{ model }} kg x Rp. {{ item?.price }} = Rp. {{ getSum }} -->
-            <q-input readonly mask="Rp. ##########" v-model="item.price" type="text" input-class="text-h5" outlined>
+            <q-input
+              readonly
+              mask="Rp. ##########"
+              v-model="item.price"
+              type="text"
+              input-class="text-h5"
+              outlined
+            >
             </q-input>
           </div>
           <div class="col">
             <!-- {{ model }} kg x Rp. {{ item?.price }} = Rp. {{ getSum }} -->
-            <q-input readonly mask="Rp. ##########" v-model="getSum" type="text" input-class="text-h5" outlined>
+            <q-input
+              readonly
+              mask="Rp. ##########"
+              v-model="getSum"
+              type="text"
+              input-class="text-h5"
+              outlined
+            >
               <template v-slot:before>
                 <span>=</span>
               </template>
@@ -83,7 +109,10 @@
 
       <q-separator />
 
-      <q-card-section style="height: calc(100% - 85.2px - 88px - 0px - 3px)" class="scroll">
+      <q-card-section
+        style="height: calc(100% - 85.2px - 88px - 0px - 3px)"
+        class="scroll"
+      >
         <div class="row q-col-gutter-md">
           <div class="row col q-col-gutter-sm flex justify-center">
             <div class="col-4">
@@ -133,7 +162,13 @@
             </div>
 
             <div class="col-4">
-              <q-btn :disable="model === '0'" @click="onRemove" class="full-width" dense color="pink">
+              <q-btn
+                :disable="model === '0'"
+                @click="onRemove"
+                class="full-width"
+                dense
+                color="pink"
+              >
                 <q-icon class="text-h4 q-py-sm" name="arrow_back" size="40px"></q-icon>
               </q-btn>
             </div>
@@ -145,8 +180,16 @@
             </div>
 
             <div class="col-4">
-              <q-btn @click="onAdd(',')" :disable="is_btn_comma_used" class="full-width" dense color="primary">
-                <q-badge v-if="is_btn_comma_used" color="red" floating>Maksimal 1</q-badge>
+              <q-btn
+                @click="onAdd(',')"
+                :disable="is_btn_comma_used"
+                class="full-width"
+                dense
+                color="primary"
+              >
+                <q-badge v-if="is_btn_comma_used" color="red" floating
+                  >Maksimal 1</q-badge
+                >
                 <span class="text-h4 q-py-sm">,</span>
               </q-btn>
             </div>

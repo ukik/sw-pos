@@ -39,6 +39,9 @@ export default defineBoot(async ({ app, router, store }) => {
   app.component('CamerCordova',
     defineAsyncComponent(() => import('src/components/commons/CamerCordova.vue'))
   )
+  app.component('FilterProdukList',
+    defineAsyncComponent(() => import('src/components/commons/FilterProdukList.vue'))
+  )
 
   app.mixin({
     computed: {

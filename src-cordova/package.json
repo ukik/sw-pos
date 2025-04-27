@@ -21,6 +21,7 @@
     "cordova-plugin-html2pdf": "^0.0.1",
     "cordova-plugin-ionic-webview": "^5.0.1",
     "cordova-plugin-spinner": "^1.1.0",
+    "cordova-plugin-splashscreen": "^6.0.2",
     "cordova-plugin-wkwebview-engine": "^1.2.2"
   },
   "cordova": {
@@ -41,7 +42,8 @@
       },
       "cordova-plugin-camera": {
         "ANDROIDX_CORE_VERSION": "1.6.+"
-      }
+      },
+      "cordova-plugin-splashscreen": {}
     }
   }
 }

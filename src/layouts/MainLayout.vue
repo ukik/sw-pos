@@ -24,7 +24,6 @@
         </q-item>
         <q-separator color="white" vertical></q-separator>
 
-
         <!-- <q-btn
           class="q-mx-sm"
           dense
@@ -33,20 +32,32 @@
           icon="support_agent"
           @click="onDialogGantiKasir"
         /> -->
-      <q-item  @click="onDialogGantiKasir" clickable v-ripple dense class="q-px-sm q-mx-sm">
-        <q-item-section avatar>
-          <q-avatar>
-            <img :src="PENGATURAN_cashier?.foto ? PENGATURAN_cashier?.foto : $defaultImage1" />
-          </q-avatar>
-        </q-item-section>
+        <q-item
+          @click="onDialogGantiKasir"
+          clickable
+          v-ripple
+          dense
+          class="q-px-sm q-mx-sm"
+        >
+          <q-item-section avatar>
+            <q-avatar>
+              <img
+                :src="
+                  PENGATURAN_cashier?.foto ? PENGATURAN_cashier?.foto : $defaultImage1
+                "
+              />
+            </q-avatar>
+          </q-item-section>
 
-        <q-item-section>
-          <q-item-label caption class="text-white text-caption">KASIR PIKET</q-item-label>
-          <q-item-label class="text-capitalize text-white">{{
-            PENGATURAN_cashier?.nama ? PENGATURAN_cashier?.nama : "Piket Kosong"
-          }}</q-item-label>
-        </q-item-section>
-      </q-item>
+          <q-item-section>
+            <q-item-label caption class="text-white text-caption"
+              >KASIR PIKET</q-item-label
+            >
+            <q-item-label class="text-capitalize text-white">{{
+              PENGATURAN_cashier?.nama ? PENGATURAN_cashier?.nama : "Piket Kosong"
+            }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
         <q-separator color="white" vertical></q-separator>
         <q-btn class="q-ml-sm" dense flat round icon="menu" @click="toggleRightDrawer" />
@@ -59,18 +70,15 @@
         <q-separator vertical color="white"></q-separator>
         <q-route-tab icon="account_balance" :to="{ name: 'balance' }" label="Saldo" />
 
-
         <q-separator vertical color="white"></q-separator>
         <q-route-tab icon="point_of_sale" :to="{ name: 'penjualan' }" label="Penjualan" />
         <q-separator vertical color="white"></q-separator>
         <q-route-tab icon="inventory_2" :to="{ name: 'pengiriman' }" label="Pengiriman" />
+        <q-separator vertical color="white"></q-separator>
         <q-route-tab icon="archive" :to="{ name: 'mutasi' }" label="Mutasi" />
         <q-separator vertical color="white"></q-separator>
-        <q-route-tab
-          icon="install_desktop"
-          :to="{ name: 'check-in' }"
-          label="Cek Buka"
-        />
+        <q-route-tab icon="install_desktop" :to="{ name: 'check-in' }" label="Cek Buka" />
+        <q-separator vertical color="white"></q-separator>
         <q-route-tab
           icon="content_paste_go"
           :to="{ name: 'check-out' }"
@@ -109,7 +117,6 @@
 
       <router-view v-if="indexTerms" name="index" />
       <router-view v-else name="default" />
-
     </q-page-container>
   </q-layout>
 </template>
@@ -227,7 +234,7 @@ export default {
       ABSENSI_struks: "struks",
       ABSENSI_struk: "struk",
       ABSENSI_invoice: "invoice",
-      ABSENSI_getPiketSudahAbsensi: 'getPiketSudahAbsensi',
+      ABSENSI_getPiketSudahAbsensi: "getPiketSudahAbsensi",
     }),
     ...mapState(useBalanceStore, {
       // CHECKIN_items: "items",
@@ -236,11 +243,11 @@ export default {
       BALANCE_invoice: "invoice",
     }),
     indexTerms() {
-      if(this.$route.name == "absensi") {
+      if (this.$route.name == "absensi") {
         if (this.PENGATURAN_list_cashiers?.length <= 0) {
-          return true
+          return true;
         } else {
-         return false
+          return false;
         }
       }
 
@@ -249,7 +256,6 @@ export default {
         this.$route.name == "pengaturan_kasir" ||
         this.$route.name == "pengaturan_kurir" ||
         this.$route.name == "pengaturan_outlet"
-
       ) {
         return false;
       }
@@ -257,7 +263,7 @@ export default {
       if (!this.PENGATURAN_cashier) return true;
       if (this.PENGATURAN_list_cashiers?.length <= 0) return true;
       if (this.PENGATURAN_list_courirs?.length <= 0) return true;
-      if(!this.ABSENSI_getPiketSudahAbsensi?.id) return true;
+      if (!this.ABSENSI_getPiketSudahAbsensi?.id) return true;
     },
   },
   watch: {
@@ -291,7 +297,6 @@ export default {
           case "rotasi":
             this.ROTASI_loadLocalStorageStruks(tanggalString);
             break;
-
         }
       },
     },
@@ -521,8 +526,6 @@ export default {
           } else if (route_name == "riwayat_balance") {
             vm.$refs.dialog_invoice_balance?.onOpen();
           }
-
-
         }
       });
     },
@@ -635,7 +638,7 @@ export default {
       }
     });
 
-    return
+    return;
     // setTimeout(() => {
     if ("geolocation" in navigator) {
       // Request the user's current position

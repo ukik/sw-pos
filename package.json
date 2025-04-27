@@ -2,7 +2,7 @@
   "name": "sw.pos.app",
   "version": "0.0.1",
   "description": "an offline POS system for SW Agung outlet ",
-  "productName": "sw-pos",
+  "productName": "Freezto Mart",
   "author": "ukik <muhamadduki@gmail.com>",
   "type": "module",
   "private": true,

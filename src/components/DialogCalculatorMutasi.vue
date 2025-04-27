@@ -13,28 +13,28 @@
 
       <q-card-section align="" class="row">
         <q-list class="col row" color="white" bordered>
-          <q-item class="col-3 q-pa-sm" dense>
+          <q-item class="col-4 q-pa-sm" dense>
             <q-item-section>
               <q-item-label caption>Nama Produk</q-item-label>
               <q-item-label class="text-capitalize">{{ item?.name }}</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item class="col-3 q-pa-sm" dense>
+          <q-item class="col q-pa-sm" dense>
             <q-item-section>
               <q-item-label caption>Stok Awal</q-item-label>
               <q-item-label>{{ item?.stock }} kg</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item class="col-3 q-pa-sm" dense>
+          <q-item class="col q-pa-sm" dense>
             <q-item-section>
               <q-item-label caption>Stok Keluar</q-item-label>
               <q-item-label>{{ getModelNumber }} kg</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item class="col-3 q-pa-sm" dense>
+          <q-item class="col q-pa-sm" dense>
             <q-item-section>
               <q-item-label caption>Stok Akhir</q-item-label>
               <q-item-label lines="1">{{ getStokAkhir }}</q-item-label>
