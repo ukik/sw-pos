@@ -27,11 +27,10 @@
               v-if="isCordova"
               ref="fieldRef"
               outlined
-              v-model="foto"
+              v-model="imageUrl"
               hint="Wajib diisi foto"
               :error="imageUrl ? false : true"
               error-message="Wajib diisi foto"
-              :rules="[(val) => !!val || 'Wajib diisi foto']"
             >
               <CamerCordova
                 @onBubbleEvent="onBubbleEventFoto"
@@ -145,19 +144,26 @@ export default {
   },
   methods: {
     onBubbleEventFoto(payload) {
-      if (!payload) {
-        this.imageUrl = null;
-        this.form.foto = null;
-        return;
-      }
       this.imageUrl = payload;
       this.form.foto = payload;
 
+      if (payload) {
+        return this.$q.notify({
+          message: "Sukses",
+          caption: "Foto berhasil diambil",
+          icon: "check",
+          color: "positive",
+          position: "top",
+        });
+      }
+
+      alert(payload);
+
       return this.$q.notify({
-        message: "Sukses",
-        caption: "Foto berhasil diambil",
-        icon: "positive",
-        color: "done",
+        message: "Perhatian",
+        caption: "Foto gagal diambil",
+        icon: "close",
+        color: "negative",
         position: "top",
       });
     },
