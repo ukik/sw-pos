@@ -3,6 +3,9 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 import { date } from "quasar";
 import { usePengaturanStore } from './pengaturan-store';
 
+import { ref, nextTick } from 'vue';
+import localforage from "localforage";
+
 const timeStamp = Date.now();
 const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
 const tanggalString = date.formatDate(Date.now(), "YYYY-MM-DD");
@@ -59,11 +62,11 @@ export const useBalanceStore = defineStore('BalanceStore', {
         total_keluar: 0,
       };
       struk?.items?.forEach((element) => {
-        if(element?.status == 'SALDO MASUK') {
-          sum.total_masuk += element?.nominal;
+        if(element?.status == 'KAS MASUK') {
+          sum.total_masuk += Number(element?.nominal);
           // sum.total -= element?.nominal;
         } else {
-          sum.total_keluar += element?.nominal;
+          sum.total_keluar += Number(element?.nominal);
           // sum.total += element?.nominal;
         }
       });
@@ -124,13 +127,45 @@ export const useBalanceStore = defineStore('BalanceStore', {
 
       }
     },
-    updateLocalStorage() {
+    async updateLocalStorage() {
       const storage_name = 'BALANCE-STRUKS-'+date.formatDate(Date.now(), "YYYY-MM-DD")
 
-      // let model = JSON.parse(JSON.stringify(localStorage.getItem(storage_name)));
+      const { balance, onBalanceSync } = usePengaturanStore()
+      console.log(balance, this.struk?.total_keluar, this.struk?.total_masuk, this.getTotalSaldo)
+
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      let notesArr = []
+
+      const id = Date.now().toString()
+      this.struk = {
+        ...this.struk, id
+      }
+      await db.setItem(id, { text: JSON.stringify(this.struk) })
+
+      await nextTick();
+      await db.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr.push(JSON.parse(n?.text))
+      })
+      this.struks = notesArr
+
+      this.invoice = this.struk
+
+      onBalanceSync(this.getTotalSaldo)
+
+      this.struk = null
+      return
+
       let model = []
 
       if(localStorage.getItem(storage_name)) model = JSON.parse(localStorage.getItem(storage_name));
+
+      this.invoice = this.struk
 
       let addModel = [
         ...model,
@@ -141,19 +176,33 @@ export const useBalanceStore = defineStore('BalanceStore', {
 
       this.struks = addModel
 
-      const { balance, onBalanceSync } = usePengaturanStore()
-      console.log(balance, this.struk?.total_keluar, this.struk?.total_masuk, this.getTotalSaldo)
       onBalanceSync(this.getTotalSaldo)
 
-      this.invoice = this.struk
+      // this.invoice = this.struk
     },
     initLocalStorage() {
       if(localStorage.getItem('BALANCE-STRUK')) {
         this.struk = JSON.parse(localStorage.getItem('BALANCE-STRUK'));
       }
     },
-    loadLocalStorageStruks(set_date) {
+    async loadLocalStorageStruks(set_date) {
       const storage_name = 'BALANCE-STRUKS-'+set_date
+
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      await nextTick();
+      let notesArr = []
+      await db.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr.push(JSON.parse(n?.text))
+      })
+      this.struks = notesArr
+
+      return
 
       console.log('loadLocalStorageStruks BALANCE', storage_name)
       if(localStorage.getItem(storage_name)) {

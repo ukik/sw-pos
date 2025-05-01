@@ -2,6 +2,9 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 
 import Swal from 'sweetalert2/dist/sweetalert2';
 
+import { ref, nextTick } from 'vue';
+import localforage from "localforage";
+
 
 import { date } from "quasar";
 
@@ -148,6 +151,9 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
   },
 
   actions: {
+    setCashier(payload) {
+      this.cashier = payload
+    },
     setPosition(payload) {
       this.position = payload
     },
@@ -217,8 +223,33 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
       })
     },
 
-    updateLocalStorageCourir() {
+    async updateLocalStorageCourir() {
       const storage_name = 'PENGATURAN-DAFTAR-KURIR-' + date.formatDate(Date.now(), "YYYY-MM-DD")
+
+      /*
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      let notesArr = []
+
+      const id = Date.now().toString()
+      this.struk = {
+        ...this.struk, id
+      }
+      await db.setItem(id, { text: JSON.stringify(this.struk) })
+
+      await nextTick();
+      await db.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr.push(JSON.parse(n?.text))
+      })
+      this.list_courirs = notesArr
+
+      return
+      */
 
       let model = []
 
@@ -233,8 +264,33 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
 
       this.list_courirs = addModel
     },
-    updateLocalStorageCashier() {
+    async updateLocalStorageCashier() {
       const storage_name = 'PENGATURAN-DAFTAR-KASIR-' + date.formatDate(Date.now(), "YYYY-MM-DD")
+
+      /*
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      let notesArr = []
+
+      const id = Date.now().toString()
+      this.struk = {
+        ...this.struk, id
+      }
+      await db.setItem(id, { text: JSON.stringify(this.struk) })
+
+      await nextTick();
+      await db.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr.push(JSON.parse(n?.text))
+      })
+      this.list_cashiers = notesArr
+
+      return
+      */
 
       let model = []
 
@@ -275,16 +331,8 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
     //   })
     // },
 
-    initLocalStorage() {
-      if (localStorage.getItem('PENGATURAN-DAFTAR-KASIR')) {
-        this.list_cashiers = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-KASIR'));
-      }
-      if (localStorage.getItem('PENGATURAN-DAFTAR-KURIR')) {
-        this.list_courirs = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-KURIR'));
-      }
-      // if (localStorage.getItem('PENGATURAN-DAFTAR-SHIFT')) {
-      //   this.list_shifts = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-SHIFT'));
-      // }
+    async initLocalStorage() {
+
       if (localStorage.getItem('PENGATURAN-CABANG')) {
         this.cabang = JSON.parse(localStorage.getItem('PENGATURAN-CABANG'));
       }
@@ -295,6 +343,48 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
         this.cashier = JSON.parse(localStorage.getItem('PENGATURAN-KASIR'));
       }
 
+      /*
+      // Konfigurasi database localForage
+      const db_kasir = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: 'PENGATURAN-DAFTAR-KASIR'
+      });
+
+      await nextTick();
+      let notesArr1 = []
+      await db_kasir.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr1.push(JSON.parse(n?.text))
+      })
+      this.list_cashiers = notesArr1
+
+
+      // Konfigurasi database localForage
+      const db_kurir = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: 'PENGATURAN-DAFTAR-KURIR'
+      });
+
+      await nextTick();
+      let notesArr2 = []
+      await db_kurir.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr2.push(JSON.parse(n?.text))
+      })
+      this.list_courirs = notesArr2
+
+      return
+      */
+
+      if (localStorage.getItem('PENGATURAN-DAFTAR-KASIR')) {
+        this.list_cashiers = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-KASIR'));
+      }
+      if (localStorage.getItem('PENGATURAN-DAFTAR-KURIR')) {
+        this.list_courirs = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-KURIR'));
+      }
+      // if (localStorage.getItem('PENGATURAN-DAFTAR-SHIFT')) {
+      //   this.list_shifts = JSON.parse(localStorage.getItem('PENGATURAN-DAFTAR-SHIFT'));
+      // }
     },
   }
 })

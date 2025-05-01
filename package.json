@@ -1,6 +1,6 @@
 {
   "name": "sw.pos.app",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "an offline POS system for SW Agung outlet ",
   "productName": "Freezto Mart",
   "author": "ukik <muhamadduki@gmail.com>",
@@ -15,6 +15,7 @@
   "dependencies": {
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
+    "localforage": "^1.10.0",
     "pinia": "^3.0.1",
     "quasar": "^2.16.0",
     "tiny-emitter": "^2.1.0",

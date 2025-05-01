@@ -5,7 +5,7 @@
     ></DialogTableRiwayatBalance>
 
     <q-date
-      subtitle="SALDO"
+      subtitle="KAS"
       class="full-width"
       color=" bg-sw"
       v-model="date"

@@ -1,7 +1,11 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-
 import { date } from "quasar";
 import { usePengaturanStore } from './pengaturan-store';
+
+
+import { ref, nextTick } from 'vue';
+import localforage from "localforage";
+
 
 const timeStamp = Date.now();
 const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
@@ -53,10 +57,10 @@ export const usePengirimanStore = defineStore('PengirimanStore', {
         stok_akhir: 0,
       };
       struk?.items?.forEach((element) => {
-        sum.stock += element?.stock;
-        sum.qty += element?.qty;
-        sum.stok_awal += element?.stok_awal;
-        sum.stok_akhir += element?.stok_akhir;
+        sum.stock += Number(element?.stock);
+        sum.qty += Number(element?.qty);
+        sum.stok_awal += Number(element?.stok_awal);
+        sum.stok_akhir += Number(element?.stok_akhir);
       });
 
       return sum;
@@ -122,32 +126,77 @@ export const usePengirimanStore = defineStore('PengirimanStore', {
 
       }
     },
-    updateLocalStorage() {
+    async updateLocalStorage() {
       const storage_name = 'PENGIRIMAN-STRUKS-'+date.formatDate(Date.now(), "YYYY-MM-DD")
+
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      let notesArr = []
+
+      const id = Date.now().toString()
+      this.struk = {
+        ...this.struk, id
+      }
+      await db.setItem(id, { text: JSON.stringify(this.struk) })
+
+      await nextTick();
+      await db.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr.push(JSON.parse(n?.text))
+      })
+      this.struks = notesArr
+
+      this.invoice = this.struk
+
+      this.struk = null
+      return
 
       // let model = JSON.parse(JSON.stringify(localStorage.getItem(storage_name)));
       let model = []
 
       if(localStorage.getItem(storage_name)) model = JSON.parse(localStorage.getItem(storage_name));
 
+      this.invoice = this.struk
+
       let addModel = [
         ...model,
         this.struk,
       ]
 
+      await nextTick();
       localStorage.setItem(storage_name, JSON.stringify(addModel))
 
       this.struks = addModel
 
-      this.invoice = this.struk
+      // this.invoice = this.struk
     },
     initLocalStorage() {
       if(localStorage.getItem('PENGIRIMAN-STRUK')) {
         this.struk = JSON.parse(localStorage.getItem('PENGIRIMAN-STRUK'));
       }
     },
-    loadLocalStorageStruks(set_date) {
+    async loadLocalStorageStruks(set_date) {
       const storage_name = 'PENGIRIMAN-STRUKS-'+set_date
+
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      await nextTick();
+      let notesArr = []
+      await db.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr.push(JSON.parse(n?.text))
+      })
+      this.struks = notesArr
+
+      return
 
       console.log('loadLocalStorageStruks PENGIRIMAN', storage_name)
       if(localStorage.getItem(storage_name)) {

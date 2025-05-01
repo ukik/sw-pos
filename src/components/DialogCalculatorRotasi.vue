@@ -3,7 +3,7 @@
     <q-card>
       <q-card-actions align="between" class="bg-swx overflow-hidden q-pa-none q-pl-xs">
         <q-toolbar>
-          <q-toolbar-title>PENGIRIMAN</q-toolbar-title>
+          <q-toolbar-title>CEK ROTASI</q-toolbar-title>
           <q-btn @click="fixed = false" flat dense color="negative" rounded icon="close">
           </q-btn>
         </q-toolbar>
@@ -29,15 +29,15 @@
 
           <q-item class="col q-pa-sm" dense>
             <q-item-section>
-              <q-item-label caption>Stok Masuk</q-item-label>
-              <q-item-label>{{ getStokBaru }} kg</q-item-label>
+              <q-item-label caption>Stok Baru</q-item-label>
+              <q-item-label>{{ getModelNumber }} kg</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item class="col q-pa-sm" dense>
             <q-item-section>
-              <q-item-label caption>Stok Akhir</q-item-label>
-              <q-item-label lines="1">{{ getStokAkhir }} kg</q-item-label>
+              <q-item-label caption>Stok Selisih</q-item-label>
+              <q-item-label lines="1">{{ getStokAkhir }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -171,7 +171,7 @@
 import { ref } from "vue";
 
 import { mapState } from "pinia";
-import { usePenjualanStore } from "src/stores/penjualan-store";
+import { useRotasiStore } from "src/stores/rotasi-store";
 
 export default {
   setup() {
@@ -190,16 +190,25 @@ export default {
   //   this.isBtnCommaUsed();
   // },
   computed: {
-    ...mapState(usePenjualanStore, ["getStrukItemID"]),
+    ...mapState(useRotasiStore, ["getStrukItemID"]),
     getStokAkhir() {
       let _model = JSON.parse(JSON.stringify(this.model));
       _model = _model.replace(",", ".");
 
-      return Number(this.item?.stock) + Number(_model);
+      const sum = this.$decimal(Number(this.item?.stock) - Number(_model));
+      return sum >= 0 ? sum + " kg" : "Tidak Cukup";
     },
-    getStokBaru() {
+    getSum() {
       let _model = JSON.parse(JSON.stringify(this.model));
-      return _model.replace(",", ".");
+      _model = _model.replace(",", ".");
+
+      // console.log(_model, _model.replace(",", "."));
+      return this.$decimal(Number(this.item?.price) * Number(_model));
+    },
+    getModelNumber() {
+      let _model = JSON.parse(JSON.stringify(this.model));
+      _model = _model.replace(",", ".");
+      return this.$decimal(_model);
     },
   },
   watch: {
@@ -229,19 +238,10 @@ export default {
       let _model = JSON.parse(JSON.stringify(this.model));
       _model = _model.replace(",", ".");
 
-      // if (Number(_model) > Number(this.item?.stock))
-      //   return this.$q.notify({
-      //     message: "Peringatan",
-      //     caption: "Berat melebih stok tersedia",
-      //     icon: "warning",
-      //     color: "negative",
-      //     position: "top",
-      //   });
-
-      if (_model === "0")
+      if (Number(_model) > Number(this.item?.stock))
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Tidak boleh kosong",
+          caption: "Berat melebih stok tersedia",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -249,14 +249,15 @@ export default {
 
       this.fixed = false;
 
+      if (_model === "0") return;
+
       this.$emit("onBubbleEvent", {
         ...this.item,
         id: this.getStrukItemID,
         produk_id: this.item?.id,
-        qty: Number(_model),
-        stok_awal: Number(this.item?.stock),
-        stok_akhir: Number(this.item?.stock) - Number(_model),
-        subtotal: Math.round(Number(_model) * Number(this.item?.price)),
+        qty: this.$decimal(_model),
+        stok_awal: this.$decimal(this.item?.stock),
+        stok_akhir: this.$decimal(this.item?.stock) - this.$decimal(_model),
       });
     },
     onOpen(item) {

@@ -76,12 +76,12 @@
               <q-icon name="support_agent" color="white" />
             </template>
             Dengan melakukan centang "SETUJU", <br />
-            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR PIKET sudah
-            sepakat jumlah barang yang diterima valid
+            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR PIKET
+            sudah sepakat jumlah barang yang diterima valid
             <template v-slot:action>
               <q-checkbox
                 keep-color
-                :color="item.cashier_confirm ? 'primary' : 'white'"
+                :color="item?.cashier_confirm ? 'primary' : 'white'"
                 dark
                 v-model="item.cashier_confirm"
                 label="SETUJU"
@@ -207,21 +207,22 @@ export default {
     }),
     ...mapActions(usePenjualanStore, {
       onSyncPenjualanPengirimanItems: "onSyncPenjualanPengirimanItems",
+      isItemOverWeight: "isItemOverWeight",
     }),
     onNotify() {
-       this.$q.notify({
-          message: "Peringatan",
-          caption: "Lengkapi formulir",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
+      this.$q.notify({
+        message: "Peringatan",
+        caption: "Lengkapi formulir",
+        icon: "warning",
+        color: "negative",
+        position: "top",
+      });
     },
-    onSubmit() {
+    async onSubmit() {
       console.log("onSubmit", this.item);
-      if (!this.item?.courir_confirm) return this.onNotify()
-      if (!this.item?.cashier_confirm) return this.onNotify()
-      if (!this.item?.courir) return this.onNotify()
+      if (!this.item?.courir_confirm) return this.onNotify();
+      if (!this.item?.cashier_confirm) return this.onNotify();
+      if (!this.item?.courir) return this.onNotify();
 
       // console.log(this.pengiriman_courir?.pin, this.pin1, this.cashier?.pin, this.pin2)
       if (this.pengiriman_courir?.pin != this.pin2 || this.cashier?.pin != this.pin1) {
@@ -251,7 +252,7 @@ export default {
 
       this.onSyncPenjualanPengirimanItems(this.struk);
 
-      this.struk = null;
+      // this.struk = null;
     },
 
     onOpen(item) {

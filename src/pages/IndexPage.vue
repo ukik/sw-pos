@@ -68,26 +68,26 @@
             />
           </q-item-section>
         </q-item>
+
+        <q-item :to="{ name: 'absensi' }" clickable v-ripple>
+          <q-item-section avatar>
+            <q-avatar color="primary" text-color="white"> 4 </q-avatar>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>ABSENSI HARIAN</q-item-label>
+            <q-item-label caption lines="1">Tidak boleh kosong</q-item-label>
+          </q-item-section>
+
+          <q-item-section side>
+            <q-icon
+              size="xl"
+              :name="getPiketSudahAbsensiColor?.icon"
+              :color="getPiketSudahAbsensiColor?.color"
+            />
+          </q-item-section>
+        </q-item>
       </q-list>
-
-      <q-item :to="{ name: 'absensi' }" clickable v-ripple>
-        <q-item-section avatar>
-          <q-avatar color="primary" text-color="white"> 4 </q-avatar>
-        </q-item-section>
-
-        <q-item-section>
-          <q-item-label>ABSENSI HARIAN</q-item-label>
-          <q-item-label caption lines="1">Tidak boleh kosong</q-item-label>
-        </q-item-section>
-
-        <q-item-section side>
-          <q-icon
-            size="xl"
-            :name="getPiketSudahAbsensiColor?.icon"
-            :color="getPiketSudahAbsensiColor?.color"
-          />
-        </q-item-section>
-      </q-item>
     </div>
   </q-page>
 </template>
@@ -98,6 +98,14 @@ import { usePengaturanStore } from "src/stores/pengaturan-store";
 import { useAbsensiStore } from "src/stores/absensi-store";
 
 export default {
+  watch: {
+    cashier: {
+      deep: true,
+      handler(val) {
+        // alert("IndexPage");
+      },
+    },
+  },
   computed: {
     ...mapState(useAbsensiStore, ["getPiketSudahAbsensi"]),
     ...mapState(usePengaturanStore, ["cashier", "list_cashiers", "list_courirs"]),

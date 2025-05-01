@@ -4,7 +4,13 @@
   <DialogInvoicePenjualan ref="dialog_invoice_penjualan"></DialogInvoicePenjualan>
   <!-- :visible-columns="visibleColumns" -->
 
-  <TableRiwayatPenjualanPDF ref="riwayat" :date="date" :getTotalStokItems="getTotalStokItems" :columns="columns" :rows="rows"></TableRiwayatPenjualanPDF>
+  <TableRiwayatPenjualanPDF
+    ref="riwayat"
+    :date="date"
+    :getTotalStokItems="getTotalStokItems"
+    :columns="columns"
+    :rows="rows"
+  ></TableRiwayatPenjualanPDF>
 
   <q-table
     :hide-header="false"
@@ -13,7 +19,7 @@
     flat
     bordered
     :rows="rows"
-    row-key="name"
+    row-key="field"
     :pagination="initialPagination"
     :grid="false"
     rows-per-page-label="catatan per halaman:"
@@ -29,12 +35,12 @@ import { mapState, mapWritableState } from "pinia";
 import { usePenjualanStore } from "src/stores/penjualan-store";
 import DialogInvoicePenjualan from "./DialogInvoicePenjualan.vue";
 
-import columns from 'src/helpers/colums-riwayat-penjualan'
+import columns from "src/helpers/colums-riwayat-penjualan";
 
 import TableRiwayatPenjualanPDF from "./TableRiwayatPenjualanPDF.vue";
 
 export default {
-  props:['date'],
+  props: ["date"],
   components: {
     DialogInvoicePenjualan,
     TableRiwayatPenjualanPDF,
@@ -48,8 +54,8 @@ export default {
   data() {
     return {
       initialPagination: {
-        sortBy: "desc",
-        descending: false,
+        sortBy: "waktu",
+        descending: true,
         page: 1,
         rowsPerPage: 25,
         // rowsNumber: xx if getting data from a server
@@ -59,7 +65,7 @@ export default {
   computed: {
     ...mapState(usePenjualanStore, {
       rows: "getStruks",
-      getTotalStokItems: 'getTotalStokItems',
+      getTotalStokItems: "getTotalStokItems",
     }),
     ...mapWritableState(usePenjualanStore, {
       invoice: "invoice",
@@ -72,8 +78,8 @@ export default {
       this.$refs.dialog_invoice_penjualan?.onOpen(row, index);
     },
     onPrint() {
-      this.$refs.riwayat.makePDFShare()
-    }
+      this.$refs.riwayat.makePDFShare();
+    },
   },
 };
 </script>

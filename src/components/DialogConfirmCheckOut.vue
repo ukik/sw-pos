@@ -83,7 +83,7 @@
             <template v-slot:action>
               <q-checkbox
                 keep-color
-                :color="item.cashier_confirm ? 'primary' : 'white'"
+                :color="item?.cashier_confirm ? 'primary' : 'white'"
                 dark
                 v-model="item.cashier_confirm"
                 label="SETUJU"
@@ -182,8 +182,9 @@ export default {
     }),
     ...mapActions(usePenjualanStore, {
       onSyncPenjualanCheckOutItems: "onSyncPenjualanCheckOutItems",
+      isItemOverWeight: "isItemOverWeight",
     }),
-    onSubmit() {
+    async onSubmit() {
       if (this.isCheckDone) {
         return this.$q.notify({
           message: "Peringatan",
@@ -222,6 +223,10 @@ export default {
 
       this.struk = this.item;
 
+      const is_item_over_weight = await this.isItemOverWeight(this.struk?.items);
+      console.log("isItemOverWeight", is_item_over_weight);
+      if (is_item_over_weight) return;
+
       this.addItemToStruk();
 
       this.$global.$emit("MainLayout", {
@@ -231,7 +236,7 @@ export default {
 
       this.onSyncPenjualanCheckOutItems(this.struk);
 
-      this.struk = null;
+      // this.struk = null;
     },
 
     onOpen(item) {

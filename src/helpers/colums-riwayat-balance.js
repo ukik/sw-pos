@@ -1,5 +1,15 @@
 export default [
   {
+    name: "waktu",
+    label: "waktu",
+    field: "waktu",
+    sortable: true,
+  },
+  {
+    label: "tanggal",
+    field: "tanggal",
+  },
+  {
     label: "id",
     field: "id",
   },
@@ -27,17 +37,17 @@ export default [
     format: (val, row) => `${val?.length} item`,
   },
   {
-    label: "total saldo",
+    label: "Kas Final",
     field: "total_saldo",
     format: (val, row) => `Rp. ${val}`,
   },
   {
-    label: "total saldo keluar",
+    label: "kas keluar",
     field: "total_keluar",
     format: (val, row) => `Rp. ${val}`,
   },
   {
-    label: "total saldo masuk",
+    label: "kas masuk",
     field: "total_masuk",
     format: (val, row) => `Rp. ${val}`,
   },
@@ -50,14 +60,14 @@ export default [
     field: "cashier_confirm",
     format: (val, row) => `${val ? 'Setuju' : 'Tidak Setuju'}`,
   },
-  {
-    label: "tanggal",
-    field: "tanggal",
-  },
-  {
-    label: "waktu",
-    field: "waktu",
-  },
+  // {
+  //   label: "tanggal",
+  //   field: "tanggal",
+  // },
+  // {
+  //   label: "waktu",
+  //   field: "waktu",
+  // },
   // {
   //   label: "created_at",
   //   field: "created_at",

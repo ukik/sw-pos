@@ -207,6 +207,9 @@ export default {
       addNewStruk: "addNewStruk",
       updateLocalStorage: "updateLocalStorage",
     }),
+    ...mapActions(usePenjualanStore, {
+      isItemOverWeight: "isItemOverWeight",
+    }),
     openDialogCatatan() {
       if (!this.struk?.id)
         return this.$q.notify({
@@ -221,7 +224,7 @@ export default {
     openDialogCalculatorPengiriman(item) {
       this.$refs.dialog_calculator?.onOpen(item);
     },
-    openDialogConfirmPengiriman() {
+    async openDialogConfirmPengiriman() {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
@@ -231,12 +234,39 @@ export default {
           position: "top",
         });
 
+      // berlaku untuk pengurangan / penggantian
+      // const is_item_over_weight = await this.isItemOverWeight(this.struk?.items);
+      // console.log("isItemOverWeight", is_item_over_weight);
+      // if (is_item_over_weight) return;
+
       this.$refs.dialog_bayar?.onOpen(this.struk);
     },
     onBubbleEventDialogCalculatorPengiriman(item) {
-      console.log(this.struk);
+      console.log("onBubbleEventDialogCalculatorPengiriman", item, this.struk);
 
       this.addNewStruk();
+
+      // let temp = JSON.parse(JSON.stringify(this.struk?.items));
+      // this.struk.items = this.$removeDuplicates(this.struk?.items, "produk_id");
+
+      // // Buat TOTAL dari yang baru dan lama
+      // let _qty = item?.qty;
+      // temp.forEach((el, i) => {
+      //   if (el.produk_id == item?.produk_id) {
+      //     _qty += el.qty;
+      //   }
+      // });
+      // temp = this.$removeDuplicates(temp, "produk_id");
+      // // karena sisa 1 bisa pake object
+      // temp[0].qty = _qty;
+
+      // console.log("temp", temp, _qty);
+
+      // // this.struk?.items.forEach((el, i) => {
+      // //   if (el.produk_id == item?.produk_id) {
+      // //     el.qty = _qty;
+      // //   }
+      // // });
 
       this.struk?.items?.push(item);
 

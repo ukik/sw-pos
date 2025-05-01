@@ -5,7 +5,7 @@
         @onBubbleEventOK="onBubbleEventOK"
         ref="money_money"
       ></MoneyCalculator>
-      <q-form @submit="onSave">
+      <q-form>
         <q-card-section class="bg-sw text-white q-py-none">
           <q-toolbar class="q-px-none">
             <q-toolbar-title>
@@ -229,15 +229,21 @@
           class="bg-white text-teal"
         >
           <q-btn
+            @click="
+              mode = 'ABSENSI MASUK';
+              onSave();
+            "
             v-if="!form?.jam_mulai"
-            type="submit"
             outline
             label="MASUK KERJA"
             icon="check_circle"
           />
           <q-btn
+            @click="
+              mode = 'ABSENSI PULANG';
+              onSave();
+            "
             v-else
-            type="submit"
             color="red"
             outline
             label="PULANG KERJA"
@@ -258,17 +264,19 @@ import MoneyCalculator from "./commons/MoneyCalculator.vue";
 
 import { date } from "quasar";
 
-const timeStamp = Date.now();
-const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
-const tanggalString = date.formatDate(Date.now(), "YYYY-MM-DD");
-const waktuString = date.formatDate(Date.now(), "HH:mm:ss");
+// const timeStamp = Date.now();
+// const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
+// const tanggalString = date.formatDate(Date.now(), "YYYY-MM-DD");
+// const waktuString = date.formatDate(Date.now(), "HH:mm:ss");
 
 export default {
   components: {
     MoneyCalculator,
   },
+  props: ["dialog"],
   data() {
     return {
+      show: false,
       medium: false,
 
       title: "ABSENSI",
@@ -278,12 +286,16 @@ export default {
       foto: null,
       imageUrl: "",
 
-      form: {},
+      form: {
+        cashier: {}, // wajib untuk v-model
+      },
     };
   },
+  emits: ["onBubbleEventOK"],
   computed: {
     ...mapWritableState(useAbsensiStore, {
       struk: "struk",
+      mode: "mode",
     }),
     ...mapWritableState(usePengaturanStore, {
       balance: "balance",
@@ -294,10 +306,14 @@ export default {
     imageUrl(val) {
       // console.log("imageUrl", compressImage(val));
     },
+    dialog(val) {
+      // this.medium = val;
+    },
   },
   methods: {
     ...mapActions(useAbsensiStore, {
       addItemToStruk: "addItemToStruk",
+      updateLocalStorage: "updateLocalStorage",
     }),
     onBubbleEventFoto(payload) {
       this.imageUrl = payload;
@@ -331,7 +347,6 @@ export default {
     },
     onOpen(payload, title) {
       this.medium = true;
-      // this.text = item;
 
       let temp = JSON.parse(JSON.stringify(payload));
 
@@ -374,7 +389,7 @@ export default {
       //   blah.src = URL.createObjectURL(file);
       // }
     },
-    onSave() {
+    async onSave() {
       this.struk = this.form;
 
       console.log("onSave 1", this.form, this.cashier);
@@ -390,6 +405,7 @@ export default {
       }
 
       if (!this.imageUrl) {
+        // alert(`!this.imageUrl ${!this.imageUrl}`);
         return this.$q.notify({
           message: "Peringatan",
           caption: "Foto jangan kosong",
@@ -400,6 +416,7 @@ export default {
       }
 
       if (this.form?.cashier.pin != this.pin) {
+        // alert(`this.form?.cashier.pin != this.pin ${this.form?.cashier.pin != this.pin}`);
         return this.$q.notify({
           message: "Peringatan",
           caption: "PIN tidak cocok",
@@ -408,6 +425,8 @@ export default {
           position: "top",
         });
       }
+
+      this.form.modal_akhir = this.balance;
 
       if (!this.form?.jam_mulai) {
         // JAM DATANG
@@ -421,6 +440,8 @@ export default {
 
       console.log("onSave 2", this.form);
 
+      // alert(`"onSave 2", ${JSON.stringify(this.form)}`);
+
       // this.$emit("onBubbleEventOK", this.form);
 
       this.medium = false;
@@ -432,13 +453,17 @@ export default {
 
       this.addItemToStruk();
 
-      if (!this.form?.jam_mulai) {
+      // this.updateLocalStorage();
+
+      // this.$nextTick(() => {
+      await this.$nextTick();
+      if (this.mode == "ABSENSI MASUK") {
         this.$global.$emit("MainLayout", {
           label: "DialogAbsensi",
           value: this.struk,
           tipe: "ABSENSI DATANG",
         });
-      } else {
+      } else if (this.mode == "ABSENSI PULANG") {
         this.$global.$emit("MainLayout", {
           label: "DialogAbsensi",
           value: this.struk,
@@ -446,11 +471,43 @@ export default {
         });
       }
 
-      this.struk = null;
+      // if (!this.form?.jam_mulai) {
+      //   this.$global.$emit("MainLayout", {
+      //     label: "DialogAbsensi",
+      //     value: this.struk,
+      //     tipe: "ABSENSI DATANG",
+      //   });
+      // } else {
+      //   this.$global.$emit("MainLayout", {
+      //     label: "DialogAbsensi",
+      //     value: this.struk,
+      //     tipe: "ABSENSI PULANG",
+      //   });
+      // }
+      // });
+
+      await this.$nextTick();
+      // this.struk = null;
       this.pin = null;
       this.foto = null;
       this.imageUrl = "";
       this.form = {};
+
+      // this.$swal({
+      //   // position: "top-end",
+      //   icon: "success",
+      //   title: "KASIR PIKET",
+      //   text: `Sekarang ${this.struk?.nama}`,
+      //   showConfirmButton: false,
+      //   // confirmButtonText: `Invoice ${item.code}`,
+      //   timer: 2000,
+      // }).then((result) => {
+      //   this.struk = null;
+      //   this.pin = null;
+      //   this.foto = null;
+      //   this.imageUrl = "";
+      //   this.form = {};
+      // });
     },
   },
 };

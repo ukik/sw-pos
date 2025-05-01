@@ -36,7 +36,7 @@
         </tr>
         <tr>
           <td style="text-align: left; width: 500px">
-            <b>TOTAL SALDO</b>
+            <b>TOTAL KAS</b>
           </td>
           <td style="text-align: left; width: 350px">
             <b>Rp. {{ balance }}</b>
@@ -191,7 +191,7 @@ export default {
                                         </tr>
                                         <tr>
                                           <td style="text-align: left; width: 500px; ">
-                                            <b>TOTAL SALDO</b>
+                                            <b>TOTAL KAS</b>
                                           </td>
                                           <td style="text-align: left; width: 350px; ">
                                             <b>Rp. ${this.balance}</b>

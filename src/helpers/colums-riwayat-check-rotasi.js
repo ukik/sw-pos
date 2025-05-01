@@ -1,5 +1,15 @@
 export default [
   {
+    name: "waktu",
+    label: "waktu",
+    field: "waktu",
+    sortable: true,
+  },
+  {
+    label: "tanggal",
+    field: "tanggal",
+  },
+  {
     label: "id",
     field: "id",
   },
@@ -69,14 +79,14 @@ export default [
     field: "cashier_confirm",
     format: (val, row) => `${val ? 'Setuju' : 'Tidak Setuju'}`,
   },
-  {
-    label: "tanggal",
-    field: "tanggal",
-  },
-  {
-    label: "waktu",
-    field: "waktu",
-  },
+  // {
+  //   label: "tanggal",
+  //   field: "tanggal",
+  // },
+  // {
+  //   label: "waktu",
+  //   field: "waktu",
+  // },
   // {
   //   label: "created_at",
   //   field: "created_at",

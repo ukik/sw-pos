@@ -1,6 +1,5 @@
 <template>
-
-      <!-- <q-card-actions class="bg-sw text-white">
+  <!-- <q-card-actions class="bg-sw text-white">
         <q-btn v-close-popup class="col-auto" dense flat icon="arrow_back"></q-btn>
         <q-toolbar-title>INVOICE: {{ invoice?.code }}</q-toolbar-title>
         <q-btn label="PDF" @click="onPDF"></q-btn>
@@ -8,106 +7,107 @@
         <q-btn label="Html2PDF" @click="Html2PDF"></q-btn>
       </q-card-actions> -->
 
-      <div v-if="false" id="LAPORAN">
-        <table style="width: 1000px; margin-bottom: 10px">
-          <tbody>
-            <tr>
-              <td style="width: 70px">
-                <img height="60" :src="$logoBase64" />
-              </td>
-              <td style="text-align: left;">
-                <div style="font-size: 24px"><b>FREEZTO-MART</b></div>
-                <div style="font-size: 16px">
-                  <b>GROSIR AYAM FRESH</b> - SEGAR SETIAP HARI
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+  <div v-if="false" id="LAPORAN">
+    <table style="width: 1000px; margin-bottom: 10px">
+      <tbody>
+        <tr>
+          <td style="width: 70px">
+            <img height="60" :src="$logoBase64" />
+          </td>
+          <td style="text-align: left">
+            <div style="font-size: 24px"><b>FREEZTO-MART</b></div>
+            <div style="font-size: 16px">
+              <b>GROSIR AYAM FRESH</b> - SEGAR SETIAP HARI
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-        <table style="width:750px; margin-bottom: 10px" id="customers2">
-          <tbody>
-            <tr>
-              <td style="text-align: left; width: 500px; ">
-                <b >TANGGAL</b>
-              </td>
-              <td style="text-align: left; width: 350px; ">
-                <b>{{date}}</b>
-              </td>
-            </tr>
-            <tr>
-              <td style="text-align: left; width: 500px; ">
-                <b >TOTAL KEMBALIAN PEMBULATAN</b>
-              </td>
-              <td style="text-align: left; width: 350px; ">
-                <b>Rp. {{getTotalKembalianPembulatan}}</b>
-              </td>
-            </tr>
-            <tr>
-              <td style="text-align: left; width: 500px; ">
-                <b>TOTAL SALDO</b>
-              </td>
-              <td style="text-align: left; width: 350px; ">
-                <b>Rp. {{balance}}</b>
-              </td>
-            </tr>
-            <tr>
-              <td style="text-align: left; width: 500px; ">
-                <b >TOTAL STOK</b>
-              </td>
-              <td style="text-align: left; width: 350px; ">
-                <b>{{getTotalStokItems}} Kg</b>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <table style="width: 750px; margin-bottom: 10px" id="customers2">
+      <tbody>
+        <tr>
+          <td style="text-align: left; width: 500px">
+            <b>TANGGAL</b>
+          </td>
+          <td style="text-align: left; width: 350px">
+            <b>{{ date }}</b>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: left; width: 500px">
+            <b>TOTAL MINUS PEMBULATAN</b>
+          </td>
+          <td style="text-align: left; width: 350px">
+            <b>Rp. {{ getTotalKembalianPembulatan }}</b>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: left; width: 500px">
+            <b>TOTAL KAS</b>
+          </td>
+          <td style="text-align: left; width: 350px">
+            <b>Rp. {{ balance }}</b>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: left; width: 500px">
+            <b>TOTAL STOK</b>
+          </td>
+          <td style="text-align: left; width: 350px">
+            <b>{{ getTotalStokItems }} Kg</b>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-        <table style="width: 100%; margin-bottom: 10px"  id="customers">
-          <thead>
-            <tr style="text-transform: capitalize">
-              <template v-for="(item, index) in columns">
-                <th>{{item?.label}}</th>
-              </template>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="(item, i) in rows">
-              <tr class="text-capitalize">
-                <template v-for="(col, index) in columns">
-                  <td v-if="col?.field == 'cashier'">{{ item[col?.field]?.nama }}</td>
-                  <td v-else-if="col?.field == 'cashier_confirm'">{{ $getSetuju(item[col?.field]) }}</td>
-                  <td v-else-if="col?.field == 'courir'">{{ item[col?.field]?.nama }}</td>
-                  <td v-else-if="col?.field == 'cabang'">{{ item[col?.field]?.nama }}</td>
-                  <td v-else-if="col?.field == 'items'">{{ item[col?.field]?.length }}</td>
-                  <td v-else>{{ item[col?.field] }}</td>
-                </template>
-              </tr>
+    <table style="width: 100%; margin-bottom: 10px" id="customers">
+      <thead>
+        <tr style="text-transform: capitalize">
+          <template v-for="(item, index) in columns">
+            <th>{{ item?.label }}</th>
+          </template>
+        </tr>
+      </thead>
+      <tbody>
+        <template v-for="(item, i) in rows">
+          <tr class="text-capitalize">
+            <template v-for="(col, index) in columns">
+              <td v-if="col?.field == 'cashier'">{{ item[col?.field]?.nama }}</td>
+              <td v-else-if="col?.field == 'cashier_confirm'">
+                {{ $getSetuju(item[col?.field]) }}
+              </td>
+              <td v-else-if="col?.field == 'courir'">{{ item[col?.field]?.nama }}</td>
+              <td v-else-if="col?.field == 'cabang'">{{ item[col?.field]?.nama }}</td>
+              <td v-else-if="col?.field == 'items'">{{ item[col?.field]?.length }}</td>
+              <td v-else>{{ item[col?.field] }}</td>
             </template>
-          </tbody>
-        </table>
-
-      </div>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
-import { mapState } from 'pinia';
-import { usePengaturanStore } from 'src/stores/pengaturan-store';
+import { mapState } from "pinia";
+import { usePengaturanStore } from "src/stores/pengaturan-store";
 
 export default {
-  props:['columns','rows','date', 'getTotalStokItems'],
+  props: ["columns", "rows", "date", "getTotalStokItems"],
   computed: {
     ...mapState(usePengaturanStore, {
-      balance:'balance'
+      balance: "balance",
     }),
     getTotalKembalianPembulatan() {
-      let temp = 0
+      let temp = 0;
 
       this.rows?.forEach((row, i) => {
-        temp += Number(row?.change_pembulatan)
-        console.log('getTotalKembalianPembulatan', row)
-      })
+        temp += Number(row?.change_pembulatan);
+        console.log("getTotalKembalianPembulatan", row);
+      });
 
-      return temp
+      return temp;
     },
     createContent() {
       let content = `
@@ -199,7 +199,7 @@ export default {
                                         </tr>
                                         <tr>
                                           <td style="text-align: left; width: 500px; ">
-                                            <b >TOTAL KEMBALIAN PEMBULATAN</b>
+                                            <b >TOTAL MINUS PEMBULATAN</b>
                                           </td>
                                           <td style="text-align: left; width: 350px; ">
                                             <b>Rp. ${this.getTotalKembalianPembulatan}</b>
@@ -207,7 +207,7 @@ export default {
                                         </tr>
                                         <tr>
                                           <td style="text-align: left; width: 500px; ">
-                                            <b>TOTAL SALDO</b>
+                                            <b>TOTAL KAS</b>
                                           </td>
                                           <td style="text-align: left; width: 350px; ">
                                             <b>Rp. ${this.balance}</b>
@@ -227,54 +227,42 @@ export default {
 
                                     <table style="width: 100%; margin-bottom: 10px"  id="customers">
                                       <thead>
-                                        <tr style="text-transform: capitalize">`
+                                        <tr style="text-transform: capitalize">`;
 
-
-                                          this.columns?.forEach((item, i) => {
-                                            content += `
+      this.columns?.forEach((item, i) => {
+        content += `
                                                 <th>${item?.label}</th>
-                                            `
-                                          });
+                                            `;
+      });
 
-
-
-                                        `</tr>
+      `</tr>
                                       </thead>
                                       <tbody>
-                                        `
+                                        `;
 
-                                        this.rows?.forEach((item, i) => {
+      this.rows?.forEach((item, i) => {
+        content += `<tr class="text-capitalize" style="text-transform: capitalize">`;
 
-                                          content += `<tr class="text-capitalize" style="text-transform: capitalize">`;
+        this.columns?.forEach((col, i) => {
+          if (col?.field == "cashier") {
+            content += `<td>${item[col?.field]?.nama}</td>`;
+          } else if (col?.field == "cashier_confirm") {
+            content += `<td>${getSetuju(item[col?.field])}</td>`;
+          } else if (col?.field == "courir") {
+            content += `<td>${item[col?.field]?.nama}</td>`;
+          } else if (col?.field == "cabang") {
+            content += `<td>${item[col?.field]?.nama}</td>`;
+          } else if (col?.field == "items") {
+            content += `<td>${item[col?.field]?.length}</td>`;
+          } else {
+            content += `<td>${item[col?.field]}</td>`;
+          }
+        });
 
-                                          this.columns?.forEach((col, i) => {
+        content += `</tr>`;
+      });
 
-                                            if(col?.field == 'cashier') {
-                                              content += `<td>${ item[col?.field]?.nama }</td>`
-                                            } else
-                                            if(col?.field == 'cashier_confirm') {
-                                              content += `<td>${ getSetuju(item[col?.field]) }</td>`
-                                            } else
-                                            if(col?.field == 'courir') {
-                                              content += `<td>${ item[col?.field]?.nama }</td>`
-                                            } else
-                                            if(col?.field == 'cabang') {
-                                              content += `<td>${ item[col?.field]?.nama }</td>`
-                                            } else
-                                            if(col?.field == 'items') {
-                                              content += `<td>${ item[col?.field]?.length }</td>`
-                                            } else
-                                            {
-                                              content += `<td>${ item[col?.field] }</td>`
-                                            }
-
-                                          });
-
-                                          content += `</tr>`;
-                                        });
-
-
-                                        `
+      `
                                       </tbody>
                                     </table>
 
@@ -288,13 +276,11 @@ export default {
     },
   },
   data() {
-    return {
-
-    };
+    return {};
   },
   methods: {
     makePDFShare() {
-      if(!this.isCordova) return this.onPDF()
+      if (!this.isCordova) return this.onPDF();
 
       var opts = {
         documentSize: "A4",
@@ -315,7 +301,7 @@ export default {
     async onPDF() {
       window.jsPDF = window.jspdf.jsPDF;
 
-      var doc = new jsPDF('l', 'pt', "a4");
+      var doc = new jsPDF("l", "pt", "a4");
 
       // Source HTMLElement or a string containing HTML.
       // var elementHTML = document.querySelector("#contentToPrint");

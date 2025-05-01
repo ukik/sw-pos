@@ -1,10 +1,16 @@
 <template>
-  <q-dialog @hide="item.cashier_confirm = false" :persistent="false" full-width full-height v-model="fixed">
+  <q-dialog
+    @hide="item.cashier_confirm = false"
+    :persistent="false"
+    full-width
+    full-height
+    v-model="fixed"
+  >
     <q-card>
       <q-form @submit="onSubmit">
         <q-card-actions class="q-pa-none q-pl-xs">
           <q-toolbar class="bg-redx text-black">
-            <q-toolbar-title> KONFIRMASI SALDO </q-toolbar-title>
+            <q-toolbar-title> KONFIRMASI KAS </q-toolbar-title>
             <q-btn v-close-popup flat round dense color="red" outline icon="close" />
           </q-toolbar>
         </q-card-actions>
@@ -15,18 +21,17 @@
           style="height: calc(100vh - 50px - 50px - 67.44px)"
           class="scroll q-pa-sm"
         >
-
           <q-banner class="bg-primary text-white rounded-borders q-mb-sm">
             <template v-slot:avatar>
               <q-icon name="support_agent" color="white" />
             </template>
             Dengan melakukan centang "SETUJU", <br />
-            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR PIKET sudah
-            sepakat jumlah saldo yang diproses valid
+            <b class="text-capitalize">{{ item?.cashier?.nama }} </b> sebagai KASIR PIKET
+            sudah sepakat jumlah kas yang diproses valid
             <template v-slot:action>
               <q-checkbox
                 keep-color
-                :color="item.cashier_confirm ? 'primary' : 'white'"
+                :color="item?.cashier_confirm ? 'primary' : 'white'"
                 dark
                 v-model="item.cashier_confirm"
                 label="SETUJU"
@@ -34,47 +39,45 @@
             </template>
           </q-banner>
 
-
-          <q-banner inline-actions class="bg-white border-1 text-dark rounded-borders q-mt-sm">
+          <q-banner
+            inline-actions
+            class="bg-white border-1 text-dark rounded-borders q-mt-sm"
+          >
             <template v-slot:avatar>
               <q-icon name="account_balance" color="red" />
             </template>
             <!-- <template v-slot:action> -->
-              <q-list bordered separator>
-                <q-item>
-                  <q-item-section>
-                    <q-item-label caption>SALDO AWAL</q-item-label>
-                    <q-item-label class="text-bold">
-                      Rp. {{ balance }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section>
-                    <q-item-label caption>SALDO MASUK</q-item-label>
-                    <q-item-label class="text-bold">
-                      Rp. {{ getTotal?.total_masuk }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section>
-                    <q-item-label caption>SALDO KELUAR</q-item-label>
-                    <q-item-label class="text-bold">
-                      Rp. {{ getTotal?.total_keluar }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section>
-                    <q-item-label caption>TOTAL SALDO</q-item-label>
-                    <q-item-label class="text-h6">
-                      Rp. {{ getTotalSaldo }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-              <!-- <span class="text-h6">Rp. {{ balance }} - Rp. {{ this.getTotal?.total }} = Rp. {{ getTotalSaldo }} </span> -->
+            <q-list bordered separator>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>KAS SEBELUMNYA</q-item-label>
+                  <q-item-label class="text-bold"> Rp. {{ balance }} </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>KAS MASUK</q-item-label>
+                  <q-item-label class="text-bold">
+                    Rp. {{ getTotal?.total_masuk }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>KAS KELUAR</q-item-label>
+                  <q-item-label class="text-bold">
+                    Rp. {{ getTotal?.total_keluar }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>TOTAL KAS</q-item-label>
+                  <q-item-label class="text-h6"> Rp. {{ getTotalSaldo }} </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+            <!-- <span class="text-h6">Rp. {{ balance }} - Rp. {{ this.getTotal?.total }} = Rp. {{ getTotalSaldo }} </span> -->
             <!-- </template> -->
           </q-banner>
         </q-card-section>
@@ -128,13 +131,13 @@ export default {
   computed: {
     ...mapState(useBalanceStore, {
       getTotal: "getTotal",
-      getTotalSaldo: 'getTotalSaldo'
+      getTotalSaldo: "getTotalSaldo",
     }),
     ...mapWritableState(useBalanceStore, {
       struk: "struk",
     }),
     ...mapState(usePengaturanStore, {
-      balance:'balance'
+      balance: "balance",
     }),
     // getSaldo() {
     //   return Number(this.balance) - Number(this.getTotal?.total)
@@ -146,9 +149,7 @@ export default {
     }),
 
     onSubmit() {
-      if (
-        !this.item?.cashier_confirm
-      ) {
+      if (!this.item?.cashier_confirm) {
         return this.$q.notify({
           message: "Peringatan",
           caption: "Lengkapi formulir",
@@ -176,7 +177,7 @@ export default {
         value: this.struk,
       });
 
-      this.struk = null;
+      // this.struk = null;
     },
 
     onOpen(item) {

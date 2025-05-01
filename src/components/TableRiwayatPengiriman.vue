@@ -46,8 +46,8 @@ export default {
   data() {
     return {
       initialPagination: {
-        sortBy: "desc",
-        descending: false,
+        sortBy: "waktu",
+        descending: true,
         page: 1,
         rowsPerPage: 25,
         // rowsNumber: xx if getting data from a server

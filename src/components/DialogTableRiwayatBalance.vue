@@ -14,7 +14,7 @@
             <q-btn v-close-popup dense flat icon="arrow_back"></q-btn>
           </q-avatar>
 
-          SALDO: {{ date }}</q-toolbar-title
+          KAS: {{ date }}</q-toolbar-title
         >
         <q-btn label="cetak laporan" @click="onPrint" outline icon="print"></q-btn>
       </q-card-actions>

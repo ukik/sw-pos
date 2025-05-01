@@ -171,7 +171,7 @@
 import { ref } from "vue";
 
 import { mapState } from "pinia";
-import { usePengirimanStore } from "src/stores/pengiriman-store";
+import { usePenjualanStore } from "src/stores/penjualan-store";
 
 export default {
   setup() {
@@ -190,7 +190,7 @@ export default {
   //   this.isBtnCommaUsed();
   // },
   computed: {
-    ...mapState(usePengirimanStore, ["getStrukItemID"]),
+    ...mapState(usePenjualanStore, ["getStrukItemID"]),
     getStokAkhir() {
       let _model = JSON.parse(JSON.stringify(this.model));
       _model = _model.replace(",", ".");
@@ -229,6 +229,15 @@ export default {
       let _model = JSON.parse(JSON.stringify(this.model));
       _model = _model.replace(",", ".");
 
+      if (Number(_model) > Number(this.item?.stock))
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Berat melebih stok tersedia",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+
       if (_model === "0")
         return this.$q.notify({
           message: "Peringatan",
@@ -246,7 +255,8 @@ export default {
         produk_id: this.item?.id,
         qty: this.$decimal(_model),
         stok_awal: this.$decimal(this.item?.stock),
-        stok_akhir: this.$decimal(this.item?.stock) + this.$decimal(_model),
+        stok_akhir: this.$decimal(this.item?.stock) - this.$decimal(_model),
+        subtotal: this.$decimal(_model) * this.$decimal(this.item?.price),
       });
     },
     onOpen(item) {

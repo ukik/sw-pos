@@ -39,8 +39,10 @@ export default {
     };
   },
   mounted() {
+    // return;
     // this.last_date = getToday;
     const _arr = JSON.parse(JSON.stringify(this.prop_date.split("/")));
+    // console.log("mounted", _arr, this.prop_date.split("/"));
     const _time = date.buildDate({ year: _arr[0], months: _arr[1], date: _arr[2] });
 
     const temp = date.formatDate(_time, "YYYY/MM/DD");

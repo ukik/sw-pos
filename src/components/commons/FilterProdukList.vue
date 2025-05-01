@@ -22,7 +22,7 @@
       :outline="mode != 2"
       dense
       color="red"
-      label="stok habis"
+      label="stok kosong"
     />
   </q-btn-group>
 </template>

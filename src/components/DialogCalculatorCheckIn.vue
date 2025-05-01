@@ -29,14 +29,14 @@
 
           <q-item class="col q-pa-sm" dense>
             <q-item-section>
-              <q-item-label caption>Stok Keluar</q-item-label>
+              <q-item-label caption>Stok Baru</q-item-label>
               <q-item-label>{{ getModelNumber }} kg</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item class="col q-pa-sm" dense>
             <q-item-section>
-              <q-item-label caption>Stok Akhir</q-item-label>
+              <q-item-label caption>Stok Selisih</q-item-label>
               <q-item-label lines="1">{{ getStokAkhir }}</q-item-label>
             </q-item-section>
           </q-item>
@@ -195,7 +195,7 @@ export default {
       let _model = JSON.parse(JSON.stringify(this.model));
       _model = _model.replace(",", ".");
 
-      const sum = Number(this.item?.stock) - Number(_model);
+      const sum = this.$decimal(Number(this.item?.stock) - Number(_model));
       return sum >= 0 ? sum + " kg" : "Tidak Cukup";
     },
     getSum() {
@@ -203,12 +203,12 @@ export default {
       _model = _model.replace(",", ".");
 
       // console.log(_model, _model.replace(",", "."));
-      return Math.round(Number(this.item?.price) * Number(_model), 2);
+      return this.$decimal(Number(this.item?.price) * Number(_model));
     },
     getModelNumber() {
       let _model = JSON.parse(JSON.stringify(this.model));
       _model = _model.replace(",", ".");
-      return Number(_model);
+      return this.$decimal(_model);
     },
   },
   watch: {
@@ -255,9 +255,9 @@ export default {
         ...this.item,
         id: this.getStrukItemID,
         produk_id: this.item?.id,
-        qty: Number(_model),
-        stok_awal: Number(this.item?.stock),
-        stok_akhir: Number(this.item?.stock) - Number(_model),
+        qty: this.$decimal(_model),
+        stok_awal: this.$decimal(this.item?.stock),
+        stok_akhir: this.$decimal(this.item?.stock) - this.$decimal(_model),
       });
     },
     onOpen(item) {

@@ -3,9 +3,19 @@ const routes = [
     path: '/',
     component: () => import ('layouts/MainLayout.vue'),
     redirect: {
-      name: 'penjualan',
+      name: 'NoteApp',
     },
     children: [
+      {
+        meta: {
+          title: 'NoteApp',
+        },
+        path: 'NoteApp',
+        name: 'NoteApp',
+        component: () => import ('pages/NoteApp.vue'),
+      },
+
+
       {
         meta: {
           title: 'penjualan',

@@ -36,6 +36,8 @@ export default defineBoot(async ({ app, router, store }) => {
 
   app.use(VueSweetalert2);
 
+  app.config.globalProperties.$decimal = (value) => Number((Math.round(value * 100) / 100).toFixed(2));
+
   app.component('CamerCordova',
     defineAsyncComponent(() => import('src/components/commons/CamerCordova.vue'))
   )
@@ -51,6 +53,19 @@ export default defineBoot(async ({ app, router, store }) => {
     }
   })
 
+
+  app.config.globalProperties.$removeDuplicates = function (arr, key) {
+    const seen = new Set();
+    return arr.filter(obj => {
+      const value = obj[key];
+      if (seen.has(value)) {
+        return false;
+      } else {
+        seen.add(value);
+        return true;
+      }
+    });
+  }
 
   app.config.globalProperties.$getSetuju = (value) => value ? 'Setuju' : 'Tidak Setuju'
 

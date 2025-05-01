@@ -47,9 +47,8 @@
           <q-icon name="account_balance" />
         </q-item-section>
 
-        <q-item-section>Saldo</q-item-section>
+        <q-item-section>Kas</q-item-section>
       </q-item>
-
 
       <q-separator spaced />
 

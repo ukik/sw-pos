@@ -1,5 +1,5 @@
 <template>
-  <q-dialog full-height v-model="confirm" persistent>
+  <q-dialog persistent full-height v-model="confirm">
     <q-card>
       <q-form @submit="onSubmit">
         <q-card-section class="row items-center text-white bg-primary q-py-none">
@@ -19,7 +19,10 @@
 
         <q-separator></q-separator>
 
-        <q-card-section class="scroll" style="height:calc(100vh - 50px - 105px); min-width: 500px">
+        <q-card-section
+          class="scroll"
+          style="height: calc(100vh - 50px - 105px); min-width: 500px"
+        >
           <q-banner dense class="bg-red text-white q-mb-md">
             <template v-slot:avatar>
               <q-icon name="support_agent" color="white" />
@@ -95,7 +98,7 @@
 </template>
 
 <script>
-import { mapState, mapWritableState } from "pinia";
+import { mapActions, mapState, mapWritableState } from "pinia";
 import { usePengaturanStore } from "src/stores/pengaturan-store";
 
 export default {
@@ -121,17 +124,22 @@ export default {
   },
   watch: {
     cashier(val) {
-      this.pin = null
-    }
+      // alert(JSON.stringify(val));
+      this.pin = null;
+    },
   },
   methods: {
+    ...mapActions(usePengaturanStore, {
+      setCashier: "setCashier",
+    }),
     onOpen() {
       this.confirm = true;
 
       this.cashier = JSON.parse(JSON.stringify(this._cashier));
     },
     onSubmit() {
-      console.log(this.cashier, this.pin)
+      // console.log(this.cashier, this.pin);
+
       if (this.cashier?.pin != this.pin) {
         return this.$q.notify({
           message: "Peringatan",
@@ -142,18 +150,21 @@ export default {
         });
       }
 
-      this._cashier = this.cashier;
+      // this._cashier = this.cashier;
+      this.setCashier(this.cashier);
 
-      this.confirm = false
+      const vm = this;
 
       this.$swal({
         // position: "top-end",
         icon: "success",
         title: "KASIR PIKET",
-        text: `Kasir Piket ${this._cashier?.nama}`,
+        text: `Sekarang ${this._cashier?.nama}`,
         showConfirmButton: false,
         // confirmButtonText: `Invoice ${item.code}`,
-        timer: 2500,
+        timer: 2000,
+      }).then((result) => {
+        vm.confirm = false;
       });
     },
   },

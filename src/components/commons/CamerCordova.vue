@@ -93,7 +93,7 @@ export default {
           alert("Gagal ambil foto: " + message);
         },
         {
-          quality: 80,
+          quality: 70,
           destinationType: Camera.DestinationType.DATA_URL,
           sourceType: Camera.PictureSourceType.CAMERA,
           encodingType: Camera.EncodingType.JPEG,

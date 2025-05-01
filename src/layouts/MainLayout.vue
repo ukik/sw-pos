@@ -8,15 +8,13 @@
           <!-- <q-avatar class="q-mr-sm">
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
           </q-avatar> -->
-
           <q-btn class="q-mr-sm" dense flat round icon="home" to="/" />
-
           {{ $route?.meta?.title }}
         </q-toolbar-title>
 
         <q-item>
           <q-item-section>
-            <q-item-label class="text-white" caption>Modal Kas</q-item-label>
+            <q-item-label class="text-white" caption>Kas Final</q-item-label>
             <q-item-label overline class="text-white">
               Rp.{{ PENGATURAN_balance }}</q-item-label
             >
@@ -68,7 +66,7 @@
       <q-tabs inline-label dense align="justify" class="bg-blue">
         <q-route-tab icon="event" :to="{ name: 'absensi' }" label="absensi" />
         <q-separator vertical color="white"></q-separator>
-        <q-route-tab icon="account_balance" :to="{ name: 'balance' }" label="Saldo" />
+        <q-route-tab icon="account_balance" :to="{ name: 'balance' }" label="Kas" />
 
         <q-separator vertical color="white"></q-separator>
         <q-route-tab icon="point_of_sale" :to="{ name: 'penjualan' }" label="Penjualan" />
@@ -80,15 +78,15 @@
         <q-route-tab icon="install_desktop" :to="{ name: 'check-in' }" label="Cek Buka" />
         <q-separator vertical color="white"></q-separator>
         <q-route-tab
-          icon="content_paste_go"
-          :to="{ name: 'check-out' }"
-          label="Cek Tutup"
-        />
-        <q-separator vertical color="white"></q-separator>
-        <q-route-tab
           icon="event_repeat"
           :to="{ name: 'check-rotasi' }"
           label="Cek Rotasi"
+        />
+        <q-separator vertical color="white"></q-separator>
+        <q-route-tab
+          icon="content_paste_go"
+          :to="{ name: 'check-out' }"
+          label="Cek Tutup"
         />
         <!-- <q-route-tab :to="{ name: 'riwayat_penjualan' }" label="Riwayat Penjualan" />
         <q-route-tab :to="{ name: 'riwayat_pengiriman' }" label="Riwayat Pengiriman" />
@@ -124,6 +122,8 @@
 <script>
 import { ref } from "vue";
 import { date } from "quasar";
+
+import localforage from "localforage";
 
 import { mapActions, mapState, mapWritableState } from "pinia";
 import { usePenjualanStore } from "src/stores/penjualan-store";
@@ -190,8 +190,11 @@ export default {
   },
   computed: {
     ...mapWritableState(usePengaturanStore, {
-      position: "position",
       PENGATURAN_cashier: "cashier",
+    }),
+    ...mapWritableState(usePengaturanStore, {
+      position: "position",
+      // PENGATURAN_cashier: "cashier",
       PENGATURAN_cabang: "cabang",
       PENGATURAN_balance: "balance",
       PENGATURAN_list_cashiers: "list_cashiers",
@@ -221,7 +224,7 @@ export default {
     ...mapState(useCheckInStore, {
       // CHECKIN_items: "items",
       CHECKIN_struk: "struk",
-      CHECKIN_struks: "struks",
+      // CHECKIN_struks: "struks",
       CHECKIN_invoice: "invoice",
     }),
     ...mapState(useCheckOutStore, {
@@ -231,7 +234,7 @@ export default {
     }),
     ...mapState(useAbsensiStore, {
       // CHECKOUT_items: "items",
-      ABSENSI_struks: "struks",
+      // ABSENSI_struks: "struks",
       ABSENSI_struk: "struk",
       ABSENSI_invoice: "invoice",
       ABSENSI_getPiketSudahAbsensi: "getPiketSudahAbsensi",
@@ -239,7 +242,7 @@ export default {
     ...mapState(useBalanceStore, {
       // CHECKIN_items: "items",
       BALANCE_struk: "struk",
-      BALANCE_struks: "struks",
+      // BALANCE_struks: "struks",
       BALANCE_invoice: "invoice",
     }),
     indexTerms() {
@@ -408,13 +411,49 @@ export default {
       console.log("MAINLAYOUT PENGATURAN_balance");
       localStorage.setItem("PENGATURAN-BALANCE", JSON.stringify(val));
     },
-    PENGATURAN_list_cashiers(val) {
+    async PENGATURAN_list_cashiers(val) {
       console.log("MAINLAYOUT PENGATURAN_list_cashiers");
       localStorage.setItem("PENGATURAN-DAFTAR-KASIR", JSON.stringify(val));
+      return;
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: "PENGATURAN-DAFTAR-KASIR",
+      });
+
+      await db.clear();
+
+      val.forEach(async (element) => {
+        const id = Date.now().toString();
+        const struk = {
+          ...element,
+          id,
+        };
+        await db.setItem(id, { text: JSON.stringify(struk) });
+      });
+
+      return;
     },
-    PENGATURAN_list_courirs(val) {
+    async PENGATURAN_list_courirs(val) {
       console.log("MAINLAYOUT PENGATURAN_list_courirs");
       localStorage.setItem("PENGATURAN-DAFTAR-KURIR", JSON.stringify(val));
+      return;
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: "PENGATURAN-DAFTAR-KURIR",
+      });
+
+      await db.clear();
+
+      val.forEach(async (element) => {
+        const id = Date.now().toString();
+        const struk = {
+          ...element,
+          id,
+        };
+        await db.setItem(id, { text: JSON.stringify(struk) });
+      });
+
+      return;
     },
     // ---------------------------- //
     BALANCE_struk: {
@@ -468,6 +507,8 @@ export default {
     }),
     ...mapActions(usePengaturanStore, {
       PENGATURAN_initLocalStorage: "initLocalStorage",
+      // PENGATURAN_updateLocalStorageCashier: "updateLocalStorageCashier",
+      // PENGATURAN_updateLocalStorageCourir: "updateLocalStorageCourir",
     }),
     ...mapActions(useAbsensiStore, {
       ABSENSI_initLocalStorage: "initLocalStorage",
@@ -575,6 +616,8 @@ export default {
   created() {
     // ABSENSI dibutuhkan untuk restriction halaman
     this.ABSENSI_loadLocalStorageStruks(tanggalString);
+    // this.PENGATURAN_updateLocalStorageCashier();
+    // this.PENGATURAN_updateLocalStorageCourir();
 
     this.PENJUALAN_initLocalStorage();
     this.PENGIRIMAN_initLocalStorage();
@@ -633,7 +676,7 @@ export default {
           break;
         case "DialogConfirmBalance":
           vm.BALANCE_updateLocalStorage();
-          vm.onSwal(event.value, "riwayat_balance", "SALDO SELESAI");
+          vm.onSwal(event.value, "riwayat_balance", "KAS SELESAI");
           break;
       }
     });

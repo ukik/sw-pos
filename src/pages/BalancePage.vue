@@ -83,7 +83,7 @@
               v-model="status"
               :emit-value="false"
               option-label="nama"
-              :options="['SALDO KELUAR', 'SALDO MASUK']"
+              :options="['KAS KELUAR', 'KAS MASUK']"
               label="Pilih Tipe"
               color="teal"
               options-selected-class="text-deep-orange"
@@ -101,7 +101,7 @@
     <q-page-sticky class="q-pr-sm" position="top-right" :offset="[0, 0]">
       <q-item style="height: 35px" dense class="bg-sw flex flex-center text-white">
         <q-item-section>
-          <q-item-label class="text-center">STRUK SALDO</q-item-label>
+          <q-item-label class="text-center">STRUK KAS</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -122,7 +122,7 @@
 
       <q-item style="height: 35px" dense class="bg-blue items-center text-white">
         <q-item-section>
-          <q-item-label class="text-left text-white" caption>SALDO MASUK</q-item-label>
+          <q-item-label class="text-left text-white" caption>KAS MASUK</q-item-label>
         </q-item-section>
         <q-item-section side>
           <q-item-label lines="1" class="text-left text-white text-dark"
@@ -132,7 +132,7 @@
       </q-item>
       <q-item style="height: 35px" dense class="bg-blue items-center text-white">
         <q-item-section>
-          <q-item-label class="text-left text-white" caption>SALDO KELUAR </q-item-label>
+          <q-item-label class="text-left text-white" caption>KAS KELUAR </q-item-label>
         </q-item-section>
         <q-item-section side>
           <q-item-label lines="1" class="text-left text-white text-dark"
@@ -143,7 +143,7 @@
 
       <q-item style="height: 35px" dense class="bg-sw items-center text-white">
         <q-item-section>
-          <q-item-label class="text-left text-white" caption>TOTAL SALDO </q-item-label>
+          <q-item-label class="text-left text-white" caption>TOTAL KAS </q-item-label>
         </q-item-section>
         <q-item-section side>
           <q-item-label lines="1" class="text-left text-white text-h6"
@@ -182,7 +182,7 @@
           color="pink"
           class="text-h6 full-width"
           style="height: 50px"
-          label="saldo kurang"
+          label="kas kurang"
           icon-right="warning"
         />
       </div>
@@ -191,7 +191,7 @@
     <!-- <q-page-sticky class="q-pr-sm" position="top-right" :offset="[0, 0]">
       <q-item style="height: 35px" dense class="bg-sw flex flex-center text-white">
         <q-item-section>
-          <q-item-label class="text-center">STRUK SALDO</q-item-label>
+          <q-item-label class="text-center">STRUK KAS</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -272,10 +272,10 @@ export default {
   },
   data() {
     return {
-      status: "SALDO MASUK",
+      status: "",
       // pin: null,
-      keterangan: "333333333",
-      nominal: 1000,
+      keterangan: "",
+      nominal: 0,
     };
   },
   computed: {
@@ -357,7 +357,7 @@ export default {
     onNotifySaldoKurang() {
       this.$q.notify({
         message: "Peringatan",
-        caption: "Saldo kurang",
+        caption: "Kas kurang",
         icon: "warning",
         color: "negative",
         position: "top",

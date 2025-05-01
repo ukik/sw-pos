@@ -1,13 +1,16 @@
 <template>
   <q-page id="page" class="q-pa-sm items-start">
-    <div class="q-col-gutter-smX rowx colX">
-      <DialogAbsensi
-        ref="dialog_absensi"
-        @onBubbleEvent="onBubbleEventDialogAbsensi"
-      ></DialogAbsensi>
+    <DialogAbsensi
+      :dialog="medium"
+      ref="dialog_absensi"
+      @onBubbleEvent="onBubbleEventDialogAbsensi"
+    ></DialogAbsensi>
 
+    <!-- <q-dialog persistent full-width full-height v-model="medium"> xxxxxxx </q-dialog> -->
+    <div class="q-col-gutter-smX rowx colX">
       <div class="col-12 q-mb-sm row q-col-gutter-sm">
         <div class="col-12">
+          <!-- <q-btn label="DELETE LOCAL STORAGE" @click="deleteLocalStorage"></q-btn> -->
           <q-banner
             inline-actions
             dense
@@ -38,6 +41,7 @@
               <q-icon name="warning" color="white" />
             </template>
             Wajib absensi datang dan pulang
+            <!-- {{ list_cashiers }} -->
           </q-banner>
         </div>
         <!-- <div class="col-auto">
@@ -74,7 +78,6 @@
       <q-list separator bordered class="col-12">
         <q-item-label class="text-left" header>ABSENSI DATANG</q-item-label>
         <q-separator></q-separator>
-
         <q-item
           v-for="(item, index) in getListCashier"
           @click="openDialogAbsensi(item, 'ABSENSI DATANG')"
@@ -89,7 +92,6 @@
           </q-item-section>
 
           <q-item-section>
-
             <q-item-label class="text-capitalize text-h6">{{ item?.nama }}</q-item-label>
             <q-item-label caption
               >CATATAN: {{ item?.absensi?.catatan_masuk }}</q-item-label
@@ -154,8 +156,6 @@
 
 <script setup>
 import { ref } from "vue";
-
-import DialogAbsensi from "src/components/DialogAbsensi.vue";
 </script>
 
 <script>
@@ -166,6 +166,7 @@ import { mapActions, mapWritableState, mapState } from "pinia";
 import { usePengaturanStore } from "src/stores/pengaturan-store";
 import DatePicker from "./AbsensiPage/DatePicker.vue";
 import { useAbsensiStore } from "src/stores/absensi-store";
+import DialogAbsensi from "src/components/DialogAbsensi.vue";
 
 const timeStamp = Date.now();
 const formattedString = date.formatDate(Date.now(), "YYYY/MM/DD");
@@ -174,20 +175,23 @@ const waktuString = date.formatDate(Date.now(), "HH:mm:ss");
 export default {
   components: {
     DatePicker,
+    DialogAbsensi,
   },
   setup() {
     return {
       updateProxy() {},
     };
   },
+  emits: ["onBubbleEvent"],
   data() {
     return {
       today: "",
       proxy: false,
+      medium: false,
     };
   },
   mounted() {
-    this.today = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
+    this.today = date.formatDate(Date.now(), "YYYY/MM/DD");
   },
   computed: {
     ...mapState(usePengaturanStore, {
@@ -199,6 +203,9 @@ export default {
       struks: "struks",
       struk: "struk",
     }),
+    ...mapState(useAbsensiStore, {
+      // getLocalStorageStruks: "getLocalStorageStruks",
+    }),
     getStruksEmpty() {
       return this.struks?.length <= 0 ? false : true;
     },
@@ -209,7 +216,7 @@ export default {
         const el1 = temp[i];
         for (let j = 0; j < this.struks.length; j++) {
           const el2 = this.struks[j];
-          if (el2.id == el1.id) {
+          if (el2?.cashier?.id == el1.id) {
             el1["absensi"] = el2;
 
             console.log(el1);
@@ -241,10 +248,26 @@ export default {
     ...mapActions(useAbsensiStore, {
       loadLocalStorageStruks: "loadLocalStorageStruks",
       addNewStruk: "addNewStruk",
+      deleteLocalStorage: "deleteLocalStorage",
     }),
-    openDialogAbsensi(item, title) {
+    async openDialogAbsensi(item, title) {
+      console.log(item?.id, this.cashier?.id, this.item?.id != this.cashier?.id);
 
-      console.log(item?.id, this.cashier?.id, this.item?.id != this.cashier?.id)
+      // this.$refs.dialog_absensi?.onOpen();
+
+      if (!this.cashier?.id) {
+        this.$global.$emit("MainLayout", {
+          label: "DialogGantiKasir",
+        });
+
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Pilih kasir piket",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      }
 
       if (item?.id != this.cashier?.id) {
         return this.$q.notify({
@@ -258,20 +281,24 @@ export default {
 
       let temp = {};
 
-      if (item?.id == this.struk?.cashier_id) {
-        temp = this.struk;
-        temp["cashier"] = item;
-      } else {
-        this.addNewStruk();
-        temp = this.struk;
-      }
+      await this.$nextTick(() => {
+        if (item?.id == this.struk?.cashier_id) {
+          temp = this.struk;
+          temp["cashier"] = item;
+        } else {
+          this.addNewStruk();
+          temp = this.struk;
+        }
 
-      this.struk.cashier_id = item.id;
+        this.struk.cashier_id = item.id;
 
-      if (item?.absensi) temp = item;
+        if (item?.absensi) temp = item;
 
-      console.log("openDialogAbsensi", temp, item?.absensi);
+        console.log("openDialogAbsensi", temp, item?.absensi);
+      });
 
+      // alert(JSON.stringify(temp));
+      // this.$refs.dialog_absensi?.onOpen();
       this.$refs.dialog_absensi?.onOpen(temp, title);
     },
     onBubbleEvent(payload) {

@@ -1,5 +1,15 @@
 export default [
   {
+    name: "waktu",
+    label: "waktu",
+    field: "waktu",
+    sortable: true,
+  },
+  {
+    label: "tanggal",
+    field: "tanggal",
+  },
+  {
     label: "id",
     field: "id",
   },
@@ -61,14 +71,14 @@ export default [
   //   label: "catatan pulang",
   //   field: "catatan_pulang",
   // },
-  {
-    label: "tanggal",
-    field: "tanggal",
-  },
-  {
-    label: "waktu",
-    field: "waktu",
-  },
+  // {
+  //   label: "tanggal",
+  //   field: "tanggal",
+  // },
+  // {
+  //   label: "waktu",
+  //   field: "waktu",
+  // },
   // {
   //   label: "created_at",
   //   field: "created_at",

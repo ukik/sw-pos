@@ -1,7 +1,9 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-
+import { ref, nextTick } from 'vue';
 import { date } from "quasar";
 import { usePengaturanStore } from './pengaturan-store';
+
+import localforage from "localforage";
 
 const timeStamp = Date.now();
 const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
@@ -22,6 +24,7 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
     },
     struks: [],
     invoice: null,
+    mode: '', // ABSENSI MASUK / ABSENSI PULANG
   }),
 
   getters: {
@@ -71,6 +74,16 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
         return Number(struk?.items?.length) + 1
       }
       return 1
+    },
+    getLocalStorageStruks() {
+      const storage_name = 'ABSENSI-STRUKS-' + date.formatDate(Date.now(), "YYYY-MM-DD")
+
+      // console.log('loadLocalStorageStruks ABSENSI', storage_name)
+      if (localStorage.getItem(storage_name)) {
+        // alert(`'getLocalStorageStruks' ${storage_name}`)
+        // return 111111
+        return JSON.parse(localStorage.getItem(storage_name));
+      }
     },
   },
 
@@ -127,7 +140,17 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
 
       }
     },
-    updateLocalStorage() {
+    deleteLocalStorage() {
+      const storage_name = 'ABSENSI-STRUKS-' + date.formatDate(Date.now(), "YYYY-MM-DD")
+
+      if (localStorage.getItem(storage_name)) localStorage.removeItem(storage_name)
+      if (localStorage.getItem('ABSENSI-STRUK')) localStorage.removeItem('ABSENSI-STRUK')
+
+      this.struks = []
+      this.struk = {}
+      // alert('deleteLocalStorage')
+    },
+    async updateLocalStorage() {
 
       const { balance, position, cabang, cashier, shift } = usePengaturanStore()
 
@@ -135,25 +158,77 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
 
       const storage_name = 'ABSENSI-STRUKS-' + date.formatDate(Date.now(), "YYYY-MM-DD")
 
-      // let model = JSON.parse(JSON.stringify(localStorage.getItem(storage_name)));
+
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      let notesArr = []
+      if (this.mode == 'ABSENSI MASUK') {
+        // await nextTick();
+        const id = Date.now().toString()
+        this.struk = {
+          ...this.struk, id
+        }
+        await db.setItem(id, { text: JSON.stringify(this.struk) })
+
+        await nextTick();
+        await db.iterate((value, key) => {
+          const n = { ...value, id: key }
+          notesArr.push(JSON.parse(n?.text))
+        })
+        this.struks = notesArr
+        console.log('ABSENSI MASUK', notesArr)
+      } else if (this.mode == 'ABSENSI PULANG') {
+        await db.setItem(this.struk?.id, {
+            text: JSON.stringify({
+            ...this.struk,
+            jam_selesai: date.formatDate(Date.now(), "HH:mm:ss"),
+            catatan_pulang: this.struk?.catatan_pulang,
+            modal_akhir: balance
+          })
+        })
+
+        await nextTick();
+        await db.iterate((value, key) => {
+          const n = { ...value, id: key }
+          notesArr.push(JSON.parse(n?.text))
+        })
+        this.struks = notesArr
+        console.log('ABSENSI PULANG', notesArr)
+      }
+
+      this.invoice = this.struk
+
+      this.struk = null
+      return
       let model = []
 
       if (localStorage.getItem(storage_name)) model = JSON.parse(localStorage.getItem(storage_name));
 
-      if (this.struk?.jam_mulai && this.struk?.jam_selesai == '') {
+      this.invoice = this.struk
+
+      if (this.mode == 'ABSENSI MASUK') {
 
         let addModelDatang = [
           ...model,
           this.struk,
         ]
 
+        await nextTick();
         localStorage.setItem(storage_name, JSON.stringify(addModelDatang))
 
+        await nextTick();
         this.struks = addModelDatang
 
         console.log('absensi-store addModelDatang', addModelDatang)
+        // alert(`'absensi-store addModelDatang', ${JSON.stringify(addModelDatang)}`)
+      }
 
-      } else if (this.struk?.jam_mulai && this.struk?.jam_selesai) {
+      if (this.mode == 'ABSENSI PULANG') {
+      // } else if (this.struk?.jam_mulai && this.struk?.jam_selesai) {
         for (let i = 0; i < model.length; i++) {
           const element = model[i];
           if (element?.cashier_id == this.struk?.cashier_id) {
@@ -171,25 +246,43 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
           ...model
         ]
 
+        await nextTick();
         localStorage.setItem(storage_name, JSON.stringify(addModelPulang))
 
+        await nextTick();
         this.struks = addModelPulang
 
         console.log('absensi-store addModelPulang', addModelPulang)
+        // alert(`'absensi-store addModelPulang', ${addModelPulang}`)
       }
 
-
-
-      this.invoice = this.struk
     },
-    initLocalStorage() {
+    async initLocalStorage() {
+      // yang seperti ini gak usah pake indexedDB
       if (localStorage.getItem('ABSENSI-STRUK')) {
         this.struk = JSON.parse(localStorage.getItem('ABSENSI-STRUK'));
       }
     },
-    loadLocalStorageStruks(set_date) {
+    async loadLocalStorageStruks(set_date) {
       const storage_name = 'ABSENSI-STRUKS-' + set_date
 
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      await nextTick();
+      let notesArr = []
+      await db.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr.push(JSON.parse(n?.text))
+      })
+      this.struks = notesArr
+      console.log('loadLocalStorageStruks X', notesArr)
+
+
+      return
       console.log('loadLocalStorageStruks ABSENSI', storage_name)
       if (localStorage.getItem(storage_name)) {
         this.struks = JSON.parse(localStorage.getItem(storage_name));

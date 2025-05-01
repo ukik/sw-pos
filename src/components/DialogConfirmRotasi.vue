@@ -359,6 +359,7 @@ export default {
     }),
     ...mapActions(usePenjualanStore, {
       onSyncPenjualanRotasiItems: "onSyncPenjualanRotasiItems",
+      isItemOverWeight: "isItemOverWeight",
     }),
     onNofityForm() {
       this.$q.notify({
@@ -369,7 +370,7 @@ export default {
         position: "top",
       });
     },
-    onSubmit() {
+    async onSubmit() {
       if (this.isCheckDone) {
         return this.$q.notify({
           message: "Peringatan",
@@ -409,6 +410,10 @@ export default {
 
       this.struk = this.item;
 
+      const is_item_over_weight = await this.isItemOverWeight(this.struk?.items);
+      console.log("isItemOverWeight", is_item_over_weight);
+      if (is_item_over_weight) return;
+
       this.addItemToStruk();
 
       this.$global.$emit("MainLayout", {
@@ -418,7 +423,7 @@ export default {
 
       this.onSyncPenjualanRotasiItems(this.struk);
 
-      this.struk = null;
+      // this.struk = null;
     },
 
     onOpen(item) {

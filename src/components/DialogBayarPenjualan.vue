@@ -19,7 +19,7 @@
               readonly
               input-class="text-h6"
               v-model="balance"
-              label="Saldo Awal"
+              label="Kas Sebelumnya"
             >
               <template v-slot:prepend> Rp. </template>
             </q-input>
@@ -66,52 +66,48 @@
       <q-separator></q-separator>
 
       <q-card-section>
-      <div class="row q-col-gutter-md">
-        <div :class="Number(model) > 0 ? 'col-auto' : 'col-12'">
-        <q-input
-          mask="Rp. ###############"
-          unmasked-value
-          readonly
-          input-class="text-h5"
-          v-model="model"
-          type="text"
-          outlined
-        >
-          <template v-slot:before>
-            <span>Bayar</span>
-          </template>
-          <template v-slot:after>
-            <q-btn
-              v-if="model !== '0'"
-              @click="model = '0'"
-              color="red"
-              class="full-height full-width"
-              icon="delete"
-            ></q-btn>
-          </template>
-        </q-input>
-        </div>
-        <div v-if="Number(model) > 0" class="col">
-          <q-input
+        <div class="row q-col-gutter-md">
+          <div :class="Number(model) > 0 ? 'col-auto' : 'col-12'">
+            <q-input
+              mask="Rp. ###############"
+              unmasked-value
+              readonly
+              input-class="text-h5"
+              v-model="model"
+              type="text"
+              outlined
+            >
+              <template v-slot:before>
+                <span>Bayar</span>
+              </template>
+              <template v-slot:after>
+                <q-btn
+                  v-if="model !== '0'"
+                  @click="model = '0'"
+                  color="red"
+                  class="full-height full-width"
+                  icon="delete"
+                ></q-btn>
+              </template>
+            </q-input>
+          </div>
+          <div v-if="Number(model) > 0" class="col">
+            <q-input
               borderless
               readonly
               input-class="text-h6"
               v-model="getTotalSaldo"
-              label="Saldo Akhir"
+              label="Kas Final"
             >
               <template v-slot:prepend> Rp. </template>
             </q-input>
-        </div>
+          </div>
         </div>
       </q-card-section>
 
       <q-separator />
 
-
-      <q-card-section
-        style="height: calc(100% - 86.2px - 88px - 25px)"
-        class="scroll"
-      >
+      <q-card-section style="height: calc(100% - 86.2px - 88px - 25px)" class="scroll">
         <div class="row q-col-gutter-md">
           <div class="row col q-col-gutter-sm flex justify-center">
             <div class="col-4">
@@ -302,9 +298,7 @@ export default {
       return Number(this.struk?.bayar) - Number(this.getPembulatanReceh);
     },
     getChangePembulatanSisa() {
-      return Number(
-          this.getTotalStruk - this.$pembulatanReceh(this.getTotalStruk)
-        )
+      return Number(this.getTotalStruk - this.$pembulatanReceh(this.getTotalStruk));
     },
     getPembulatanReceh() {
       return this.$pembulatanReceh(this.getTotalStruk);
@@ -320,8 +314,8 @@ export default {
     },
 
     getTotalSaldo() {
-      const { balance } = usePengaturanStore()
-      return Number(balance) + Number(this.model) - Number(this.getChangePembulatan)
+      const { balance } = usePengaturanStore();
+      return Number(balance) + Number(this.model) - Number(this.getChangePembulatan);
     },
   },
   watch: {
@@ -331,14 +325,14 @@ export default {
     item: {
       deep: true,
       handler(val) {
-        console.log('item', val)
-
-      }
-    }
+        console.log("item", val);
+      },
+    },
   },
   methods: {
     ...mapActions(usePenjualanStore, {
       addItemToStruk: "addItemToStruk",
+      isItemOverWeight: "isItemOverWeight",
     }),
     onHide() {},
     onAdd(val) {
@@ -358,7 +352,7 @@ export default {
 
       this.model = temp.toString();
     },
-    onClose() {
+    async onClose() {
       if (this.getChange < 0 || this.model <= 0)
         return this.$q.notify({
           message: "Peringatan",
@@ -393,6 +387,10 @@ export default {
       this.struk.stok_awal = this.getTotal?.stok_awal;
       this.struk.stok_akhir = this.getTotal?.stok_akhir;
 
+      const is_item_over_weight = await this.isItemOverWeight(this.struk?.items);
+      console.log("isItemOverWeight", is_item_over_weight);
+      if (is_item_over_weight) return;
+
       this.addItemToStruk();
 
       // this.$emit("onBubbleEvent", _struk);
@@ -402,38 +400,7 @@ export default {
         value: this.struk,
       });
 
-      this.struk = null;
-
-      // localStorage.clear("PENJUALAN-STRUK");
-
-      // const vm = this;
-
-      // this.$swal({
-      //   // position: "top-end",
-      //   icon: "success",
-      //   title: "Penjualan Selesai",
-      //   text: `Struk diterbitkan ${_struk?.created_at}`,
-      //   showConfirmButton: true,
-      //   confirmButtonText: `${_struk.code}`,
-      //   // timer: 1500,
-      //   allowOutsideClick: () => {
-      //     const popup = Swal.getPopup();
-      //     popup.classList.remove("swal2-show");
-      //     setTimeout(() => {
-      //       popup.classList.add("animate__animated", "animate__headShake");
-      //     });
-      //     setTimeout(() => {
-      //       popup.classList.remove("animate__animated", "animate__headShake");
-      //     }, 500);
-      //     return false;
-      //   },
-      // }).then((result) => {
-      //   if (result.isConfirmed) {
-      //     vm.$router.push({
-      //       name: "riwayat_penjualan",
-      //     });
-      //   }
-      // });
+      // this.struk = null;
     },
     onOpen(item) {
       this.fixed = true;

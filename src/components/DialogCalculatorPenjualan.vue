@@ -251,15 +251,18 @@ export default {
       let _model = JSON.parse(JSON.stringify(this.model));
       _model = _model.replace(",", ".");
 
-      const sum = Number(this.item?.stock) - Number(_model);
+      const sum = this.$decimal(Number(this.item?.stock) - Number(_model));
       return sum >= 0 ? sum + " kg" : "Tidak Cukup";
     },
-    getSum() {
-      let _model = JSON.parse(JSON.stringify(this.model));
-      _model = _model.replace(",", ".");
+    getSum: {
+      get() {
+        let _model = JSON.parse(JSON.stringify(this.model));
+        _model = _model.replace(",", ".");
 
-      // console.log(_model, _model.replace(",", "."));
-      return Math.round(Number(this.item?.price) * Number(_model), 2);
+        // console.log(_model, _model.replace(",", "."));
+        return this.$decimal(Number(this.item?.price) * Number(_model));
+      },
+      set(v) {},
     },
   },
   watch: {
@@ -306,10 +309,10 @@ export default {
         ...this.item,
         id: this.getStrukItemID,
         produk_id: this.item?.id,
-        qty: Number(_model),
-        stok_awal: Number(this.item?.stock),
-        stok_akhir: Number(this.item?.stock) - Number(_model),
-        subtotal: Math.round(Number(_model) * Number(this.item?.price)),
+        qty: this.$decimal(_model),
+        stok_awal: this.$decimal(this.item?.stock),
+        stok_akhir: this.$decimal(this.item?.stock) - this.$decimal(_model),
+        subtotal: this.$decimal(_model) * this.$decimal(this.item?.price),
       });
     },
     onOpen(item) {

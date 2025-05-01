@@ -5,9 +5,22 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     redirect: {
-      name: 'penjualan',
+      name: 'NoteApp',
     },
     children: [
+      {
+        meta: {
+          title: 'NoteApp',
+        },
+        path: 'NoteApp',
+        name: 'NoteApp',
+        components: {
+          default: () => import('pages/NoteApp.vue'),
+          index: INDEX
+        },
+      },
+
+
       {
         meta: {
           title: 'absensi',
@@ -89,7 +102,7 @@ const routes = [
 
       {
         meta: {
-          title: 'saldo',
+          title: 'kas',
         },
         path: 'balance',
         name: 'balance',
@@ -200,7 +213,7 @@ const routes = [
       },
       {
         meta: {
-          title: 'riwayat saldo',
+          title: 'riwayat kas',
         },
         path: 'riwayat-balance',
         name: 'riwayat_balance',

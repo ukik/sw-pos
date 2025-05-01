@@ -28,7 +28,7 @@
           <template v-slot:avatar>
             <q-icon name="warning" color="white" />
           </template>
-          Hanya bisa dilakukan sekali dalam satu hari
+          Wajib dilakukan saat ganti shift, hanya 1 kali sehari
           <div v-if="isCheckDone" class="">
             SELESAI PROSES: {{ getCheckDone?.created_at }}
           </div>
@@ -193,6 +193,9 @@ export default {
       addNewStruk: "addNewStruk",
       updateLocalStorage: "updateLocalStorage",
     }),
+    ...mapActions(usePenjualanStore, {
+      isItemOverWeight: "isItemOverWeight",
+    }),
     openDialogCatatan() {
       if (!this.struk?.id)
         return this.$q.notify({
@@ -205,6 +208,17 @@ export default {
       this.$refs.dialog_catatan?.onOpen(this.struk.catatan);
     },
     openDialogCalculatorRotasi(item) {
+      console.log(item);
+
+      if (Number(item?.stock) <= 0)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Stok kosong",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+
       if (this.isCheckDone)
         return this.$q.notify({
           message: "Peringatan",
@@ -219,7 +233,7 @@ export default {
     openDialogConfirmRotasiPreview() {
       if (this.isCheckDone) return this.$refs.dialog_bayar?.onOpen(this.struk);
     },
-    openDialogConfirmRotasi() {
+    async openDialogConfirmRotasi() {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
@@ -229,6 +243,10 @@ export default {
           position: "top",
         });
 
+      const is_item_over_weight = await this.isItemOverWeight(this.struk?.items);
+      console.log("isItemOverWeight", is_item_over_weight);
+      if (is_item_over_weight) return;
+
       this.$refs.dialog_bayar?.onOpen(this.struk);
     },
     onBubbleEventDialogCalculatorRotasi(item) {
@@ -236,7 +254,41 @@ export default {
 
       this.addNewStruk();
 
-      this.struk?.items?.push(item);
+      // Anti Duplicate Item Struk
+      // ======================================================
+      let arr = JSON.parse(JSON.stringify(this.struk?.items));
+      console.log("arr", arr);
+      let temp_qty = item?.qty;
+      for (var i = 0; i <= arr.length; i++) {
+        if (item?.produk_id == arr[i]?.produk_id) {
+          temp_qty += Number(arr[i]?.qty);
+        }
+      }
+      arr.push(item);
+      arr = this.$removeDuplicates(arr, "produk_id");
+      console.log("arr 1", arr);
+      for (var i = 0; i <= arr.length; i++) {
+        if (item?.produk_id == arr[i]?.produk_id) {
+          arr[i].qty = item?.qty; // temp_qty; // karena ini data diganti jadi langsung saja yang baru
+          // arr[i].stok_awal = temp_qty; // karena ini data diganti jadi langsung saja yang baru
+          // if (temp_qty > arr[i].stock) { // karena ini data diganti jadi langsung saja yang baru
+          if (item?.qty > arr[i].stock) {
+            return this.$q.notify({
+              message: "Peringatan",
+              caption: "Stok " + arr[i].name + " tidak cukup",
+              icon: "warning",
+              color: "negative",
+              position: "top",
+            });
+          }
+        }
+      }
+
+      console.log("arr 2", arr);
+      this.struk.items = arr;
+      // ======================================================
+
+      // this.struk?.items?.push(item);
 
       // // this.struk.bill = this.getTotalStruk;
       // this.struk.qty = this.getTotal?.qty;

@@ -1,8 +1,13 @@
 <template>
-  <q-dialog @show="show = true" full-width full-height v-model="fixed" transition-show="slide-down"
-    transition-hide="slide-up">
+  <q-dialog
+    @show="show = true"
+    full-width
+    full-height
+    v-model="fixed"
+    transition-show="slide-down"
+    transition-hide="slide-up"
+  >
     <q-card id="contentToPrint">
-
       <q-card-actions class="bg-sw text-white q-py-none">
         <q-toolbar-title>
           <q-avatar class="">
@@ -35,7 +40,7 @@
         <table id="customers2">
           <tbody>
             <tr>
-              <td colspan="4">{{ invoice?.type }} </td>
+              <td colspan="4">{{ invoice?.type }}</td>
             </tr>
             <tr>
               <td>ID</td>
@@ -51,18 +56,17 @@
             </tr>
 
             <tr>
-              <td>Saldo Masuk</td>
+              <td>Kas Masuk</td>
               <td>Rp. {{ invoice?.total_masuk }}</td>
-              <td>Saldo Keluar</td>
+              <td>Kas Keluar</td>
               <td>Rp. {{ invoice?.total_keluar }}</td>
             </tr>
             <tr>
-              <td>Saldo Total</td>
+              <td>Kas Final</td>
               <td>Rp. {{ invoice?.total_saldo }}</td>
               <td>Konfirmasi</td>
               <td>Kasir {{ $getSetuju(invoice?.cashier_confirm) }}</td>
             </tr>
-
 
             <tr>
               <td>Latitude</td>
@@ -124,7 +128,7 @@ export default {
       invoice: "invoice",
     }),
     getTotal() {
-      this.invoice?.items?.forEach((element) => { });
+      this.invoice?.items?.forEach((element) => {});
     },
     createContent() {
       let invoice = this.invoice;
@@ -205,85 +209,57 @@ export default {
                                   <table id="customers2">
                                     <tbody>
                                       <tr>
-                                        <td colspan="4">${ invoice?.type } </td>
+                                        <td colspan="4">${invoice?.type}</td>
                                       </tr>
                                       <tr>
                                         <td>ID</td>
-                                        <td>${ invoice?.id }</td>
+                                        <td>${invoice?.id}</td>
                                         <td>Code</td>
-                                        <td>${ invoice?.code }</td>
+                                        <td>${invoice?.code}</td>
                                       </tr>
                                       <tr>
                                         <td>Kasir</td>
-                                        <td>${ invoice?.cashier?.nama }</td>
+                                        <td>${invoice?.cashier?.nama}</td>
                                         <td>Cabang</td>
-                                        <td>${ invoice?.cabang?.nama }</td>
+                                        <td>${invoice?.cabang?.nama}</td>
                                       </tr>
-
-
 
                                       <tr>
-                                        <td>Saldo Awal</td>
-                                        <td>Rp. ${ invoice?.balance }</td>
-                                        <td>Saldo Akhir</td>
-                                        <td>Rp. ${ invoice?.balance_akhir }</td>
+                                        <td>Kas Masuk</td>
+                                        <td>Rp. ${invoice?.total_masuk}</td>
+                                        <td>Kas Keluar</td>
+                                        <td>Rp. ${invoice?.total_keluar}</td>
                                       </tr>
                                       <tr>
-                                        <td>Tagihan</td>
-                                        <td>Rp. ${ invoice?.bill }</td>
-                                        <td>Tagihan Pembulatan</td>
-                                        <td>Rp. ${ invoice?.bill_pembulatan }</td>
+                                        <td>Kas Final</td>
+                                        <td>Rp. ${invoice?.total_saldo}</td>
+                                        <td>Konfirmasi</td>
+                                        <td>Kasir ${$getSetuju(
+                                          invoice?.cashier_confirm
+                                        )}</td>
                                       </tr>
-                                      <tr>
-                                        <td>Dibayar</td>
-                                        <td>Rp. ${ invoice?.bayar }</td>
-                                        <td>Kembalian</td>
-                                        <td>Rp. ${ invoice?.change }</td>
-                                      </tr>
-                                      <tr>
-                                        <td>Kembalian Pembulatan</td>
-                                        <td>Rp. ${ invoice?.change_pembulatan }</td>
-                                        <td>Kembalian Aktual</td>
-                                        <td>Rp. ${ invoice?.change_aktual }</td>
-                                      </tr>
-                                      <tr>
-                                        <td>Stok Awal</td>
-                                        <td>${ invoice?.stok_awal } Kg</td>
-                                        <td>Stok Akhir</td>
-                                        <td>${ invoice?.stok_akhir } Kg</td>
-                                      </tr>
-                                      <tr>
-                                        <td>Stok Keluar</td>
-                                        <td>${ invoice?.qty } Kg</td>
-                                        <td>Item</td>
-                                        <td>${ invoice?.items?.length }</td>
-                                      </tr>
-
-
-
-
-
-
-
 
                                       <tr>
                                         <td>Latitude</td>
-                                        <td>${ invoice?.latitude }</td>
+                                        <td>${invoice?.latitude}</td>
                                         <td>Longitude</td>
-                                        <td>${ invoice?.longitude }</td>
+                                        <td>${invoice?.longitude}</td>
                                       </tr>
                                       <tr>
                                         <td>Tanggal</td>
-                                        <td>${ invoice?.tanggal }</td>
+                                        <td>${invoice?.tanggal}</td>
                                         <td>Waktu</td>
-                                        <td>${ invoice?.waktu }</td>
+                                        <td>${invoice?.waktu}</td>
                                       </tr>
                                       <tr>
                                         <td colspan="1">Catatan</td>
-                                        <td colspan="3">${ invoice?.catatan ? invoice?.catatan : "" }</td>
+                                        <td colspan="3">${
+                                          invoice?.catatan ? invoice?.catatan : ""
+                                        }</td>
                                       </tr>
                                     </tbody>
                                   </table>
+
 
 
 
@@ -299,20 +275,20 @@ export default {
                                     </thead>
                                     <tbody>
                                   `;
-                                    this.invoice?.items?.forEach((item, i) => {
-                                      content += `
+      this.invoice?.items?.forEach((item, i) => {
+        content += `
                                               <tr class="text-capitalize" style="text-transform: capitalize;">
-                                                <td>${ item?.id }</td>
-                                                <td>${ item?.keterangan }</td>
-                                                <td>${ item?.status }</td>
-                                                <td>Rp. ${ item?.nominal }</td>
+                                                <td>${i + 1}</td>
+                                                <td>${item?.keterangan}</td>
+                                                <td>${item?.status}</td>
+                                                <td>Rp. ${item?.nominal}</td>
                                               </tr>
                                           `;
-                                    });
+      });
 
-                                    content += `
+      content += `
                                       <tr>
-                                        <td colspan="4">TOTAL</td>
+                                        <td colspan="3">TOTAL</td>
                                         <td>Rp. ${invoice?.total_masuk}</td>
                                       </tr>
                                     </tbody>

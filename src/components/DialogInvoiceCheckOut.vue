@@ -80,18 +80,13 @@
             </tr>
 
             <tr>
-              <td colspan="1">Konfirmasi</td>
-              <td colspan="3">Kasir {{ $getSetuju(invoice?.cashier_confirm) }}</td>
-            </tr>
-
-            <tr>
-              <td>Stok Awal</td>
-              <td>{{ invoice?.stok_awal }} Kg</td>
-              <td>Stok Akhir</td>
+              <td>Konfirmasi</td>
+              <td>Kasir {{ $getSetuju(invoice?.cashier_confirm) }}</td>
+              <td>Stok Selisih</td>
               <td>{{ invoice?.stok_akhir }} Kg</td>
             </tr>
             <tr>
-              <td>Stok Keluar</td>
+              <td>Stok Baru</td>
               <td>{{ invoice?.qty }} Kg</td>
               <td>Item</td>
               <td>{{ invoice?.items?.length }}</td>
@@ -122,8 +117,8 @@
               <th>No</th>
               <th>Item</th>
               <th>Stok Awal</th>
-              <th>Stok Keluar</th>
-              <th>Stok Akhir</th>
+              <th>Stok Baru</th>
+              <th>Stok Selisih</th>
             </tr>
           </thead>
           <tbody>
@@ -255,21 +250,17 @@ export default {
                                         <td>${invoice?.cabang?.nama}</td>
                                       </tr>
 
-                                      <tr>
-                                        <td colspan="1">Konfirmasi</td>
-                                        <td colspan="3">Kasir ${this.$getSetuju(
-                                          invoice?.cashier_confirm
-                                        )}</td>
-                                      </tr>
 
                                       <tr>
-                                        <td>Stok Awal</td>
-                                        <td>${invoice?.stok_awal} Kg</td>
-                                        <td>Stok Akhir</td>
+                                        <td>Konfirmasi</td>
+                                        <td>Kasir ${this.$getSetuju(
+                                          invoice?.cashier_confirm
+                                        )}</td>
+                                        <td>Stok Selisih</td>
                                         <td>${invoice?.stok_akhir} Kg</td>
                                       </tr>
                                       <tr>
-                                        <td>Stok Keluar</td>
+                                        <td>Stok Baru</td>
                                         <td>${invoice?.qty} Kg</td>
                                         <td>Item</td>
                                         <td>${invoice?.items?.length}</td>
@@ -303,8 +294,8 @@ export default {
                                         <th>No</th>
                                         <th>Item</th>
                                         <th>Stok Awal</th>
-                                        <th>Stok Keluar</th>
-                                        <th>Stok Akhir</th>
+                                        <th>Stok Baru</th>
+                                        <th>Stok Selisih</th>
                                       </tr>
                                     </thead>
                                     <tbody>

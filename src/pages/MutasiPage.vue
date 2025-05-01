@@ -207,6 +207,9 @@ export default {
       addNewStruk: "addNewStruk",
       updateLocalStorage: "updateLocalStorage",
     }),
+    ...mapActions(usePenjualanStore, {
+      isItemOverWeight: "isItemOverWeight",
+    }),
     openDialogCatatan() {
       if (!this.struk?.id)
         return this.$q.notify({
@@ -219,9 +222,20 @@ export default {
       this.$refs.dialog_catatan?.onOpen(this.struk.catatan);
     },
     openDialogCalculatorMutasi(item) {
+      console.log(item);
+
+      if (Number(item?.stock) <= 0)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Stok kosong",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+
       this.$refs.dialog_calculator?.onOpen(item);
     },
-    openDialogConfirmMutasi() {
+    async openDialogConfirmMutasi() {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
@@ -231,14 +245,50 @@ export default {
           position: "top",
         });
 
+      const is_item_over_weight = await this.isItemOverWeight(this.struk?.items);
+      console.log("isItemOverWeight", is_item_over_weight);
+      if (is_item_over_weight) return;
+
       this.$refs.dialog_bayar?.onOpen(this.struk);
     },
     onBubbleEventDialogCalculatorMutasi(item) {
-      console.log(this.struk);
+      console.log(this.struk, item);
 
       this.addNewStruk();
 
-      this.struk?.items?.push(item);
+      // Anti Duplicate Item Struk
+      // ======================================================
+      let arr = JSON.parse(JSON.stringify(this.struk?.items));
+      console.log("arr", arr);
+      let temp_qty = item?.qty;
+      for (var i = 0; i <= arr.length; i++) {
+        if (item?.produk_id == arr[i]?.produk_id) {
+          temp_qty += Number(arr[i]?.qty);
+        }
+      }
+      arr.push(item);
+      arr = this.$removeDuplicates(arr, "produk_id");
+      for (var i = 0; i <= arr.length; i++) {
+        if (item?.produk_id == arr[i]?.produk_id) {
+          arr[i].qty = temp_qty;
+          arr[i].stok_awal = temp_qty;
+          if (temp_qty > arr[i].stock) {
+            return this.$q.notify({
+              message: "Peringatan",
+              caption: "Stok " + arr[i].name + " tidak cukup",
+              icon: "warning",
+              color: "negative",
+              position: "top",
+            });
+          }
+        }
+      }
+
+      console.log("arr", arr);
+      this.struk.items = arr;
+      // ======================================================
+
+      // this.struk?.items?.push(item);
 
       // this.struk.qty = this.getTotal?.qty;
       // this.struk.stok_awal = this.getTotal?.stok_awal;

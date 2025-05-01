@@ -1,6 +1,9 @@
 <template>
   <q-dialog
-    @show="show = true"
+    @show="
+      show = true;
+      onShow();
+    "
     full-width
     full-height
     v-model="fixed"
@@ -73,9 +76,9 @@
             </tr>
 
             <tr>
-              <td>Modal Terakhir</td>
+              <td>Modal Awal</td>
               <td>Rp. {{ invoice?.modal_awal }}</td>
-              <td>Modal Sekarang</td>
+              <td>Modal Sebelumnya</td>
               <td>Rp. {{ invoice?.modal_akhir }}</td>
             </tr>
             <tr>
@@ -216,7 +219,7 @@ export default {
                                             <img src="${
                                               invoice?.foto
                                                 ? invoice?.foto
-                                                : $defaultImage
+                                                : this.$defaultImage
                                             }" spinner-color="white"
                                             style="width: 300px" width="300" />
                                           </td>
@@ -235,11 +238,10 @@ export default {
                                           <td>${invoice?.cabang?.nama}</td>
                                         </tr>
 
-
                                         <tr>
-                                          <td>Modal Terakhir</td>
+                                          <td>Modal Awal</td>
                                           <td>Rp. ${invoice?.modal_awal}</td>
-                                          <td>Modal Sekarang</td>
+                                          <td>Modal Sebelumnya</td>
                                           <td>Rp. ${invoice?.modal_akhir}</td>
                                         </tr>
                                         <tr>
@@ -297,6 +299,9 @@ export default {
     };
   },
   methods: {
+    onShow() {
+      console.log("invoice XXXX", this.invoice);
+    },
     onOpen(row = null, index = null) {
       this.fixed = true;
     },
