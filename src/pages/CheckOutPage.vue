@@ -165,6 +165,7 @@ import { date } from "quasar";
 import { mapActions, mapWritableState, mapState } from "pinia";
 import { useCheckOutStore } from "src/stores/checkout-store";
 import { usePenjualanStore } from "src/stores/penjualan-store";
+import { useRotasiStore } from "src/stores/rotasi-store";
 
 export default {
   data() {
@@ -175,6 +176,9 @@ export default {
       getTotal: "getTotal",
       isCheckDone: "isCheckDone",
       getCheckDone: "getCheckDone",
+    }),
+    ...mapState(useRotasiStore, {
+      ROTASI_isCheckDone: "isCheckDone",
     }),
     ...mapWritableState(usePenjualanStore, {
       items: "items",
@@ -209,6 +213,15 @@ export default {
     },
     openDialogCalculatorCheckOut(item) {
       console.log(item);
+
+      if (!this.ROTASI_isCheckDone)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Wajib cek rotasi dulu",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
 
       if (Number(item?.stock) <= 0)
         return this.$q.notify({

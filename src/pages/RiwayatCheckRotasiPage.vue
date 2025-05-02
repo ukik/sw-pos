@@ -46,12 +46,14 @@ export default {
 
       console.log(val, val?.split("/").join("-"));
 
-      this.$refs.dialog_invoice_rotasi.onOpen(this.date);
-
       // TAMBAHAN khusus karena hanya 1x sehari
+      this.$nextTick();
       const _date = val?.split("/").join("-");
-      this.loadLocalStorageStruks(_date);
+      await this.loadLocalStorageStruks(_date);
       this.invoice = this.getInvoiceSelected(_date);
+
+      this.$nextTick();
+      this.$refs.dialog_invoice_rotasi.onOpen(this.date);
     },
   },
   data() {

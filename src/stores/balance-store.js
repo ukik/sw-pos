@@ -3,6 +3,9 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 import { date } from "quasar";
 import { usePengaturanStore } from './pengaturan-store';
 
+import decimal from 'src/helpers/decimal';
+
+
 import { ref, nextTick } from 'vue';
 import localforage from "localforage";
 

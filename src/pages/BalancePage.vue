@@ -18,14 +18,14 @@
 
       <q-form @submit="onTambah" class="col-12">
         <div class="row q-col-gutter-md">
-          <div class="col-12">
+          <!-- <div class="col-12">
             <q-banner dense class="bg-positive text-white">
               <template v-slot:avatar>
                 <q-icon name="info" color="white" />
               </template>
-              Modal lama akan diganti dengan modal baru
+              Kas modal lama akan diganti dengan kas modal baru
             </q-banner>
-          </div>
+          </div> -->
 
           <div class="col-12">
             <q-input

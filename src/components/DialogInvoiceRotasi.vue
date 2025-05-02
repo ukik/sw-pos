@@ -98,12 +98,6 @@
             </tr>
 
             <tr>
-              <td>Stok Awal</td>
-              <td>{{ invoice?.stok_awal }} Kg</td>
-              <td>Stok Selisih</td>
-              <td>{{ invoice?.stok_akhir }} Kg</td>
-            </tr>
-            <tr>
               <td>Stok Baru</td>
               <td>{{ invoice?.qty }} Kg</td>
               <td>Item</td>
@@ -144,15 +138,15 @@
               <tr class="text-capitalize">
                 <td>{{ item?.id }}</td>
                 <td>{{ item?.name }}</td>
-                <td>{{ item?.stok_awal }} Kg</td>
+                <td>{{ this.$decimal(item?.stok_awal) }} Kg</td>
                 <td>{{ item?.qty }} Kg</td>
-                <td>{{ item?.stok_akhir }} Kg</td>
+                <td>{{ this.$decimal(item?.stok_akhir) }} Kg</td>
               </tr>
             </template>
             <tr>
               <td colspan="3">TOTAL</td>
               <td>{{ invoice?.qty }} Kg</td>
-              <td>{{ invoice?.stok_akhir }} Kg</td>
+              <td>{{ this.$decimal(invoice?.stok_akhir) }} Kg</td>
             </tr>
           </tbody>
         </table>
@@ -276,12 +270,6 @@ export default {
                                       </tr>
 
                                       <tr>
-                                        <td>Stok Awal</td>
-                                        <td>${invoice?.stok_awal} Kg</td>
-                                        <td>Stok Selisih</td>
-                                        <td>${invoice?.stok_akhir} Kg</td>
-                                      </tr>
-                                      <tr>
                                         <td>Stok Baru</td>
                                         <td>${invoice?.qty} Kg</td>
                                         <td>Item</td>
@@ -327,9 +315,9 @@ export default {
                                     <tr class="text-capitalize" style="text-transform: capitalize;">
                                       <td>${item?.id}</td>
                                       <td>${item?.name}</td>
-                                      <td>${item?.stok_awal} Kg</td>
+                                      <td>${this.$decimal(item?.stok_awal)} Kg</td>
                                       <td>${item?.qty} Kg</td>
-                                      <td>${item?.stok_akhir} Kg</td>
+                                      <td>${this.$decimal(item?.stok_akhir)} Kg</td>
                                     </tr>
                                   `;
       });
@@ -338,7 +326,7 @@ export default {
                                       <tr>
                                         <td colspan="3">TOTAL</td>
                                         <td>${invoice?.qty} Kg</td>
-                                        <td>${invoice?.stok_akhir} Kg</td>
+                                        <td>${this.$decimal(invoice?.stok_akhir)} Kg</td>
                                       </tr>
                                     </tbody>
                                   </table>

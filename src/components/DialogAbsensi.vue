@@ -50,7 +50,7 @@
               mask="Rp. ############"
               unmasked-value
               readonly
-              label="Modal Awal"
+              label="Kas Modal"
               v-model="form.modal_awal"
             />
           </div>
@@ -163,7 +163,7 @@
             <template v-slot:avatar>
               <q-icon name="info" color="white" />
             </template>
-            Modal lama akan diganti dengan modal baru
+            Kas lama akan diganti dengan kas baru
           </q-banner>
 
           <div class="q-mb-md">
@@ -174,7 +174,7 @@
               mask="Rp. ##########"
               unmasked-value
               autogrow
-              label="Modal Awal"
+              label="Kas Modal"
               :rules="[(val) => !!val || 'Wajib diisi']"
               hint="Wajib diisi"
               v-model="form.modal_awal"
@@ -445,11 +445,6 @@ export default {
       // this.$emit("onBubbleEventOK", this.form);
 
       this.medium = false;
-
-      // this.struk.bill = this.getTotalStruk;
-      // this.struk.qty = this.getTotal?.qty;
-      // this.struk.stok_awal = this.getTotal?.stok_awal;
-      // this.struk.stok_akhir = this.getTotal?.stok_akhir;
 
       this.addItemToStruk();
 

@@ -41,12 +41,12 @@ export default [
   },
 
   {
-    label: "modal awal",
+    label: "kas modal",
     field: "modal_awal",
     format: (val, row) => `Rp. ${val}`,
   },
   {
-    label: "modal akhir",
+    label: "kas modal lama",
     field: "modal_akhir",
     format: (val, row) => `Rp. ${val}`,
   },

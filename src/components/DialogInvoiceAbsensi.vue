@@ -76,9 +76,9 @@
             </tr>
 
             <tr>
-              <td>Modal Awal</td>
+              <td>Kas Modal</td>
               <td>Rp. {{ invoice?.modal_awal }}</td>
-              <td>Modal Sebelumnya</td>
+              <td>Kas Modal Lama</td>
               <td>Rp. {{ invoice?.modal_akhir }}</td>
             </tr>
             <tr>
@@ -239,9 +239,9 @@ export default {
                                         </tr>
 
                                         <tr>
-                                          <td>Modal Awal</td>
+                                          <td>Kas Modal</td>
                                           <td>Rp. ${invoice?.modal_awal}</td>
-                                          <td>Modal Sebelumnya</td>
+                                          <td>Kas Modal Lama</td>
                                           <td>Rp. ${invoice?.modal_akhir}</td>
                                         </tr>
                                         <tr>

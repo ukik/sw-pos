@@ -89,9 +89,9 @@
             </tr>
             <tr>
               <td>Stok Awal</td>
-              <td>{{ invoice?.stok_awal }} Kg</td>
+              <td>{{ this.$decimal(invoice?.stok_awal) }} Kg</td>
               <td>Stok Akhir</td>
-              <td>{{ invoice?.stok_akhir }} Kg</td>
+              <td>{{ this.$decimal(invoice?.stok_akhir) }} Kg</td>
             </tr>
             <tr>
               <td>Stok Keluar</td>
@@ -286,9 +286,9 @@ export default {
                                       </tr>
                                       <tr>
                                         <td>Stok Awal</td>
-                                        <td>${invoice?.stok_awal} Kg</td>
+                                        <td>${this.$decimal(invoice?.stok_awal)} Kg</td>
                                         <td>Stok Akhir</td>
-                                        <td>${invoice?.stok_akhir} Kg</td>
+                                        <td>${this.$decimal(invoice?.stok_akhir)} Kg</td>
                                       </tr>
                                       <tr>
                                         <td>Stok Keluar</td>

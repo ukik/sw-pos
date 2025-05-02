@@ -2,6 +2,7 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 
 import { date } from "quasar";
 import { usePengaturanStore } from './pengaturan-store';
+import decimal from 'src/helpers/decimal';
 
 import { ref, nextTick } from 'vue';
 import localforage from "localforage";
@@ -84,10 +85,10 @@ export const useRotasiStore = defineStore('RotasiStore', {
         stok_akhir: 0,
       };
       struk?.items?.forEach((element) => {
-        sum.stock += Number(element?.stock);
-        sum.qty += Number(element?.qty);
-        sum.stok_awal += Number(element?.stok_awal);
-        sum.stok_akhir += Number(element?.stok_akhir);
+        sum.stock += decimal(element?.stock);
+        sum.qty += decimal(element?.qty);
+        sum.stok_awal += decimal(element?.stok_awal);
+        sum.stok_akhir += decimal(element?.stok_akhir);
       });
 
       return sum;

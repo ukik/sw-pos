@@ -2,6 +2,7 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 
 import { date, Notify } from "quasar";
 import { usePengaturanStore } from './pengaturan-store';
+import decimal from 'src/helpers/decimal';
 
 
 import { ref, nextTick } from 'vue';
@@ -200,7 +201,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
     getTotalStokItems: ({items}) => {
       let temp = 0
       items.forEach(element => {
-        temp += Number(element?.stock)
+        temp += decimal(element?.stock)
       });
       return temp
     },
@@ -226,11 +227,11 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
       console.log('penjualan-store', struk, struk?.items)
       struk?.items?.forEach((element) => {
         sum.price += Number(element?.price);
-        sum.stock += Number(element?.stock);
-        sum.qty += Number(element?.qty);
-        sum.subtotal += Number(element?.subtotal);
-        sum.stok_awal += Number(element?.stok_awal);
-        sum.stok_akhir += Number(element?.stok_akhir);
+        sum.stock += decimal(element?.stock);
+        sum.qty += decimal(element?.qty);
+        sum.subtotal += decimal(element?.subtotal);
+        sum.stok_awal += decimal(element?.stok_awal);
+        sum.stok_akhir += decimal(element?.stok_akhir);
       });
 
       //console.log(sum);

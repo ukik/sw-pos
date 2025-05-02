@@ -234,7 +234,7 @@ export default {
                                         <td>Kas Final</td>
                                         <td>Rp. ${invoice?.total_saldo}</td>
                                         <td>Konfirmasi</td>
-                                        <td>Kasir ${$getSetuju(
+                                        <td>Kasir ${this.$getSetuju(
                                           invoice?.cashier_confirm
                                         )}</td>
                                       </tr>

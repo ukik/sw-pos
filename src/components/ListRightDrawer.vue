@@ -102,21 +102,6 @@
       <q-item
         clickable
         v-ripple
-        :active="link === 'riwayat_checkout'"
-        @click="link = 'riwayat_checkout'"
-        active-class="bg-sw text-white"
-        :to="{ name: 'riwayat_checkout' }"
-      >
-        <q-item-section avatar>
-          <q-icon name="content_paste_go" />
-        </q-item-section>
-
-        <q-item-section>Cek Tutup</q-item-section>
-      </q-item>
-
-      <q-item
-        clickable
-        v-ripple
         :active="link === 'riwayat_rotasi'"
         @click="link = 'riwayat_rotasi'"
         active-class="bg-sw text-white"
@@ -127,6 +112,21 @@
         </q-item-section>
 
         <q-item-section>Cek Rotasi</q-item-section>
+      </q-item>
+
+      <q-item
+        clickable
+        v-ripple
+        :active="link === 'riwayat_checkout'"
+        @click="link = 'riwayat_checkout'"
+        active-class="bg-sw text-white"
+        :to="{ name: 'riwayat_checkout' }"
+      >
+        <q-item-section avatar>
+          <q-icon name="content_paste_go" />
+        </q-item-section>
+
+        <q-item-section>Cek Tutup</q-item-section>
       </q-item>
 
       <q-separator spaced />

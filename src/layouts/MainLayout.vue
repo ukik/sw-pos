@@ -113,8 +113,11 @@
       <DialogInvoiceBalance ref="dialog_invoice_balance"></DialogInvoiceBalance>
       <DialogGantiKasir ref="dialog_ganti_kasir"></DialogGantiKasir>
 
-      <router-view v-if="indexTerms" name="index" />
-      <router-view v-else name="default" />
+      <!-- {{ getCheck }} xxxxxxxxxx -->
+      <router-view v-if="!indexTerms" name="default" />
+      <router-view v-else-if="indexTerms" name="index" />
+
+      <!-- <router-view v-if="getCheck" name="check" /> -->
     </q-page-container>
   </q-layout>
 </template>
@@ -220,12 +223,14 @@ export default {
       // ROTASI_items: "items",
       ROTASI_struk: "struk",
       ROTASI_invoice: "invoice",
+      ROTASI_isCheckDone: "isCheckDone",
     }),
     ...mapState(useCheckInStore, {
       // CHECKIN_items: "items",
       CHECKIN_struk: "struk",
       // CHECKIN_struks: "struks",
       CHECKIN_invoice: "invoice",
+      CHECKIN_isCheckDone: "isCheckDone",
     }),
     ...mapState(useCheckOutStore, {
       // CHECKOUT_items: "items",
@@ -246,6 +251,19 @@ export default {
       BALANCE_invoice: "invoice",
     }),
     indexTerms() {
+      // if (this.$route.name == "check-out") {
+      //   if (this.ROTASI_isCheckDone) {
+      //     return false;
+      //   } else {
+      //     return true;
+      //   }
+      // } else if (this.$route.name == "check-rotasi") {
+      //   if (this.CHECKIN_isCheckDone) {
+      //     return false;
+      //   } else {
+      //     return true;
+      //   }
+      // }
       if (this.$route.name == "absensi") {
         if (this.PENGATURAN_list_cashiers?.length <= 0) {
           return true;
@@ -268,6 +286,21 @@ export default {
       if (this.PENGATURAN_list_courirs?.length <= 0) return true;
       if (!this.ABSENSI_getPiketSudahAbsensi?.id) return true;
     },
+    // getCheck() {
+    //   if (this.$route.name == "check-out") {
+    //     if (this.ROTASI_isCheckDone) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   } else if (this.$route.name == "check-rotasi") {
+    //     if (this.CHECKIN_isCheckDone) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   }
+    // },
   },
   watch: {
     // jika di halaman check-in/check-out/check-rotasi

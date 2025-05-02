@@ -3,6 +3,8 @@ import { ref, nextTick } from 'vue';
 import { date } from "quasar";
 import { usePengaturanStore } from './pengaturan-store';
 
+import decimal from 'src/helpers/decimal';
+
 import localforage from "localforage";
 
 const timeStamp = Date.now();

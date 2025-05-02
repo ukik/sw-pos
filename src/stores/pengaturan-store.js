@@ -1,6 +1,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 
 import Swal from 'sweetalert2/dist/sweetalert2';
+import decimal from 'src/helpers/decimal';
 
 import { ref, nextTick } from 'vue';
 import localforage from "localforage";

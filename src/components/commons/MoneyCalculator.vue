@@ -3,9 +3,7 @@
     <q-card>
       <q-card-actions class="q-pa-none q-pl-xs">
         <q-toolbar class="bg-redx text-black">
-          <q-toolbar-title class="text-uppercase">
-            MODAL AWAL
-          </q-toolbar-title>
+          <q-toolbar-title class="text-uppercase"> KAS MODAL </q-toolbar-title>
           <q-btn v-close-popup flat round dense color="red" outline icon="close" />
         </q-toolbar>
       </q-card-actions>
@@ -13,37 +11,37 @@
       <q-separator></q-separator>
 
       <q-card-section class="q-pb-none">
-          <q-input class="q-pb-md"
-            mask="Rp. ###############"
-            unmasked-value
-            readonly
-            input-class="text-h5"
-            v-model="model"
-            type="text"
-            outlined
-            :rules="[(val) => !!val || 'Wajib diisi']"
-            hide-hint
-          >
-            <template v-slot:before>
-              <span>Harga</span>
-            </template>
-            <template v-slot:after>
-              <q-btn
-                v-if="model !== '0'"
-                @click="model = '0'"
-                color="red"
-                class="full-height full-width"
-                icon="delete"
-              ></q-btn>
-            </template>
-          </q-input>
-
+        <q-input
+          class="q-pb-md"
+          mask="Rp. ###############"
+          unmasked-value
+          readonly
+          input-class="text-h5"
+          v-model="model"
+          type="text"
+          outlined
+          :rules="[(val) => !!val || 'Wajib diisi']"
+          hide-hint
+        >
+          <template v-slot:before>
+            <span>Harga</span>
+          </template>
+          <template v-slot:after>
+            <q-btn
+              v-if="model !== '0'"
+              @click="model = '0'"
+              color="red"
+              class="full-height full-width"
+              icon="delete"
+            ></q-btn>
+          </template>
+        </q-input>
       </q-card-section>
 
       <q-separator />
 
-      <q-card-section class="scroll" style="height:calc(100vh - 100px - 150px)">
-        <div class="row q-col-gutter-md full-height ">
+      <q-card-section class="scroll" style="height: calc(100vh - 100px - 150px)">
+        <div class="row q-col-gutter-md full-height">
           <div class="row col q-col-gutter-sm flex justify-center q-mb-md">
             <div class="col-4">
               <q-btn @click="onAdd(1)" class="full-width full-height" dense color="dark">
@@ -128,7 +126,7 @@
             </div>
           </div>
 
-          <div class="col-3 row ">
+          <div class="col-3 row">
             <!-- <div class="col-12" style="height: 30%">
               <q-btn
                 @click="$emit('onBubbleEventCatatan')"
@@ -171,7 +169,7 @@ export default {
   data() {
     return {
       item: {
-        no_order:null
+        no_order: null,
       },
       model: 0,
     };
@@ -210,7 +208,6 @@ export default {
           color: "negative",
           position: "top",
         });
-
 
       this.fixed = false;
 
