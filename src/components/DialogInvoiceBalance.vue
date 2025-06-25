@@ -13,9 +13,9 @@
           <q-avatar class="">
             <q-btn v-close-popup dense flat icon="arrow_back"></q-btn>
           </q-avatar>
-          INVOICE: {{ invoice?.code }}
+          BERKAS: {{ invoice?.code }}
         </q-toolbar-title>
-        <q-btn label="cetak invoice" outline icon="print" @click="makePDFShare"></q-btn>
+        <q-btn label="cetak berkas" outline icon="print" @click="makePDFShare"></q-btn>
       </q-card-actions>
 
       <q-card-section v-if="show" class="scroll" style="height: calc(100% - 52px)">

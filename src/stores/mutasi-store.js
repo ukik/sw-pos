@@ -6,6 +6,7 @@ import decimal from 'src/helpers/decimal';
 
 import { ref, nextTick } from 'vue';
 import localforage from "localforage";
+import { useAbsensiStore } from './absensi-store';
 
 
 const timeStamp = Date.now();
@@ -96,6 +97,17 @@ export const useMutasiStore = defineStore('MutasiStore', {
     addNewStruk() {
 
       const { balance, position, cabang, cashier, shift } = usePengaturanStore()
+      const useAbsensi = useAbsensiStore()
+
+      function getShift() {
+        let temp = null
+        useAbsensi?.struks.forEach(el => {
+          if (el?.cashier_id == cashier?.id) {
+            temp = el
+          }
+        });
+        return temp
+      }
 
       console.log(!this.struk?.id)
       if(!this.struk?.id) {
@@ -109,6 +121,7 @@ export const useMutasiStore = defineStore('MutasiStore', {
           cashier: {
             ...cashier
           },
+          absensi: getShift(),
           courir: {},
           status: "",
           stok_akhir: 0,

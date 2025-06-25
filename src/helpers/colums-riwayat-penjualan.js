@@ -10,46 +10,52 @@ export default [
     field: "tanggal",
   },
   {
-    label: "id",
-    field: "id",
+    label: "shift",
+    field: "absensi",
+    format: (val, row) => `${val?.shift}`,
   },
-  {
-    label: "code",
-    field: "code",
-  },
+  // {
+  //   label: "id",
+  //   field: "id",
+  // },
+  // {
+  //   label: "code",
+  //   field: "code",
+  // },
   {
     label: "cabang",
     field: "cabang",
     format: (val, row) => `${val?.nama}`,
   },
   {
-    label: "kasir",
+    label: "nama kasir",
     field: "cashier",
     format: (val, row) => `${val?.nama}`,
   },
-  // {
-  //   label: "tipe",
-  //   field: "type",
-  // },
+  {
+    label: "modal awal",
+    field: "absensi",
+    format: (val, row) => `Rp. ${val?.modal_awal}`,
+  },
   // {
   //   label: "status",
   //   field: "status",
   // },
   {
     // name: "balance",
-    label: "kas Sebelumnya",
+    label: "kas awal",
     field: "balance",
     format: (val, row) => `Rp. ${val}`,
 
   },
 
   {
-    label: "tagihan",
+    label: "Nota penjualan",
     field: "bill",
     format: (val, row) => `Rp. ${val}`,
   },
   {
-    label: "tagihan pembulatan",
+    label: "pembulatan nota",
     field: "bill_pembulatan",
     format: (val, row) => `Rp. ${val}`,
   },
@@ -64,7 +70,7 @@ export default [
     format: (val, row) => `Rp. ${val}`,
   },
   {
-    label: "Minus pembulatan",
+    label: "pembulatan Minus",
     field: "change_pembulatan",
     format: (val, row) => `Rp. ${val}`,
   },
@@ -78,23 +84,23 @@ export default [
     field: "balance_akhir",
     format: (val, row) => `Rp. ${val}`,
   },
+  // {
+  //   label: "stok akhir",
+  //   field: "stok_akhir",
+  //   format: (val, row) => `${val} kg`,
+  // },
+  // {
+  //   label: "stok awal",
+  //   field: "stok_awal",
+  //   format: (val, row) => `${val} kg`,
+  // },
   {
-    label: "stok akhir",
-    field: "stok_akhir",
-    format: (val, row) => `${val} kg`,
-  },
-  {
-    label: "stok awal",
-    field: "stok_awal",
-    format: (val, row) => `${val} kg`,
-  },
-  {
-    label: "kuantitas",
+    label: "Total kg",
     field: "qty",
     format: (val, row) => `${val} kg`,
   },
   {
-    label: "item",
+    label: "Total Item",
     field: "items",
     format: (val, row) => `${val?.length} item`,
   },
@@ -116,12 +122,12 @@ export default [
   //   label: "created_at",
   //   field: "created_at",
   // },
-  {
-    label: "latitude",
-    field: "latitude",
-  },
-  {
-    label: "longitude",
-    field: "longitude",
-  }
+  // {
+  //   label: "latitude",
+  //   field: "latitude",
+  // },
+  // {
+  //   label: "longitude",
+  //   field: "longitude",
+  // }
 ]

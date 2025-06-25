@@ -22,7 +22,7 @@
           <template v-slot:avatar>
             <q-icon name="info" color="white" />
           </template>
-          Stok berubah setelah konfirmasi CEK TUTUP sukses
+          Stok berubah setelah konfirmasi STOK AKHIR sukses
         </q-banner>
         <q-banner dense class="bg-orange q-mt-sm text-white">
           <template v-slot:avatar>
@@ -86,7 +86,7 @@
     <q-page-sticky class="q-pr-sm" position="top-right" :offset="[0, 0]">
       <q-item style="height: 35px" dense class="bg-sw flex flex-center text-white">
         <q-item-section>
-          <q-item-label class="text-center">STRUK CEK TUTUP</q-item-label>
+          <q-item-label class="text-center">STRUK STOK AKHIR</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -166,12 +166,20 @@ import { mapActions, mapWritableState, mapState } from "pinia";
 import { useCheckOutStore } from "src/stores/checkout-store";
 import { usePenjualanStore } from "src/stores/penjualan-store";
 import { useRotasiStore } from "src/stores/rotasi-store";
+import { useAbsensiStore } from "../stores/absensi-store";
+import { usePengaturanStore } from "src/stores/pengaturan-store";
 
 export default {
   data() {
     return {};
   },
   computed: {
+    ...mapState(useAbsensiStore, {
+      ABSENSI_struks: "struks",
+    }),
+    ...mapState(usePengaturanStore, {
+      cashier: "cashier",
+    }),
     ...mapState(useCheckOutStore, {
       getTotal: "getTotal",
       isCheckDone: "isCheckDone",
@@ -214,14 +222,30 @@ export default {
     openDialogCalculatorCheckOut(item) {
       console.log(item);
 
-      if (!this.ROTASI_isCheckDone)
+      let isAbsensi = null;
+      this.ABSENSI_struks.forEach((element) => {
+        if (element?.cashier_id == this.cashier?.id) {
+          isAbsensi = element;
+        }
+      });
+      if (isAbsensi?.shift != "SHIFT 2") {
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Wajib cek rotasi dulu",
+          caption: "Cek STOK AWAL harus SHIFT 2",
           icon: "warning",
           color: "negative",
           position: "top",
         });
+      }
+
+      // if (!this.ROTASI_isCheckDone)
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "Wajib cek rotasi dulu",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
 
       if (Number(item?.stock) <= 0)
         return this.$q.notify({
@@ -235,7 +259,7 @@ export default {
       if (this.isCheckDone)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Maksimal 1 kali cek buka",
+          caption: "Maksimal 1 kali STOK AWAL",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -250,7 +274,7 @@ export default {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Struk cek buka kosong",
+          caption: "Struk STOK AWAL kosong",
           icon: "warning",
           color: "negative",
           position: "top",

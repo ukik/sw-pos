@@ -18,14 +18,18 @@
             <q-btn v-close-popup dense flat icon="arrow_back"></q-btn>
           </q-avatar>
 
-          PENJUALAN: {{ date }}</q-toolbar-title
+          LAPORAN PENJUALAN: {{ date }}</q-toolbar-title
         >
         <q-btn label="cetak laporan" @click="onPrint" outline icon="print"></q-btn>
       </q-card-actions>
 
       <q-separator />
 
-      <q-card-section style="height: calc(100% - 50px)" id="TableRiwayat" class="scroll q-pa-sm">
+      <q-card-section
+        style="height: calc(100% - 50px)"
+        id="TableRiwayat"
+        class="scroll q-pa-sm"
+      >
         <TableRiwayatPenjualan :date="date" ref="riwayat"></TableRiwayatPenjualan>
       </q-card-section>
       <!--
@@ -78,8 +82,8 @@ export default {
       // loadLocalStorageStruks
     },
     onPrint() {
-      this.$refs.riwayat.onPrint()
-    }
+      this.$refs.riwayat.onPrint();
+    },
   },
 };
 </script>

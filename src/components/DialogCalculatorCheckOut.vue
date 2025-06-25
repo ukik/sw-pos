@@ -3,7 +3,7 @@
     <q-card>
       <q-card-actions align="between" class="bg-swx overflow-hidden q-pa-none q-pl-xs">
         <q-toolbar>
-          <q-toolbar-title>CEK TUTUP</q-toolbar-title>
+          <q-toolbar-title>STOK AKHIR</q-toolbar-title>
           <q-btn @click="fixed = false" flat dense color="negative" rounded icon="close">
           </q-btn>
         </q-toolbar>

@@ -18,31 +18,32 @@
       <template v-for="(item, i) in list_courirs">
         <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-6">
           <q-card @click="openDialogPengaturanCourir(item, 'UPDATE')" clickable v-ripple>
-            <q-img style="height: 300px" :src="item?.foto ? item?.foto : $defaultImage" />
+            <q-img style="height: 325px" :src="item?.foto ? item?.foto : $defaultImage" />
+            <q-separator></q-separator>
 
             <q-card-section>
               <div class="text-h6">{{ item?.nama }}</div>
             </q-card-section>
 
-            <q-separator></q-separator>
+            <!-- <q-separator></q-separator> -->
 
-            <q-card-section>
+            <!-- <q-card-section>
               <div class="text-caption">Alamat</div>
               <div class="text-subtitle2">{{ item?.alamat }}</div>
-            </q-card-section>
+            </q-card-section> -->
           </q-card>
         </div>
       </template>
     </div>
 
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+    <!-- <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn
         @click="openDialogPengaturanCourir(null, 'CREATE')"
         fab
         icon="add"
         color="sw"
       />
-    </q-page-sticky>
+    </q-page-sticky> -->
   </q-page>
 </template>
 

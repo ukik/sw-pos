@@ -6,7 +6,7 @@
     <DialogInvoiceCheckOut ref="dialog_invoice_checkout"></DialogInvoiceCheckOut>
 
     <q-date
-      subtitle="CEK TUTUP"
+      subtitle="STOK AKHIR"
       class="full-width"
       color=" bg-sw"
       v-model="date"

@@ -159,6 +159,7 @@ import { date } from "quasar";
 import { mapActions, mapWritableState, mapState } from "pinia";
 import { useMutasiStore } from "src/stores/mutasi-store";
 import { usePenjualanStore } from "src/stores/penjualan-store";
+import { useCheckOutStore } from "src/stores/checkout-store";
 
 // const timeStamp = Date.now();
 // const formattedString = date.formatDate(Date.now(), "YYYY-MM-DDTHH:mm:ss.SSSZ");
@@ -170,6 +171,9 @@ export default {
     return {};
   },
   computed: {
+    ...mapState(useCheckOutStore, {
+      isCheckDone: "isCheckDone",
+    }),
     ...mapState(useMutasiStore, {
       // getStruk: "getStruk",
       // getTotalStruk: "getTotalStruk",
@@ -223,6 +227,15 @@ export default {
     },
     openDialogCalculatorMutasi(item) {
       console.log(item);
+      if (this.isCheckDone) {
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "TOKO sudah tutup",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      }
 
       if (Number(item?.stock) <= 0)
         return this.$q.notify({

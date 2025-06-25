@@ -10,8 +10,8 @@
     <q-card id="contentToPrint">
       <!-- <q-card-actions class="bg-sw text-white">
         <q-btn v-close-popup class="col-auto" dense flat icon="arrow_back"></q-btn>
-        <q-toolbar-title>INVOICE: {{ invoice?.code }}</q-toolbar-title>
-        <q-btn label="cetak invoice" outline icon="print" @click="makePDFShare"></q-btn>
+        <q-toolbar-title>BERKAS: {{ invoice?.code }}</q-toolbar-title>
+        <q-btn label="cetak berkas" outline icon="print" @click="makePDFShare"></q-btn>
       </q-card-actions> -->
 
       <q-card-actions class="bg-sw text-white q-py-none">
@@ -19,11 +19,11 @@
           <q-avatar class="">
             <q-btn v-close-popup dense flat icon="arrow_back"></q-btn>
           </q-avatar>
-          INVOICE: {{ invoice?.code }}
+          BERKAS: {{ invoice?.code }}
         </q-toolbar-title>
         <q-btn
           v-if="invoice?.id"
-          label="cetak invoice"
+          label="cetak berkas"
           outline
           icon="print"
           @click="makePDFShare"
@@ -174,7 +174,7 @@ export default {
                           <html lang="en">
                               <head>
                                   <meta charset="utf-8">
-                                  <title>INVOICE CEK BUKA</title>
+                                  <title>INVOICE STOK AWAL</title>
 
 
                                   <style>
@@ -353,7 +353,7 @@ export default {
         documentSize: "A4",
         landscape: "portrait",
         type: "share", //Open a context menu and ask the user what to do next (print, mail, etc..).
-        fileName: `INVOICE-CEK BUKA-${this.invoice?.cabang}-${this.invoice?.cashier}-SHIFT ${this.invoice?.shift}-${this.invoice?.created_at}.pdf`, //it will use this filename as a place-holder
+        fileName: `INVOICE-STOK AWAL-${this.invoice?.cabang}-${this.invoice?.cashier}-SHIFT ${this.invoice?.shift}-${this.invoice?.created_at}.pdf`, //it will use this filename as a place-holder
       };
 
       pdf

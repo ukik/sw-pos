@@ -217,7 +217,7 @@ export default {
       if (!this.CHECKIN_isCheckDone)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Wajib cek buka dulu",
+          caption: "Wajib cek STOK AWAL dulu",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -235,7 +235,7 @@ export default {
       if (this.isCheckDone)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Maksimal 1 kali cek tutup",
+          caption: "Maksimal 1 kali STOK AKHIR",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -250,7 +250,7 @@ export default {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Struk cek tutup kosong",
+          caption: "Struk STOK AKHIR kosong",
           icon: "warning",
           color: "negative",
           position: "top",

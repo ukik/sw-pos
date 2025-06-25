@@ -1,9 +1,9 @@
 <template>
   <!-- <q-card-actions class="bg-sw text-white">
         <q-btn v-close-popup class="col-auto" dense flat icon="arrow_back"></q-btn>
-        <q-toolbar-title>INVOICE: {{ invoice?.code }}</q-toolbar-title>
+        <q-toolbar-title>BERKAS: {{ invoice?.code }}</q-toolbar-title>
         <q-btn label="PDF" @click="onPDF"></q-btn>
-        <q-btn label="cetak invoice" outline icon="print" @click="makePDFShare"></q-btn>
+        <q-btn label="cetak berkas" outline icon="print" @click="makePDFShare"></q-btn>
         <q-btn label="Html2PDF" @click="Html2PDF"></q-btn>
       </q-card-actions> -->
 

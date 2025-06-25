@@ -83,7 +83,7 @@
               v-model="status"
               :emit-value="false"
               option-label="nama"
-              :options="['KAS KELUAR', 'KAS MASUK']"
+              :options="list_status"
               label="Pilih Tipe"
               color="teal"
               options-selected-class="text-deep-orange"
@@ -265,6 +265,7 @@ import { mapActions, mapWritableState, mapState } from "pinia";
 import { useBalanceStore } from "src/stores/balance-store";
 import { usePenjualanStore } from "src/stores/penjualan-store";
 import { usePengaturanStore } from "src/stores/pengaturan-store";
+import { useCheckOutStore } from "src/stores/checkout-store";
 
 export default {
   components: {
@@ -276,9 +277,16 @@ export default {
       // pin: null,
       keterangan: "",
       nominal: 0,
+      list_status: [
+        "KAS KELUAR",
+        // 'KAS MASUK'
+      ],
     };
   },
   computed: {
+    ...mapState(useCheckOutStore, {
+      isCheckDone: "isCheckDone",
+    }),
     ...mapState(useBalanceStore, {
       getTotal: "getTotal",
       getStrukItemID: "getStrukItemID",
@@ -317,6 +325,16 @@ export default {
       });
     },
     onTambah() {
+      if (this.isCheckDone) {
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "TOKO sudah tutup",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      }
+
       console.log(this.struk);
       console.log(this.keterangan);
       console.log(this.status);

@@ -11,6 +11,7 @@ import localforage from "localforage";
 
 
 import Swal from 'sweetalert2/dist/sweetalert2';
+import { useAbsensiStore } from './absensi-store';
 
 const timeStamp = Date.now();
 const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
@@ -35,7 +36,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
         produk_id: 0,
         name: "Ayam Utuh Non Jeroan",
         stock: 10,
-        price: 1250,
+        price: 1000,
         no_order: 1,
       },
       {
@@ -43,7 +44,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
         produk_id: 1,
         name: "⁠Karkas",
         stock: 10,
-        price: 1500,
+        price: 1000,
         no_order: 2,
       },
       {
@@ -59,32 +60,32 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
         id: 3,
         produk_id: 3,
         name: "⁠Paha",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 4,
       },
       {
         id: 4,
         produk_id: 4,
         name: "⁠Sayap",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 5,
       },
       {
         id: 5,
         produk_id: 5,
         name: "⁠Kulit",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 6,
       },
       {
         id: 6,
         produk_id: 6,
         name: "⁠Ati Ampela",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 6,
       },
 
@@ -94,24 +95,24 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
         id: 7,
         produk_id: 7,
         name: "⁠Usus Bersih",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 7,
       },
       {
         id: 8,
         produk_id: 8,
         name: "⁠Gajih Brutu",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 8,
       },
       {
         id: 9,
         produk_id: 9,
         name: "⁠Kepala",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 9,
       },
 
@@ -119,8 +120,8 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
         id: 10,
         produk_id: 10,
         name: "⁠Ceker",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 10,
       },
 
@@ -128,24 +129,24 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
         id: 11,
         produk_id: 11,
         name: "⁠Balungan Karkas",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 11,
       },
       {
         id: 12,
         produk_id: 12,
         name: "⁠Balungan Leher",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 12,
       },
       {
         id: 13,
         produk_id: 13,
         name: "⁠Balungan Premium",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 13,
       },
 
@@ -153,18 +154,18 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
         id: 14,
         produk_id: 14,
         name: "⁠Telur",
-        stock: 0,
-        price: 0,
+        stock: 10,
+        price: 1000,
         no_order: 14,
       },
 
       {
-        id: 14,
-        produk_id: 14,
+        id: 15,
+        produk_id: 15,
         name: " ⁠Beras",
-        stock: 0,
-        price: 0,
-        no_order: 14,
+        stock: 10,
+        price: 1000,
+        no_order: 15,
       },
 
     ],
@@ -176,7 +177,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
 
   getters: {
     //doubleCount: (state) => state.counter * 2
-    getItemsByStok: ({items, mode}) => {
+    getItemsByStok: ({ items, mode }) => {
       let temp = []
       items.forEach(element => {
         switch (mode) {
@@ -184,12 +185,12 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
             temp.push(element)
             break;
           case 1:
-            if(element?.stock > 0) {
+            if (element?.stock > 0) {
               temp.push(element)
             }
             break;
           case 2:
-            if(element?.stock <= 0) {
+            if (element?.stock <= 0) {
               temp.push(element)
             }
             break;
@@ -198,7 +199,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
       return temp
     },
     getItems: (state) => state.items,
-    getTotalStokItems: ({items}) => {
+    getTotalStokItems: ({ items }) => {
       let temp = 0
       items.forEach(element => {
         temp += decimal(element?.stock)
@@ -244,7 +245,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
     },
 
 
-    getTotalSaldo: ({struk}) => {
+    getTotalSaldo: ({ struk }) => {
       const { balance } = usePengaturanStore()
       return Number(balance) - Number(struk?.bill_pembulatan)
     },
@@ -264,12 +265,12 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
       let temp = false
       this.items.forEach(el1 => {
         payload.forEach(el2 => {
-          if(el2?.produk_id == el1.id) {
+          if (el2?.produk_id == el1.id) {
             console.log('el1.stock < el2.qty', el1.stock < el2.qty, el1.stock, el2.qty)
-            if(el1.stock < el2.qty) {
+            if (el1.stock < el2.qty) {
               Notify.create({
                 message: "Peringatan",
-                caption: "Stok "+el1.name+" tidak cukup (overweight)",
+                caption: "Stok " + el1.name + " tidak cukup (overweight)",
                 icon: "warning",
                 color: "negative",
                 position: "top",
@@ -284,7 +285,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
     onEditProduct(payload) {
       let temp = JSON.parse(JSON.stringify(this.items))
       temp.forEach(element => {
-        if(element?.id == payload.id) {
+        if (element?.id == payload.id) {
           element.price = payload.price
           element.no_order = payload.no_order
         }
@@ -345,6 +346,18 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
     addNewStruk() {
 
       const { balance, position, cabang, cashier, shift } = usePengaturanStore()
+      const useAbsensi = useAbsensiStore()
+
+      function getShift() {
+        let temp = null
+        useAbsensi?.struks.forEach(el => {
+          if (el?.cashier_id == cashier?.id) {
+            temp = el
+          }
+        });
+        return temp
+      }
+      console.log('addNewStruk cashier', cashier)
 
       if (!this.struk?.id) {
         this.struk = {
@@ -357,6 +370,7 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
           cashier: {
             ...cashier
           },
+          absensi: getShift(),
           // status: "",
           balance: 0,
           balance_akhir: 0,
@@ -377,8 +391,9 @@ export const usePenjualanStore = defineStore('PenjualanStore', {
           latitude: position?.coords?.latitude, // Latitude will be stored here
           longitude: position?.coords?.longitude, // Longitude will be stored here
         }
-        console.log('addNewStruk', position)
+        // console.log('addNewStruk', this.struk)
       }
+      console.log('addNewStruk', this.struk)
     },
     onSyncPenjualanPengirimanItems(payload) {
       this.items.forEach((el1, index1) => {

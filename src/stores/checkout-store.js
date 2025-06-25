@@ -6,6 +6,8 @@ import decimal from 'src/helpers/decimal';
 
 import { ref, nextTick } from 'vue';
 import localforage from "localforage";
+import { useAbsensiStore } from './absensi-store';
+import { usePenjualanStore } from './penjualan-store';
 
 const timeStamp = Date.now();
 const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
@@ -21,6 +23,7 @@ function uuidv4() {
 
 export const useCheckOutStore = defineStore('CheckOutStore', {
   state: () => ({
+    produks:[],
     struk: {
     },
     struks: [],
@@ -116,6 +119,17 @@ export const useCheckOutStore = defineStore('CheckOutStore', {
     addNewStruk() {
 
       const { balance, position, cabang, cashier, shift } = usePengaturanStore()
+      const useAbsensi = useAbsensiStore()
+
+      function getShift() {
+        let temp = null
+        useAbsensi?.struks.forEach(el => {
+          if (el?.cashier_id == cashier?.id) {
+            temp = el
+          }
+        });
+        return temp
+      }
 
       console.log(!this.struk?.id)
       if(!this.struk?.id) {
@@ -129,6 +143,7 @@ export const useCheckOutStore = defineStore('CheckOutStore', {
           cashier: {
             ...cashier
           },
+          absensi: getShift(),
           status: "",
           stok_akhir: 0,
           stok_awal: 0,
@@ -144,6 +159,23 @@ export const useCheckOutStore = defineStore('CheckOutStore', {
         }
 
       }
+    },
+    // jadi kondisi produk akan di record setelah VALIDASI
+    async updateLocalStorageProduk() {
+      const storage_name = 'CHECK-TUTUP-PRODUK-'+date.formatDate(Date.now(), "YYYY-MM-DD")
+
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+      db.clear()
+      const id = Date.now().toString()
+
+      const { items } = usePenjualanStore()
+      await db.setItem(id, { text: JSON.stringify(items) })
+      this.produks = items
+      console.log('updateLocalStorageProduk')
     },
     async updateLocalStorage() {
       const storage_name = 'CHECK-TUTUP-STRUKS-'+date.formatDate(Date.now(), "YYYY-MM-DD")
@@ -172,6 +204,8 @@ export const useCheckOutStore = defineStore('CheckOutStore', {
       this.invoice = this.struk
 
       this.struk = null
+
+      this.updateLocalStorageProduk()
       return
 
       // let model = JSON.parse(JSON.stringify(localStorage.getItem(storage_name)));
@@ -223,6 +257,25 @@ export const useCheckOutStore = defineStore('CheckOutStore', {
         this.struks = []
       }
 
+    },
+    async loadLocalStorageProduk(set_date) {
+      const storage_name = 'CHECK-TUTUP-PRODUK-'+set_date
+
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      await nextTick();
+      let notesArr = []
+      await db.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr.push(JSON.parse(n?.text))
+      })
+      this.produks = notesArr[0]
+      console.log('loadLocalStorageProduk', notesArr[0])
+      return
     }
   }
 })

@@ -4,7 +4,7 @@
       <q-form @submit="onSubmit">
         <q-card-actions class="q-pa-none q-pl-xs">
           <q-toolbar class="bg-redx text-black">
-            <q-toolbar-title> KONFIRMASI CEK BUKA </q-toolbar-title>
+            <q-toolbar-title> KONFIRMASI STOK AWAL </q-toolbar-title>
             <q-btn v-close-popup flat round dense color="red" outline icon="close" />
           </q-toolbar>
         </q-card-actions>
@@ -34,7 +34,7 @@
             </q-item>
           </q-list>
 
-          <div v-if="!isCheckDone" class="row q-col-gutter-md q-mb-md">
+          <!-- <div v-if="!isCheckDone" class="row q-col-gutter-md q-mb-md">
             <div class="col-12">
               <q-input
                 type="password"
@@ -48,7 +48,7 @@
                 label="PIN Kasir"
               />
             </div>
-          </div>
+          </div> -->
 
           <q-banner class="bg-orange q-mb-sm text-white">
             <template v-slot:avatar>
@@ -189,7 +189,7 @@ export default {
       if (this.isCheckDone) {
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Maksimal cek buka 1 kali sehari",
+          caption: "Maksimal STOK AWAL 1 kali sehari",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -206,15 +206,15 @@ export default {
         });
       }
 
-      if (this.checkin_cashier?.pin != this.pin2) {
-        return this.$q.notify({
-          message: "Peringatan",
-          caption: "PIN tidak cocok",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
-      }
+      // if (this.checkin_cashier?.pin != this.pin2) {
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "PIN tidak cocok",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
+      // }
 
       this.fixed = false;
 

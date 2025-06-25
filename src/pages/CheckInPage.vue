@@ -22,7 +22,7 @@
           <template v-slot:avatar>
             <q-icon name="info" color="white" />
           </template>
-          Stok berubah setelah konfirmasi CEK BUKA sukses
+          Stok berubah setelah konfirmasi STOK AWAL sukses
         </q-banner>
         <q-banner dense class="bg-orange q-mt-sm text-white">
           <template v-slot:avatar>
@@ -86,7 +86,7 @@
     <q-page-sticky class="q-pr-sm" position="top-right" :offset="[0, 0]">
       <q-item style="height: 35px" dense class="bg-sw flex flex-center text-white">
         <q-item-section>
-          <q-item-label class="text-center">STRUK CEK BUKA</q-item-label>
+          <q-item-label class="text-center">STRUK STOK AWAL</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -165,12 +165,24 @@ import { date } from "quasar";
 import { mapActions, mapWritableState, mapState } from "pinia";
 import { useCheckInStore } from "src/stores/checkin-store";
 import { usePenjualanStore } from "src/stores/penjualan-store";
+import { useAbsensiStore } from "../stores/absensi-store";
+import { usePengaturanStore } from "src/stores/pengaturan-store";
+import { useCheckOutStore } from "src/stores/checkout-store";
 
 export default {
   data() {
     return {};
   },
   computed: {
+    ...mapState(useCheckOutStore, {
+      CHECKOUT_isCheckDone: "isCheckDone",
+    }),
+    ...mapState(useAbsensiStore, {
+      ABSENSI_struks: "struks",
+    }),
+    ...mapState(usePengaturanStore, {
+      cashier: "cashier",
+    }),
     ...mapState(useCheckInStore, {
       getTotal: "getTotal",
       isCheckDone: "isCheckDone",
@@ -209,6 +221,31 @@ export default {
     },
     openDialogCalculatorCheckIn(item) {
       console.log(item);
+      if (this.isCheckDone) {
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "TOKO sudah tutup",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      }
+
+      let isAbsensi = null;
+      this.ABSENSI_struks.forEach((element) => {
+        if (element?.cashier_id == this.cashier?.id) {
+          isAbsensi = element;
+        }
+      });
+      if (isAbsensi?.shift != "SHIFT 1") {
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "Cek STOK AWAL harus SHIFT 1",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      }
 
       if (Number(item?.stock) <= 0)
         return this.$q.notify({
@@ -222,7 +259,7 @@ export default {
       if (this.isCheckDone)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Maksimal 1 kali cek buka",
+          caption: "Maksimal 1 kali STOK AWAL",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -237,7 +274,7 @@ export default {
       if (this.getTotalStruk <= 0)
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Struk cek buka kosong",
+          caption: "Struk STOK AWAL kosong",
           icon: "warning",
           color: "negative",
           position: "top",

@@ -14,12 +14,13 @@
 
         <q-item>
           <q-item-section>
-            <q-item-label class="text-white" caption>Kas Final</q-item-label>
+            <q-item-label class="text-white" caption>KAS FINAL</q-item-label>
             <q-item-label overline class="text-white">
               Rp.{{ PENGATURAN_balance }}</q-item-label
             >
           </q-item-section>
         </q-item>
+
         <q-separator color="white" vertical></q-separator>
 
         <!-- <q-btn
@@ -30,14 +31,8 @@
           icon="support_agent"
           @click="onDialogGantiKasir"
         /> -->
-        <q-item
-          @click="onDialogGantiKasir"
-          clickable
-          v-ripple
-          dense
-          class="q-px-sm q-mx-sm"
-        >
-          <q-item-section avatar>
+        <q-item @click="onDialogGantiKasir" clickable v-ripple dense>
+          <!-- <q-item-section avatar>
             <q-avatar>
               <img
                 :src="
@@ -45,15 +40,26 @@
                 "
               />
             </q-avatar>
-          </q-item-section>
+          </q-item-section> -->
 
           <q-item-section>
-            <q-item-label caption class="text-white text-caption"
-              >KASIR PIKET</q-item-label
-            >
+            <q-item-label caption class="text-white">KASIR PIKET</q-item-label>
             <q-item-label class="text-capitalize text-white">{{
               PENGATURAN_cashier?.nama ? PENGATURAN_cashier?.nama : "Piket Kosong"
             }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator color="white" vertical></q-separator>
+
+        <q-item @click="onDialogGantiKasir" clickable v-ripple dense>
+          <q-item-section>
+            <q-item-label class="text-white" caption>SHIFT</q-item-label>
+            <q-item-label overline class="text-white">
+              {{
+                getAbsensiShift?.shift ? getAbsensiShift?.shift : "BELUM ABSEN"
+              }}</q-item-label
+            >
           </q-item-section>
         </q-item>
 
@@ -65,28 +71,58 @@
 
       <q-tabs inline-label dense align="justify" class="bg-blue">
         <q-route-tab icon="event" :to="{ name: 'absensi' }" label="absensi" />
-        <q-separator vertical color="white"></q-separator>
-        <q-route-tab icon="account_balance" :to="{ name: 'balance' }" label="Kas" />
 
         <q-separator vertical color="white"></q-separator>
-        <q-route-tab icon="point_of_sale" :to="{ name: 'penjualan' }" label="Penjualan" />
-        <q-separator vertical color="white"></q-separator>
-        <q-route-tab icon="inventory_2" :to="{ name: 'pengiriman' }" label="Pengiriman" />
-        <q-separator vertical color="white"></q-separator>
-        <q-route-tab icon="archive" :to="{ name: 'mutasi' }" label="Mutasi" />
-        <q-separator vertical color="white"></q-separator>
-        <q-route-tab icon="install_desktop" :to="{ name: 'check-in' }" label="Cek Buka" />
+
+        <q-route-tab
+          :class="!ABSENSI_isAbsensi ? 'bg-orange' : ''"
+          icon="install_desktop"
+          :to="{ name: 'check-in' }"
+          label="Stok Awal"
+        />
+
         <q-separator vertical color="white"></q-separator>
         <q-route-tab
+          :class="!this.CHECKIN_isCheckDone || !ABSENSI_isAbsensi ? 'bg-red' : ''"
+          icon="account_balance"
+          :to="{ name: 'balance' }"
+          label="Kas"
+        />
+
+        <q-separator vertical color="white"></q-separator>
+        <q-route-tab
+          :class="!this.CHECKIN_isCheckDone || !ABSENSI_isAbsensi ? 'bg-red' : ''"
+          icon="point_of_sale"
+          :to="{ name: 'penjualan' }"
+          label="Penjualan"
+        />
+        <q-separator vertical color="white"></q-separator>
+        <q-route-tab
+          :class="!this.CHECKIN_isCheckDone || !ABSENSI_isAbsensi ? 'bg-red' : ''"
+          icon="inventory_2"
+          :to="{ name: 'pengiriman' }"
+          label="Pengiriman"
+        />
+        <q-separator vertical color="white"></q-separator>
+        <q-route-tab
+          :class="!this.CHECKIN_isCheckDone || !ABSENSI_isAbsensi ? 'bg-red' : ''"
+          icon="archive"
+          :to="{ name: 'mutasi' }"
+          label="Mutasi"
+        />
+        <q-separator vertical color="white"></q-separator>
+
+        <!-- <q-route-tab
           icon="event_repeat"
           :to="{ name: 'check-rotasi' }"
           label="Cek Rotasi"
         />
-        <q-separator vertical color="white"></q-separator>
+        <q-separator vertical color="white"></q-separator> -->
         <q-route-tab
+          :class="!this.CHECKIN_isCheckDone || !ABSENSI_isAbsensi ? 'bg-red' : ''"
           icon="content_paste_go"
           :to="{ name: 'check-out' }"
-          label="Cek Tutup"
+          label="Stok Akhir"
         />
         <!-- <q-route-tab :to="{ name: 'riwayat_penjualan' }" label="Riwayat Penjualan" />
         <q-route-tab :to="{ name: 'riwayat_pengiriman' }" label="Riwayat Pengiriman" />
@@ -98,11 +134,29 @@
 
     <q-drawer v-model="leftDrawerOpen" side="left" bordered> </q-drawer>
 
-    <q-drawer v-model="rightDrawerOpen" side="right" bordered>
+    <q-drawer
+      show-if-above
+      behavior="mobile"
+      v-model="rightDrawerOpen"
+      side="right"
+      bordered
+    >
       <ListRightDrawer></ListRightDrawer>
     </q-drawer>
 
     <q-page-container>
+      <DialogPengaturanCashier
+        @onBubbleEventOK="onBubbleEventOKCashier"
+        ref="dialog_pengaturan_cashier"
+      >
+      </DialogPengaturanCashier>
+
+      <DialogPengaturanCourir
+        @onBubbleEventOK="onBubbleEventOKCourir"
+        ref="dialog_pengaturan_courir"
+      >
+      </DialogPengaturanCourir>
+
       <DialogInvoicePenjualan ref="dialog_invoice_penjualan"></DialogInvoicePenjualan>
       <DialogInvoicePengiriman ref="dialog_invoice_pengiriman"></DialogInvoicePengiriman>
       <DialogInvoiceMutasi ref="dialog_invoice_mutasi"></DialogInvoiceMutasi>
@@ -114,8 +168,10 @@
       <DialogGantiKasir ref="dialog_ganti_kasir"></DialogGantiKasir>
 
       <!-- {{ getCheck }} xxxxxxxxxx -->
-      <router-view v-if="!indexTerms" name="default" />
-      <router-view v-else-if="indexTerms" name="index" />
+
+      <router-view :name="changeRouteComponent" />
+      <!-- <router-view v-if="!indexTerms" name="default" />
+      <router-view v-else-if="indexTerms" name="index" /> -->
 
       <!-- <router-view v-if="getCheck" name="check" /> -->
     </q-page-container>
@@ -149,6 +205,9 @@ import DialogInvoiceAbsensi from "src/components/DialogInvoiceAbsensi.vue";
 import DialogInvoiceBalance from "src/components/DialogInvoiceBalance.vue";
 import DialogGantiKasir from "src/components/DialogGantiKasir.vue";
 
+import DialogPengaturanCashier from "src/components/DialogPengaturanCashier.vue";
+import DialogPengaturanCourir from "src/components/DialogPengaturanCourir.vue";
+
 import ListRightDrawer from "src/components/ListRightDrawer.vue";
 import { useBalanceStore } from "src/stores/balance-store";
 
@@ -168,6 +227,9 @@ export default {
     DialogInvoiceBalance,
     ListRightDrawer,
     DialogGantiKasir,
+
+    DialogPengaturanCashier,
+    DialogPengaturanCourir,
   },
   setup() {
     const leftDrawerOpen = ref(false);
@@ -189,6 +251,8 @@ export default {
     return {
       tanggalString,
       // position: null,
+
+      tipe: null,
     };
   },
   computed: {
@@ -239,7 +303,8 @@ export default {
     }),
     ...mapState(useAbsensiStore, {
       // CHECKOUT_items: "items",
-      // ABSENSI_struks: "struks",
+      ABSENSI_isAbsensi: "isAbsensi",
+      ABSENSI_struks: "struks",
       ABSENSI_struk: "struk",
       ABSENSI_invoice: "invoice",
       ABSENSI_getPiketSudahAbsensi: "getPiketSudahAbsensi",
@@ -250,6 +315,59 @@ export default {
       // BALANCE_struks: "struks",
       BALANCE_invoice: "invoice",
     }),
+    getAbsensiShift() {
+      let isAbsensi = null;
+      this.ABSENSI_struks.forEach((element) => {
+        if (element?.cashier_id == this.PENGATURAN_cashier?.id) {
+          isAbsensi = element;
+        }
+      });
+      return isAbsensi;
+    },
+    changeRouteComponent() {
+      // if (this.$route.name == "check-rotasi") {
+      //   if (!this.CHECKIN_isCheckDone)
+      //     this.$q.notify({
+      //       message: "Peringatan",
+      //       caption: "Wajib CEK BUKA dulu",
+      //       icon: "warning",
+      //       color: "negative",
+      //       position: "top",
+      //     });
+      //   return "index";
+      // } else if (this.$route.name == "check-out") {
+      //   if (!this.CHECKIN_isCheckDone)
+      //     this.$q.notify({
+      //       message: "Peringatan",
+      //       caption: "Wajib CEK ROTASI dulu",
+      //       icon: "warning",
+      //       color: "negative",
+      //       position: "top",
+      //     });
+      //   return "index";
+      // }
+
+      switch (this.$route.name) {
+        case "balance":
+        case "penjualan":
+        case "pengiriman":
+        case "mutasi":
+        case "check-out":
+          if (!this.CHECKIN_isCheckDone) {
+            this.$q.notify({
+              message: "Peringatan",
+              caption: "Wajib cek STOK AWAL dulu",
+              icon: "warning",
+              color: "negative",
+              position: "top",
+            });
+            return "index";
+          }
+          break;
+        default:
+          return "default";
+      }
+    },
     indexTerms() {
       // if (this.$route.name == "check-out") {
       //   if (this.ROTASI_isCheckDone) {
@@ -303,6 +421,28 @@ export default {
     // },
   },
   watch: {
+    ABSENSI_isAbsensi(val) {
+      console.log("ABSENSI_isAbsensi", val);
+      switch (this.$route.name) {
+        case "balance":
+        case "penjualan":
+        case "pengiriman":
+        case "mutasi":
+        case "check-out":
+        case "check-in":
+          if (!val) {
+            this.$q.notify({
+              message: "Peringatan",
+              caption: "Mulai dari ABSENSI",
+              icon: "warning",
+              color: "orange",
+              position: "top",
+            });
+            this.$router.push({ name: "absensi" });
+          }
+          break;
+      }
+    },
     // jika di halaman check-in/check-out/check-rotasi
     "$route.name": {
       deep: true,
@@ -318,8 +458,8 @@ export default {
           case "check-in":
             this.CHECKIN_loadLocalStorageStruks(tanggalString);
             break;
-          case "check-out":
-            this.CHECKOUT_loadLocalStorageStruks(tanggalString);
+            // case "check-out":
+            //   this.CHECKOUT_loadLocalStorageStruks(tanggalString);
             break;
           case "mutasi":
             this.MUTASI_loadLocalStorageStruks(tanggalString);
@@ -537,11 +677,15 @@ export default {
       CHECKOUT_initLocalStorage: "initLocalStorage",
       CHECKOUT_updateLocalStorage: "updateLocalStorage",
       CHECKOUT_loadLocalStorageStruks: "loadLocalStorageStruks",
+      CHECKOUT_updateLocalStorageProduk: "updateLocalStorageProduk",
     }),
     ...mapActions(usePengaturanStore, {
       PENGATURAN_initLocalStorage: "initLocalStorage",
       // PENGATURAN_updateLocalStorageCashier: "updateLocalStorageCashier",
       // PENGATURAN_updateLocalStorageCourir: "updateLocalStorageCourir",
+
+      onEditCashier: "onEditCashier",
+      onEditCourir: "onEditCourir",
     }),
     ...mapActions(useAbsensiStore, {
       ABSENSI_initLocalStorage: "initLocalStorage",
@@ -556,6 +700,23 @@ export default {
     onDialogGantiKasir() {
       this.$refs.dialog_ganti_kasir.onOpen();
     },
+
+    openDialogPengaturanCashier(payload, tipe) {
+      this.tipe = tipe;
+      this.$refs.dialog_pengaturan_cashier?.onOpen(payload);
+    },
+    openDialogPengaturanCourir(payload, tipe) {
+      this.tipe = tipe;
+      this.$refs.dialog_pengaturan_courir?.onOpen(payload);
+    },
+
+    onBubbleEventOKCashier(payload) {
+      this.onEditCashier(payload, this.tipe);
+    },
+    onBubbleEventOKCourir(payload) {
+      this.onEditCourir(payload, this.tipe);
+    },
+
     onSwal(item, route_name, title) {
       const vm = this;
 
@@ -565,7 +726,8 @@ export default {
         title: title,
         text: `Struk diterbitkan ${item?.created_at}`,
         showConfirmButton: true,
-        confirmButtonText: `Invoice ${item.code}`,
+        confirmButtonText: `BERKAS ${item.code}`,
+        showCloseButton: true,
         // timer: 1500,
         allowOutsideClick: () => {
           const popup = vm.$swal.getPopup();
@@ -646,8 +808,11 @@ export default {
       }
     },
   },
-  created() {
+  async created() {
+    // this.ABSENSI_updateLocalStorage();
+
     // ABSENSI dibutuhkan untuk restriction halaman
+    this.CHECKIN_loadLocalStorageStruks(tanggalString);
     this.ABSENSI_loadLocalStorageStruks(tanggalString);
     // this.PENGATURAN_updateLocalStorageCashier();
     // this.PENGATURAN_updateLocalStorageCourir();
@@ -662,7 +827,7 @@ export default {
     this.ABSENSI_initLocalStorage();
     this.BALANCE_initLocalStorage();
   },
-  mounted() {
+  async mounted() {
     const vm = this;
 
     console.log("navigator?.geolocation", navigator?.geolocation);
@@ -711,8 +876,22 @@ export default {
           vm.BALANCE_updateLocalStorage();
           vm.onSwal(event.value, "riwayat_balance", "KAS SELESAI");
           break;
+
+        case "openDialogPengaturanCashier":
+          vm.openDialogPengaturanCashier(event.value, "UPDATE");
+          break;
+        case "openDialogPengaturanCourir":
+          vm.openDialogPengaturanCourir(event.value, "UPDATE");
+          break;
       }
     });
+
+    this.CHECKOUT_updateLocalStorageProduk();
+
+    await this.$nextTick();
+    if (!this.PENGATURAN_cashier?.id) {
+      this.onDialogGantiKasir();
+    }
 
     return;
     // setTimeout(() => {

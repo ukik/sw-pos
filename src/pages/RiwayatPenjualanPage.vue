@@ -4,7 +4,7 @@
       ref="dialog_table_riwayat_penjualan"
     ></DialogTableRiwayatPenjualan>
     <q-date
-      subtitle="PENJUALAN"
+      subtitle="LAPORAN PENJUALAN"
       class="full-width"
       color=" bg-sw"
       v-model="date"

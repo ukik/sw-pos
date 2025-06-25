@@ -42,7 +42,7 @@
             </template> -->
           </q-select>
 
-          <div class="row q-col-gutter-md q-mb-md">
+          <!-- <div class="row q-col-gutter-md q-mb-md">
             <div class="col-6">
               <q-input
                 hint="Wajib diisi (4 digits)"
@@ -69,7 +69,7 @@
                 label="PIN Kurir"
               />
             </div>
-          </div>
+          </div> -->
 
           <q-banner class="bg-primary text-white rounded-borders q-mb-sm">
             <template v-slot:avatar>
@@ -225,15 +225,15 @@ export default {
       if (!this.item?.cashier_confirm) return this.onNotify();
       if (!this.item?.courir) return this.onNotify();
 
-      if (this.mutasi_courir?.pin != this.pin2 || this.cashier?.pin != this.pin1) {
-        return this.$q.notify({
-          message: "Peringatan",
-          caption: "PIN tidak cocok",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
-      }
+      // if (this.mutasi_courir?.pin != this.pin2 || this.cashier?.pin != this.pin1) {
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "PIN tidak cocok",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
+      // }
 
       this.fixed = false;
 

@@ -15,6 +15,32 @@
           style="height: calc(100vh - 50px - 50px - 67.44px)"
           class="scroll q-pa-sm"
         >
+          <q-list v-if="pengiriman_courir?.id" bordered class="q-mb-md">
+            <q-item
+              v-ripple
+              clickable
+              @click="openDialogPengaturanCourir(pengiriman_courir)"
+            >
+              <q-badge floating>Klik untuk mengganti NAMA</q-badge>
+              <q-item-section avatar>
+                <q-avatar>
+                  <img
+                    :src="
+                      pengiriman_courir?.foto ? pengiriman_courir?.foto : $defaultImage1
+                    "
+                  />
+                </q-avatar>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label caption>KURIR PENGANTAR</q-item-label>
+                <q-item-label>{{
+                  pengiriman_courir?.nama ? pengiriman_courir?.nama : "Piket Kosong"
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+
           <q-select
             clearable
             class="q-mb-md"
@@ -42,7 +68,7 @@
             </template> -->
           </q-select>
 
-          <div class="row q-col-gutter-md q-mb-md">
+          <!-- <div class="row q-col-gutter-md q-mb-md">
             <div class="col-6">
               <q-input
                 hint="Wajib diisi (4 digits)"
@@ -69,7 +95,7 @@
                 label="PIN Kurir"
               />
             </div>
-          </div>
+          </div> -->
 
           <q-banner class="bg-primary text-white rounded-borders q-mb-sm">
             <template v-slot:avatar>
@@ -187,6 +213,13 @@ export default {
     }),
   },
   watch: {
+    list_courirs(val) {
+      val.forEach((element) => {
+        if (element?.id == this.pengiriman_courir?.id) {
+          this.pengiriman_courir = element;
+        }
+      });
+    },
     pengiriman_courir: {
       deep: true,
       handler(val) {
@@ -209,6 +242,13 @@ export default {
       onSyncPenjualanPengirimanItems: "onSyncPenjualanPengirimanItems",
       isItemOverWeight: "isItemOverWeight",
     }),
+    openDialogPengaturanCourir(payload) {
+      this.$global.$emit("MainLayout", {
+        label: "openDialogPengaturanCourir",
+        value: payload,
+      });
+    },
+
     onNotify() {
       this.$q.notify({
         message: "Peringatan",
@@ -225,15 +265,15 @@ export default {
       if (!this.item?.courir) return this.onNotify();
 
       // console.log(this.pengiriman_courir?.pin, this.pin1, this.cashier?.pin, this.pin2)
-      if (this.pengiriman_courir?.pin != this.pin2 || this.cashier?.pin != this.pin1) {
-        return this.$q.notify({
-          message: "Peringatan",
-          caption: "PIN tidak cocok",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
-      }
+      // if (this.pengiriman_courir?.pin != this.pin2 || this.cashier?.pin != this.pin1) {
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "PIN tidak cocok",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
+      // }
 
       this.fixed = false;
 

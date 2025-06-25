@@ -10,9 +10,9 @@
     <q-card id="contentToPrint">
       <!-- <q-card-actions class="bg-sw text-white">
         <q-btn v-close-popup class="col-auto" dense flat icon="arrow_back"></q-btn>
-        <q-toolbar-title>INVOICE: {{ invoice?.code }}</q-toolbar-title>
+        <q-toolbar-title>BERKAS: {{ invoice?.code }}</q-toolbar-title>
         <q-btn label="PDF" @click="onPDF"></q-btn>
-        <q-btn label="cetak invoice" outline icon="print" @click="makePDFShare"></q-btn>
+        <q-btn label="cetak berkas" outline icon="print" @click="makePDFShare"></q-btn>
         <q-btn label="Html2PDF" @click="Html2PDF"></q-btn>
       </q-card-actions> -->
 
@@ -21,9 +21,9 @@
           <q-avatar class="">
             <q-btn v-close-popup dense flat icon="arrow_back"></q-btn>
           </q-avatar>
-          INVOICE: {{ invoice?.code }}
+          BERKAS: {{ invoice?.code }}
         </q-toolbar-title>
-        <q-btn label="cetak invoice" outline icon="print" @click="makePDFShare"></q-btn>
+        <q-btn label="cetak berkas" outline icon="print" @click="makePDFShare"></q-btn>
       </q-card-actions>
 
       <q-card-section v-if="show" class="scroll" style="height: calc(100% - 52px)">
@@ -57,22 +57,28 @@
               <td>{{ invoice?.code }}</td>
             </tr>
             <tr>
-              <td>Kasir</td>
+              <td>Nama Kasir</td>
               <td>{{ invoice?.cashier?.nama }}</td>
               <td>Cabang</td>
               <td>{{ invoice?.cabang?.nama }}</td>
             </tr>
+            <tr>
+              <td>Shift</td>
+              <td>{{ invoice?.absensi?.shift }}</td>
+              <td>Modal Awal</td>
+              <td>Rp. {{ invoice?.absensi?.modal_awal }}</td>
+            </tr>
 
             <tr>
-              <td>Kas Sebelumnya</td>
+              <td>Kas Awal</td>
               <td>Rp. {{ invoice?.balance }}</td>
               <td>Kas Final</td>
               <td>Rp. {{ invoice?.balance_akhir }}</td>
             </tr>
             <tr>
-              <td>Tagihan</td>
+              <td>Nota Penjualan</td>
               <td>Rp. {{ invoice?.bill }}</td>
-              <td>Tagihan Pembulatan</td>
+              <td>Pembulatan Nota</td>
               <td>Rp. {{ invoice?.bill_pembulatan }}</td>
             </tr>
             <tr>
@@ -82,30 +88,30 @@
               <td>Rp. {{ invoice?.change }}</td>
             </tr>
             <tr>
-              <td>Minus Pembulatan</td>
+              <td>Pembulatan Minus</td>
               <td>Rp. {{ invoice?.change_pembulatan }}</td>
               <td>Kembalian Aktual</td>
               <td>Rp. {{ invoice?.change_aktual }}</td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td>Stok Awal</td>
               <td>{{ this.$decimal(invoice?.stok_awal) }} Kg</td>
               <td>Stok Akhir</td>
               <td>{{ this.$decimal(invoice?.stok_akhir) }} Kg</td>
-            </tr>
+            </tr> -->
             <tr>
-              <td>Stok Keluar</td>
+              <td>Total Kg</td>
               <td>{{ invoice?.qty }} Kg</td>
-              <td>Item</td>
+              <td>Total Item</td>
               <td>{{ invoice?.items?.length }}</td>
             </tr>
 
-            <tr>
+            <!-- <tr>
               <td>Latitude</td>
               <td>{{ invoice?.latitude }}</td>
               <td>Longitude</td>
               <td>{{ invoice?.longitude }}</td>
-            </tr>
+            </tr> -->
             <tr>
               <td>Tanggal</td>
               <td>{{ invoice?.tanggal }}</td>
@@ -243,7 +249,7 @@ export default {
                                   <table id="customers2">
                                     <tbody>
                                       <tr>
-                                        <td colspan="4">${invoice?.type} </td>
+                                        <td colspan="4">${invoice?.type}</td>
                                       </tr>
                                       <tr>
                                         <td>ID</td>
@@ -252,24 +258,28 @@ export default {
                                         <td>${invoice?.code}</td>
                                       </tr>
                                       <tr>
-                                        <td>Kasir</td>
+                                        <td>Nama Kasir</td>
                                         <td>${invoice?.cashier?.nama}</td>
                                         <td>Cabang</td>
                                         <td>${invoice?.cabang?.nama}</td>
                                       </tr>
-
-
+                                      <tr>
+                                        <td>Shift</td>
+                                        <td>${invoice?.absensi?.shift}</td>
+                                        <td>Modal Awal</td>
+                                        <td>Rp. ${invoice?.absensi?.modal_awal}</td>
+                                      </tr>
 
                                       <tr>
-                                        <td>Kas Sebelumnya</td>
+                                        <td>Kas Awal</td>
                                         <td>Rp. ${invoice?.balance}</td>
                                         <td>Kas Final</td>
                                         <td>Rp. ${invoice?.balance_akhir}</td>
                                       </tr>
                                       <tr>
-                                        <td>Tagihan</td>
+                                        <td>Nota Penjualan</td>
                                         <td>Rp. ${invoice?.bill}</td>
-                                        <td>Tagihan Pembulatan</td>
+                                        <td>Pembulatan Nota</td>
                                         <td>Rp. ${invoice?.bill_pembulatan}</td>
                                       </tr>
                                       <tr>
@@ -279,36 +289,16 @@ export default {
                                         <td>Rp. ${invoice?.change}</td>
                                       </tr>
                                       <tr>
-                                        <td>Minus Pembulatan</td>
+                                        <td>Pembulatan Minus</td>
                                         <td>Rp. ${invoice?.change_pembulatan}</td>
                                         <td>Kembalian Aktual</td>
                                         <td>Rp. ${invoice?.change_aktual}</td>
                                       </tr>
                                       <tr>
-                                        <td>Stok Awal</td>
-                                        <td>${this.$decimal(invoice?.stok_awal)} Kg</td>
-                                        <td>Stok Akhir</td>
-                                        <td>${this.$decimal(invoice?.stok_akhir)} Kg</td>
-                                      </tr>
-                                      <tr>
-                                        <td>Stok Keluar</td>
+                                        <td>Total Kg</td>
                                         <td>${invoice?.qty} Kg</td>
-                                        <td>Item</td>
+                                        <td>Total Item</td>
                                         <td>${invoice?.items?.length}</td>
-                                      </tr>
-
-
-
-
-
-
-
-
-                                      <tr>
-                                        <td>Latitude</td>
-                                        <td>${invoice?.latitude}</td>
-                                        <td>Longitude</td>
-                                        <td>${invoice?.longitude}</td>
                                       </tr>
                                       <tr>
                                         <td>Tanggal</td>
@@ -324,9 +314,6 @@ export default {
                                       </tr>
                                     </tbody>
                                   </table>
-
-
-
 
                                   <table class="q-mt-md" id="customers" style="margin-top:10px">
                                     <thead>

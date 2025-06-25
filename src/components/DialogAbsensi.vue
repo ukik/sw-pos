@@ -45,12 +45,17 @@
           <div class="q-mb-md">
             <q-input readonly label="Nama Kasir" v-model="form.cashier.nama" />
           </div>
+
+          <div class="q-mb-md">
+            <q-input readonly label="Shift" v-model="form.shift" />
+          </div>
+
           <div class="q-mb-md">
             <q-input
               mask="Rp. ############"
               unmasked-value
               readonly
-              label="Kas Modal"
+              label="Modal Awal"
               v-model="form.modal_awal"
             />
           </div>
@@ -84,7 +89,7 @@
             />
           </div>
 
-          <div v-if="!form?.jam_selesai" class="">
+          <!-- <div v-if="!form?.jam_selesai" class="">
             <q-input
               type="password"
               mask="####"
@@ -97,7 +102,7 @@
               hint="Wajib diisi PIN Kasir (4 digits)"
               v-model="pin"
             />
-          </div>
+          </div> -->
         </q-card-section>
 
         <q-card-section
@@ -112,7 +117,7 @@
             Tidak bisa diubah setelah tersimpan
           </q-banner>
 
-          <div class="text-center q-mb-md">
+          <div v-if="false" class="text-center q-mb-md">
             <q-img
               :src="imageUrl ? imageUrl : $defaultImage"
               spinner-color="white"
@@ -120,11 +125,11 @@
             />
           </div>
 
-          <div class="q-mb-md">
+          <div v-if="false" class="q-mb-md">
             <q-input readonly label="Nama Kasir" v-model="form.cashier.nama" />
           </div>
 
-          <div class="q-mb-md">
+          <div v-if="false" class="q-mb-md">
             <q-field
               v-if="isCordova"
               ref="fieldRef"
@@ -159,14 +164,75 @@
             </q-file>
           </div>
 
-          <q-banner dense class="bg-blue col-12 q-mb-md text-white">
+          <!-- <q-banner dense class="bg-primary col-12 q-mb-md text-white">
             <template v-slot:avatar>
               <q-icon name="info" color="white" />
             </template>
-            Kas lama akan diganti dengan kas baru
-          </q-banner>
+            KAS FINAL akan ditambah ke MODAL AWAL BARU
+          </q-banner> -->
 
           <div class="q-mb-md">
+            <q-select
+              ref="shift"
+              outlined
+              clearable
+              v-model="form.shift"
+              :options="['SHIFT 1', 'SHIFT 2']"
+              :rules="[(val) => !!val || 'Wajib diisi']"
+              stack-label
+              label="Pilih SHIFT"
+              hint="Wajib diisi"
+              error-message="Wajib diisi"
+              lazy-rules
+              :error="!form.shift || checkShift"
+            />
+            <!--  -->
+          </div>
+
+          <div class="q-mb-md">
+            <q-select
+              ref="jenis_modal"
+              outlined
+              clearable
+              v-model="form.jenis_modal"
+              :options="list_jenis_modal"
+              :rules="[(val) => !!val || 'Wajib diisi']"
+              emit-value
+              stack-label
+              label="Pilih JENIS MODAL"
+              hint="Wajib diisi"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <!-- <q-item-section avatar>
+                    <q-icon :name="scope.opt.icon" />
+                  </q-item-section> -->
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+
+          <div v-if="form?.jenis_modal" class="q-mb-md">
+            <q-item class="bg-sw">
+              <q-item-section>
+                <q-item-label class="text-white">{{
+                  get_list_jenis_modal?.label
+                }}</q-item-label>
+                <q-item-label class="text-white" caption>{{
+                  get_list_jenis_modal?.description
+                }}</q-item-label>
+                <q-item-label v-if="get_list_jenis_modal?.info" class="text-white">{{
+                  get_list_jenis_modal?.info
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </div>
+
+          <div v-if="form?.jenis_modal && form?.jenis_modal != 'KOSONG'" class="q-mb-md">
             <q-input
               readonly
               clearable
@@ -174,12 +240,15 @@
               mask="Rp. ##########"
               unmasked-value
               autogrow
-              label="Kas Modal"
-              :rules="[(val) => !!val || 'Wajib diisi']"
+              label="MODAL AWAL"
               hint="Wajib diisi"
               v-model="form.modal_awal"
               stack-label
+              :rules="[(val) => !!val || 'Wajib diisi']"
+              :error="!form.modal_awal || form?.modal_awal <= 0"
             >
+              <!-- :rules="[(val) => !!val || 'Wajib diisi']" -->
+              <!-- :error="!form.modal_awal" -->
               <template v-slot:after>
                 <q-btn
                   @click="onOpenMoneyCalculator"
@@ -206,7 +275,7 @@
             />
           </div>
 
-          <div class="">
+          <!-- <div class="">
             <q-input
               type="password"
               mask="####"
@@ -219,7 +288,7 @@
               hint="Wajib diisi PIN Kasir (4 digits)"
               v-model="pin"
             />
-          </div>
+          </div> -->
         </q-card-section>
 
         <q-separator v-if="!form?.jam_selesai"></q-separator>
@@ -289,11 +358,29 @@ export default {
       form: {
         cashier: {}, // wajib untuk v-model
       },
+      list_jenis_modal: [
+        {
+          value: "KOSONG",
+          label: "KOSONG",
+          description: "MODAL AWAL tidak ada",
+        },
+        {
+          value: "RESET",
+          label: "RESET",
+          description: "KAS FINAL akan digantikan dengan MODAL AWAL",
+        },
+        {
+          value: "TOP UP",
+          label: "TOP UP",
+          description: "KAS FINAL akan ditambahkan dengan MODAL AWAL",
+        },
+      ],
     };
   },
   emits: ["onBubbleEventOK"],
   computed: {
     ...mapWritableState(useAbsensiStore, {
+      struks: "struks",
       struk: "struk",
       mode: "mode",
     }),
@@ -301,6 +388,36 @@ export default {
       balance: "balance",
       cashier: "cashier",
     }),
+    get_list_jenis_modal() {
+      let temp = null;
+      const n = this.form?.modal_awal ? this.form?.modal_awal : 0;
+      switch (this.form?.jenis_modal) {
+        case "KOSONG":
+          temp = this.list_jenis_modal[0];
+          temp["info"] = `sehingga KAS FINAL tetap Rp. ${this.balance}`;
+          break;
+        case "RESET":
+          temp = this.list_jenis_modal[1];
+          temp["info"] = `sehingga KAS FINAL: Rp. ${this.balance} menjadi Rp. ${n}`;
+          break;
+        case "TOP UP":
+          temp = this.list_jenis_modal[2];
+          temp["info"] = `sehingga KAS FINAL: Rp. ${this.balance} + Rp. ${n} = Rp. ${
+            Number(this.balance) + Number(n)
+          }`;
+          break;
+      }
+      return temp;
+    },
+    checkShift() {
+      let shift_used = false;
+      this.struks.forEach((element) => {
+        if (element?.shift == this.form?.shift) {
+          shift_used = true;
+        }
+      });
+      return shift_used;
+    },
   },
   watch: {
     imageUrl(val) {
@@ -329,8 +446,6 @@ export default {
         });
       }
 
-      alert(payload);
-
       return this.$q.notify({
         message: "Perhatian",
         caption: "Foto gagal diambil",
@@ -358,6 +473,10 @@ export default {
 
       this.foto = this.form?.foto ? [this.form?.foto] : [];
       this.imageUrl = this.form?.foto ? this.form?.foto : "";
+
+      this.form.shift = null;
+      this.form.modal_awal = null;
+      this.form.jenis_modal = null;
     },
     async onUpdateValueFile(payload) {
       console.log(payload);
@@ -393,44 +512,92 @@ export default {
       this.struk = this.form;
 
       console.log("onSave 1", this.form, this.cashier);
+      this.$refs.jenis_modal.validate();
+      this.$refs.shift.validate();
+
+      if (this.checkShift)
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: this.form?.shift + " sudah ada",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
 
       if (this.form?.cashier_id != this.cashier?.id) {
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Salah profile kasir",
+          caption: "Harus sesuai dengan KASIR PIKET",
           icon: "warning",
           color: "negative",
           position: "top",
         });
       }
 
-      if (!this.imageUrl) {
+      if (this.form.modal_awal && this.form.modal_awal > 0 && !this.form?.jenis_modal) {
+        return this.$q.notify({
+          message: "Peringatan",
+          caption: "JENIS MODAL wajib diisi",
+          icon: "warning",
+          color: "negative",
+          position: "top",
+        });
+      }
+
+      if (this.form?.jenis_modal != "KOSONG") {
+        if (!this.form?.modal_awal || this.form?.modal_awal <= 0) {
+          return this.$q.notify({
+            message: "Peringatan",
+            caption: "MODAL AWAL jangan kosong",
+            icon: "warning",
+            color: "negative",
+            position: "top",
+          });
+        }
+      }
+
+      // if (!this.imageUrl) {
+      //   // alert(`!this.imageUrl ${!this.imageUrl}`);
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "Foto jangan kosong",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
+      // }
+
+      if (!this.form?.shift) {
         // alert(`!this.imageUrl ${!this.imageUrl}`);
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Foto jangan kosong",
+          caption: "Shift jangan kosong",
           icon: "warning",
           color: "negative",
           position: "top",
         });
       }
 
-      if (this.form?.cashier.pin != this.pin) {
-        // alert(`this.form?.cashier.pin != this.pin ${this.form?.cashier.pin != this.pin}`);
-        return this.$q.notify({
-          message: "Peringatan",
-          caption: "PIN tidak cocok",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
-      }
+      // if (this.form?.cashier.pin != this.pin) {
+      //   // alert(`this.form?.cashier.pin != this.pin ${this.form?.cashier.pin != this.pin}`);
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "PIN tidak cocok",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
+      // }
 
       this.form.modal_akhir = this.balance;
 
       if (!this.form?.jam_mulai) {
         // JAM DATANG
-        this.balance = this.form?.modal_awal;
+        if (this.form?.jenis_modal == "RESET") {
+          this.balance = Number(this.form?.modal_awal);
+        } else {
+          this.balance += Number(this.form?.modal_awal);
+        }
 
         this.struk.jam_mulai = date.formatDate(Date.now(), "HH:mm:ss");
       } else {

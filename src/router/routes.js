@@ -1,16 +1,58 @@
+import { Notify } from 'quasar';
+import { useAbsensiStore } from 'src/stores/absensi-store';
+import { usePengaturanStore } from 'src/stores/pengaturan-store';
+
+import { date } from "quasar";
+const tanggalString = date.formatDate(Date.now(), "YYYY-MM-DD");
+
+
 const INDEX = () => import('pages/IndexPage.vue')
+
+const CheckOutWajibPage = () => import('pages/CheckOutWajibPage.vue')
+const CheckRotasiWajibPage = () => import('pages/CheckRotasiWajibPage.vue')
+const CheckInWajibPage = () => import('pages/CheckInWajibPage.vue')
+
+function mustAbsensi() {
+  const { struks } = useAbsensiStore()
+  const { cashier } = usePengaturanStore()
+  console.log('struks', struks)
+
+  let isAbsensi = false
+  struks.forEach(element => {
+    console.log('router.js', element?.cashier_id, cashier?.id)
+    if(element?.cashier_id == cashier?.id) {
+      isAbsensi = true
+    }
+  });
+
+  if (!isAbsensi) {
+    Notify.create({
+      message: "Peringatan",
+      caption: "Mulai dari ABSENSI",
+      icon: "warning",
+      color: "orange",
+      position: "top",
+    })
+    return true
+  } else {
+    return false
+  }
+}
 
 const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     redirect: {
-      name: 'NoteApp',
+      name: 'absensi',
     },
     children: [
       {
         meta: {
           title: 'NoteApp',
+        },
+        redirect: {
+          name: 'absensi',
         },
         path: 'NoteApp',
         name: 'NoteApp',
@@ -41,8 +83,15 @@ const routes = [
         name: 'penjualan',
         components: {
           default: () => import('pages/PenjualanPage.vue'),
-          index: INDEX
-        }
+          index: CheckInWajibPage
+        },
+        beforeEnter: (to, from, next) => {
+          if (mustAbsensi()) {
+            next({ name: 'absensi' })
+          } else {
+            next()
+          }
+        },
       },
       {
         meta: {
@@ -52,8 +101,15 @@ const routes = [
         name: 'pengiriman',
         components: {
           default: () => import('pages/PengirimanPage.vue'),
-          index: INDEX
-        }
+          index: CheckInWajibPage
+        },
+        beforeEnter: (to, from, next) => {
+          if (mustAbsensi()) {
+            next({ name: 'absensi' })
+          } else {
+            next()
+          }
+        },
       },
       {
         meta: {
@@ -63,41 +119,69 @@ const routes = [
         name: 'mutasi',
         components: {
           default: () => import('pages/MutasiPage.vue'),
-          index: INDEX
-        }
+          index: CheckInWajibPage
+        },
+        beforeEnter: (to, from, next) => {
+          if (mustAbsensi()) {
+            next({ name: 'absensi' })
+          } else {
+            next()
+          }
+        },
       },
       {
         meta: {
-          title: 'cek buka',
+          title: 'stok awal',
         },
         path: 'check-in',
         name: 'check-in',
         components: {
           default: () => import('pages/CheckInPage.vue'),
           index: INDEX
-        }
+        },
+        beforeEnter: (to, from, next) => {
+          if (mustAbsensi()) {
+            next({ name: 'absensi' })
+          } else {
+            next()
+          }
+        },
       },
       {
         meta: {
-          title: 'cek tutup',
+          title: 'stok akhir',
         },
         path: 'check-out',
         name: 'check-out',
         components: {
           default: () => import('pages/CheckOutPage.vue'),
-          index: INDEX
-        }
+          index: CheckInWajibPage,
+        },
+        beforeEnter: (to, from, next) => {
+          if (mustAbsensi()) {
+            next({ name: 'absensi' })
+          } else {
+            next()
+          }
+        },
       },
       {
         meta: {
-          title: 'cek rotasi',
+          title: 'stok rotasi',
         },
         path: 'check-rotasi',
         name: 'check-rotasi',
         components: {
           default: () => import('pages/CheckRotasiPage.vue'),
-          index: INDEX
-        }
+          index: CheckRotasiWajibPage,
+        },
+        beforeEnter: (to, from, next) => {
+          if (mustAbsensi()) {
+            next({ name: 'absensi' })
+          } else {
+            next()
+          }
+        },
       },
 
       {
@@ -108,9 +192,20 @@ const routes = [
         name: 'balance',
         components: {
           default: () => import('pages/BalancePage.vue'),
-          index: INDEX
-        }
+          index: CheckInWajibPage
+        },
+        beforeEnter: (to, from, next) => {
+          if (mustAbsensi()) {
+            next({ name: 'absensi' })
+          } else {
+            next()
+          }
+        },
       },
+
+
+
+
 
 
 
@@ -191,7 +286,7 @@ const routes = [
 
       {
         meta: {
-          title: 'riwayat penjualan',
+          title: 'laporan penjualan',
         },
         path: 'riwayat-penjualan',
         name: 'riwayat_penjualan',
@@ -200,6 +295,20 @@ const routes = [
           index: INDEX
         }
       },
+      {
+        meta: {
+          title: 'laporan rekap shift',
+        },
+        path: 'riwayat-shift',
+        name: 'riwayat_shift',
+        components: {
+          default: () => import('pages/RiwayatShiftPage.vue'),
+          index: INDEX
+        }
+      },
+
+
+
       {
         meta: {
           title: 'riwayat absensi',
@@ -298,7 +407,7 @@ const routes = [
         },
         path: 'camera',
         name: 'camera',
-        component: () => import ('pages/CameraPage.vue'),
+        component: () => import('pages/CameraPage.vue'),
       },
     ],
   },

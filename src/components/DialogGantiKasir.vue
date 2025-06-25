@@ -13,7 +13,15 @@
               <div class="text-h6">KASIR PIKET</div>
             </q-toolbar-title>
 
-            <q-btn v-close-popup flat dense color="white" rounded icon="close"></q-btn>
+            <q-btn
+              v-if="_cashier?.id"
+              v-close-popup
+              flat
+              dense
+              color="white"
+              rounded
+              icon="close"
+            ></q-btn>
           </q-toolbar>
         </q-card-section>
 
@@ -30,9 +38,10 @@
             Ganti kasir PIKET yang bertanggungjawab pada shift sekarang
           </q-banner>
 
-          <div class="col-6 q-mb-md">
+          <div v-if="cashier?.id" class="col-6 q-mb-md">
             <q-list bordered>
-              <q-item>
+              <q-item v-ripple clickable @click="openDialogPengaturanCashier(cashier)">
+                <!-- <q-badge floating>Klik untuk mengganti NAMA</q-badge> -->
                 <q-item-section avatar>
                   <q-avatar>
                     <img :src="cashier?.foto ? cashier?.foto : $defaultImage1" />
@@ -45,8 +54,14 @@
                     cashier?.nama ? cashier?.nama : "Piket Kosong"
                   }}</q-item-label>
                 </q-item-section>
+
+                <q-item-section side>
+                  <q-item-label caption>SHIFT</q-item-label>
+                  <q-item-label>{{ getAbsensi?.shift }}</q-item-label>
+                </q-item-section>
               </q-item>
             </q-list>
+            <div class="text-caption q-mt-sm">Klik untuk mengganti NAMA</div>
           </div>
 
           <div>
@@ -66,7 +81,7 @@
             </q-select>
           </div>
 
-          <div class="col-12">
+          <!-- <div class="col-12">
             <q-input
               type="password"
               :hint="getPinLabel"
@@ -78,7 +93,7 @@
               v-model="pin"
               label="PIN Kasir"
             />
-          </div>
+          </div> -->
         </q-card-section>
 
         <q-separator></q-separator>
@@ -99,7 +114,9 @@
 
 <script>
 import { mapActions, mapState, mapWritableState } from "pinia";
+import { useAbsensiStore } from "src/stores/absensi-store";
 import { usePengaturanStore } from "src/stores/pengaturan-store";
+import { usePenjualanStore } from "src/stores/penjualan-store";
 
 export default {
   data() {
@@ -110,8 +127,15 @@ export default {
     };
   },
   computed: {
+    ...mapState(useAbsensiStore, {
+      ABSENSI_struks: "struks",
+    }),
     ...mapState(usePengaturanStore, {
       list_cashiers: "list_cashiers",
+    }),
+
+    ...mapWritableState(usePenjualanStore, {
+      PENJUALAN_struk: "struk",
     }),
 
     ...mapWritableState(usePengaturanStore, {
@@ -121,8 +145,22 @@ export default {
       const name = this.cashier?.nama ? " - " + this.cashier?.nama : "";
       return `Wajib diisi PIN Kasir`;
     },
+    getAbsensi() {
+      let temp = null;
+      this.ABSENSI_struks.forEach((el) => {
+        if (el?.cashier_id == this.cashier?.id) temp = el;
+      });
+      return temp;
+    },
   },
   watch: {
+    list_cashiers(val) {
+      val.forEach((element) => {
+        if (element?.id == this.cashier?.id) {
+          this.cashier = element;
+        }
+      });
+    },
     cashier(val) {
       // alert(JSON.stringify(val));
       this.pin = null;
@@ -132,6 +170,12 @@ export default {
     ...mapActions(usePengaturanStore, {
       setCashier: "setCashier",
     }),
+    openDialogPengaturanCashier(payload) {
+      this.$global.$emit("MainLayout", {
+        label: "openDialogPengaturanCashier",
+        value: payload,
+      });
+    },
     onOpen() {
       this.confirm = true;
 
@@ -140,20 +184,23 @@ export default {
     onSubmit() {
       // console.log(this.cashier, this.pin);
 
-      if (this.cashier?.pin != this.pin) {
-        return this.$q.notify({
-          message: "Peringatan",
-          caption: "PIN tidak cocok",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
-      }
+      // if (this.cashier?.pin != this.pin) {
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "PIN tidak cocok",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
+      // }
 
       // this._cashier = this.cashier;
       this.setCashier(this.cashier);
 
       const vm = this;
+      vm.confirm = false;
+
+      this.PENJUALAN_struk = {};
 
       this.$swal({
         // position: "top-end",

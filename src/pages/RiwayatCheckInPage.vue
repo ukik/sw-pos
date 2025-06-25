@@ -6,7 +6,7 @@
     <DialogInvoiceCheckIn ref="dialog_invoice_checkin"></DialogInvoiceCheckIn>
 
     <q-date
-      subtitle="CEK BUKA"
+      subtitle="STOK AWAL"
       class="full-width"
       color=" bg-sw"
       v-model="date"

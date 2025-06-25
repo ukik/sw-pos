@@ -98,38 +98,45 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
     // ],
 
     list_cashiers: [
-      // {
-      //   id: 1,
-      //   nama: 'Yuli',
-      //   alamat: 'Jl. ini itu',
-      //   pin: 1234,
-      //   foto: 'https://cdn.quasar.dev/img/mountains.jpg',
+      {
+        id: 1,
+        nama: 'Kasir 1',
+        alamat: 'Jl. ini itu',
+        pin: 1234,
+        foto: 'images/user-1.png',
 
-      // },
-      // {
-      //   id: 2,
-      //   nama: 'Zigas',
-      //   alamat: 'Jl. macan',
-      //   pin: 1234,
-      //   foto: 'https://cdn.quasar.dev/img/mountains.jpg',
+      },
+      {
+        id: 2,
+        nama: 'Kasir 2',
+        alamat: 'Jl. macan',
+        pin: 1234,
+        foto: 'images/user-1.png',
 
-      // },
+      },
     ],
     list_courirs: [
-      // {
-      //   id: 1,
-      //   nama: 'JOKO',
-      //   alamat: 'Jl. ini itu',
-      //   pin: 1234,
-      //   foto: 'https://cdn.quasar.dev/img/mountains.jpg',
-      // },
-      // {
-      //   id: 2,
-      //   nama: 'PRABOWO',
-      //   alamat: 'Jl. ini itu',
-      //   pin: 1234,
-      //   foto: 'https://cdn.quasar.dev/img/mountains.jpg',
-      // },
+      {
+        id: 1,
+        nama: 'Kurir 1',
+        alamat: 'Jl. ini itu',
+        pin: 1234,
+        foto: 'images/user-1.png',
+      },
+      {
+        id: 2,
+        nama: 'Kurir 2',
+        alamat: 'Jl. ini itu',
+        pin: 1234,
+        foto: 'images/user-1.png',
+      },
+      {
+        id: 3,
+        nama: 'Kurir 3',
+        alamat: 'Jl. ini itu',
+        pin: 1234,
+        foto: 'images/user-1.png',
+      },
     ],
   }),
 
@@ -176,7 +183,7 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
           }
         }
       }
-      if(tipe == 'CREATE') {
+      if (tipe == 'CREATE') {
         payload.id = this.getCashierLength + 1
 
         temp.push(payload)
@@ -208,7 +215,7 @@ export const usePengaturanStore = defineStore('PengaturanStore', {
         }
       }
 
-      if(tipe == 'CREATE') {
+      if (tipe == 'CREATE') {
         payload.id = this.getCourirLength + 1
         temp.push(payload)
       }

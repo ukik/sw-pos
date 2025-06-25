@@ -6,6 +6,8 @@ import decimal from 'src/helpers/decimal';
 
 import { ref, nextTick } from 'vue';
 import localforage from "localforage";
+import { usePenjualanStore } from './penjualan-store';
+import { useAbsensiStore } from './absensi-store';
 
 
 const timeStamp = Date.now();
@@ -22,6 +24,7 @@ function uuidv4() {
 
 export const useCheckInStore = defineStore('CheckInStore', {
   state: () => ({
+    produks:[],
     struk: {
     },
     struks: [],
@@ -117,6 +120,17 @@ export const useCheckInStore = defineStore('CheckInStore', {
     addNewStruk() {
 
       const { balance, position, cabang, cashier, shift } = usePengaturanStore()
+      const useAbsensi = useAbsensiStore()
+
+      function getShift() {
+        let temp = null
+        useAbsensi?.struks.forEach(el => {
+          if (el?.cashier_id == cashier?.id) {
+            temp = el
+          }
+        });
+        return temp
+      }
 
       console.log(!this.struk?.id)
       if(!this.struk?.id) {
@@ -130,6 +144,7 @@ export const useCheckInStore = defineStore('CheckInStore', {
           cashier: {
             ...cashier
           },
+          absensi: getShift(),
           // status: "",
           stok_akhir: 0,
           stok_awal: 0,
@@ -145,6 +160,23 @@ export const useCheckInStore = defineStore('CheckInStore', {
         }
 
       }
+      console.log('addNewStruk', this.struk)
+    },
+    // jadi kondisi produk akan di record setelah VALIDASI
+    async updateLocalStorageProduk() {
+      const storage_name = 'CHECK-BUKA-PRODUK-'+date.formatDate(Date.now(), "YYYY-MM-DD")
+
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+      db.clear()
+      const id = Date.now().toString()
+
+      const { items } = usePenjualanStore()
+      await db.setItem(id, { text: JSON.stringify(items) })
+      this.produks = items
     },
     async updateLocalStorage() {
       const storage_name = 'CHECK-BUKA-STRUKS-'+date.formatDate(Date.now(), "YYYY-MM-DD")
@@ -173,23 +205,25 @@ export const useCheckInStore = defineStore('CheckInStore', {
       this.invoice = this.struk
 
       this.struk = null
+
+      this.updateLocalStorageProduk()
       return
 
-      // let model = JSON.parse(JSON.stringify(localStorage.getItem(storage_name)));
-      let model = []
+      // // let model = JSON.parse(JSON.stringify(localStorage.getItem(storage_name)));
+      // let model = []
 
-      if(localStorage.getItem(storage_name)) model = JSON.parse(localStorage.getItem(storage_name));
+      // if(localStorage.getItem(storage_name)) model = JSON.parse(localStorage.getItem(storage_name));
 
-      this.invoice = this.struk
+      // this.invoice = this.struk
 
-      let addModel = [
-        ...model,
-        this.struk,
-      ]
+      // let addModel = [
+      //   ...model,
+      //   this.struk,
+      // ]
 
-      localStorage.setItem(storage_name, JSON.stringify(addModel))
+      // localStorage.setItem(storage_name, JSON.stringify(addModel))
 
-      this.struks = addModel
+      // this.struks = addModel
 
       // this.invoice = this.struk
     },
@@ -224,6 +258,25 @@ export const useCheckInStore = defineStore('CheckInStore', {
         this.struks = []
       }
 
+    },
+    async loadLocalStorageProduk(set_date) {
+      const storage_name = 'CHECK-BUKA-PRODUK-'+set_date
+
+      // Konfigurasi database localForage
+      const db = localforage.createInstance({
+        name: "FreeztoMartDB",
+        storeName: storage_name
+      });
+
+      await nextTick();
+      let notesArr = []
+      await db.iterate((value, key) => {
+        const n = { ...value, id: key }
+        notesArr.push(JSON.parse(n?.text))
+      })
+      this.produks = notesArr[0]
+      console.log('loadLocalStorageProduk', notesArr[0])
+      return
     }
   }
 })

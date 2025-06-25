@@ -1,7 +1,7 @@
 <template>
   <div class="" style="">
     <q-list padding class="rounded-borders text-primary">
-      <q-item-label class="text-h6" header>Riwayat</q-item-label>
+      <q-item-label class="text-h6" header>Laporan</q-item-label>
 
       <q-item
         clickable
@@ -18,8 +18,24 @@
         <q-item-section>Penjualan</q-item-section>
       </q-item>
 
-      <q-separator spaced />
+      <!-- <q-separator spaced /> -->
 
+      <q-item
+        clickable
+        v-ripple
+        :active="link === 'riwayat_shift'"
+        @click="link = 'riwayat_shift'"
+        :to="{ name: 'riwayat_shift' }"
+        active-class="bg-sw text-white"
+      >
+        <q-item-section avatar>
+          <q-icon name="description" />
+        </q-item-section>
+
+        <q-item-section>Rekap SHIFT</q-item-section>
+      </q-item>
+
+      <!-- 
       <q-item
         clickable
         v-ripple
@@ -96,7 +112,7 @@
           <q-icon name="install_desktop" />
         </q-item-section>
 
-        <q-item-section>Cek Buka</q-item-section>
+        <q-item-section>STOK AWAL</q-item-section>
       </q-item>
 
       <q-item
@@ -126,8 +142,8 @@
           <q-icon name="content_paste_go" />
         </q-item-section>
 
-        <q-item-section>Cek Tutup</q-item-section>
-      </q-item>
+        <q-item-section>STOK AKHIR</q-item-section>
+      </q-item> -->
 
       <q-separator spaced />
 

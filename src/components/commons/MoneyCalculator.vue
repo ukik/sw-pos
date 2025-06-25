@@ -1,5 +1,5 @@
 <template>
-  <q-dialog @hide="onHide" full-width :persistent="false" v-model="fixed">
+  <q-dialog @hide="onHide" full-width persistent v-model="fixed">
     <q-card>
       <q-card-actions class="q-pa-none q-pl-xs">
         <q-toolbar class="bg-redx text-black">
@@ -153,12 +153,10 @@
 
 <script>
 import { date } from "quasar";
-
-import { mapActions, mapState, mapWritableState } from "pinia";
 import { ref } from "vue";
 
-const timeStamp = Date.now();
-const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
+//const timeStamp = Date.now();
+//const formattedString = date.formatDate(Date.now(), "YYYY-MM-DD HH:mm:ss");
 
 export default {
   setup() {
@@ -200,18 +198,18 @@ export default {
       this.model = temp.toString();
     },
     onClose() {
-      if (this.model <= 0)
-        return this.$q.notify({
-          message: "Peringatan",
-          caption: "Harga wajib diisi",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
+      // if (this.model <= 0)
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "Kas Modal jangan kosong",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
+
+      // if (this.model === 0) return;
 
       this.fixed = false;
-
-      if (this.model === 0) return;
 
       this.item.price = this.model;
 

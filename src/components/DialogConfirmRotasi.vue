@@ -374,7 +374,7 @@ export default {
       if (this.isCheckDone) {
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Maksimal cek buka 1 kali sehari",
+          caption: "Maksimal STOK AWAL 1 kali sehari",
           icon: "warning",
           color: "negative",
           position: "top",
@@ -389,18 +389,18 @@ export default {
       // if (!this.item?.shift_pemberi) return this.onNofityForm();
       // if (!this.item?.shift_penerima) return this.onNofityForm();
 
-      if (
-        this.rotasi_cashier_pemberi?.pin != this.pin1 ||
-        this.rotasi_cashier_penerima?.pin != this.pin2
-      ) {
-        return this.$q.notify({
-          message: "Peringatan",
-          caption: "PIN tidak cocok",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
-      }
+      // if (
+      //   this.rotasi_cashier_pemberi?.pin != this.pin1 ||
+      //   this.rotasi_cashier_penerima?.pin != this.pin2
+      // ) {
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "PIN tidak cocok",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
+      // }
 
       this.fixed = false;
 

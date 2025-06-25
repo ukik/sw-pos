@@ -1,5 +1,5 @@
 <template>
-  <q-dialog persistent full-width full-height v-model="medium">
+  <q-dialog persistent position="top" v-model="medium">
     <q-card class="q-mt-md" style="width: 700px; max-width: 80vw">
       <q-form @submit="onSave">
         <q-card-section class="bg-sw text-white q-py-none">
@@ -14,15 +14,15 @@
 
         <q-separator></q-separator>
 
-        <q-card-section class="scroll" style="height: calc(100vh - 55px - 50px - 50px)">
-          <div v-if="imageUrl" class="text-center q-mb-md">
+        <q-card-section class="scroll" style="heightx: calc(100vh - 55px - 50px - 50px)">
+          <div v-if="imageUrl && false" class="text-center q-mb-md">
             <q-img
               :src="imageUrl"
               spinner-color="white"
               style="height: 300px; width: 300px"
             />
           </div>
-          <div class="q-mb-md">
+          <div v-if="false" class="q-mb-md">
             <q-field
               v-if="isCordova"
               ref="fieldRef"
@@ -65,7 +65,7 @@
             />
           </div>
 
-          <div class="q-mb-md">
+          <!-- <div class="q-mb-md">
             <q-input
               type="password"
               mask="####"
@@ -77,8 +77,8 @@
               hint="Wajib diisi PIN Kurir"
               v-model="form.pin"
             />
-          </div>
-          <div class="q-mb-md">
+          </div> -->
+          <!-- <div class="q-mb-md">
             <q-input
               clearable
               outlined
@@ -89,9 +89,9 @@
               hint="Wajib diisi alamat"
               v-model="form.alamat"
             />
-          </div>
+          </div> -->
 
-          <div class="q-mb-md">
+          <!-- <div class="q-mb-md">
             <q-input
               type="password"
               mask="####"
@@ -103,7 +103,7 @@
               hint="Wajib diisi PIN Master"
               v-model="pin_master"
             />
-          </div>
+          </div> -->
         </q-card-section>
 
         <q-separator></q-separator>
@@ -156,8 +156,6 @@ export default {
           position: "top",
         });
       }
-
-      alert(payload);
 
       return this.$q.notify({
         message: "Perhatian",
@@ -221,19 +219,19 @@ export default {
       this.form.pin = Number(this.form.pin);
 
       if (!this.form.nama) return this.onNotify();
-      if (!this.form.alamat) return this.onNotify();
-      if (!this.form.pin) return this.onNotify();
-      if (!this.form.foto) return this.onNotify();
+      // if (!this.form.alamat) return this.onNotify();
+      // if (!this.form.pin) return this.onNotify();
+      // if (!this.form.foto) return this.onNotify();
 
-      if (!this.pin_master) return this.onNotify();
-      if (this.pin_master != this.get_pin_master)
-        return this.$q.notify({
-          message: "Peringatan",
-          caption: "PIN Master salah",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
+      // if (!this.pin_master) return this.onNotify();
+      // if (this.pin_master != this.get_pin_master)
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "PIN Master salah",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
 
       this.$emit("onBubbleEventOK", this.form);
 

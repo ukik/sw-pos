@@ -30,6 +30,18 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
   }),
 
   getters: {
+    isAbsensi: ({ struks }) => {
+      const { cashier } = usePengaturanStore()
+
+      let isAbsensi = false
+      struks.forEach(element => {
+        console.log('router.js', element?.cashier_id, cashier?.id)
+        if (element?.cashier_id == cashier?.id) {
+          isAbsensi = true
+        }
+      });
+      return isAbsensi
+    },
     getInvoiceSelected: ({ struks }) => {
       return function (date) {
         let temp = null
@@ -130,6 +142,7 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
           modal_akhir: 0,
           jam_mulai: '',
           jam_selesai: '',
+          shift: '',
           foto: '',
           catatan_masuk: null,
           catatan_pulang: null,
@@ -156,7 +169,7 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
 
       const { balance, position, cabang, cashier, shift } = usePengaturanStore()
 
-      console.log('updateLocalStorage', this.struk)
+      console.log('absensi-store updateLocalStorage', this.struk)
 
       const storage_name = 'ABSENSI-STRUKS-' + date.formatDate(Date.now(), "YYYY-MM-DD")
 
@@ -185,7 +198,7 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
         console.log('ABSENSI MASUK', notesArr)
       } else if (this.mode == 'ABSENSI PULANG') {
         await db.setItem(this.struk?.id, {
-            text: JSON.stringify({
+          text: JSON.stringify({
             ...this.struk,
             jam_selesai: date.formatDate(Date.now(), "HH:mm:ss"),
             catatan_pulang: this.struk?.catatan_pulang,
@@ -230,7 +243,7 @@ export const useAbsensiStore = defineStore('AbsensiStore', {
       }
 
       if (this.mode == 'ABSENSI PULANG') {
-      // } else if (this.struk?.jam_mulai && this.struk?.jam_selesai) {
+        // } else if (this.struk?.jam_mulai && this.struk?.jam_selesai) {
         for (let i = 0; i < model.length; i++) {
           const element = model[i];
           if (element?.cashier_id == this.struk?.cashier_id) {
