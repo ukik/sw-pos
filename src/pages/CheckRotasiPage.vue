@@ -22,7 +22,7 @@
           <template v-slot:avatar>
             <q-icon name="info" color="white" />
           </template>
-          Stok berubah setelah konfirmasi CEK ROTASI sukses
+          Stok berubah setelah konfirmasi PERGANTIAN SHIFT sukses
         </q-banner>
         <q-banner dense class="bg-orange q-mt-sm text-white">
           <template v-slot:avatar>
@@ -86,7 +86,7 @@
     <q-page-sticky class="q-pr-sm" position="top-right" :offset="[0, 0]">
       <q-item style="height: 35px" dense class="bg-sw flex flex-center text-white">
         <q-item-section>
-          <q-item-label class="text-center">STRUK CEK ROTASI</q-item-label>
+          <q-item-label class="text-center">STRUK PERGANTIAN SHIFT</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -117,6 +117,7 @@
       </q-item>
 
       <div class="full-width q-mt-sm col-12 row q-col-gutter-sm">
+
         <div class="col q-pl-none q-pt-none">
           <q-btn
             v-if="!isCheckDone"
@@ -166,12 +167,20 @@ import { mapActions, mapWritableState, mapState } from "pinia";
 import { useRotasiStore } from "src/stores/rotasi-store";
 import { usePenjualanStore } from "src/stores/penjualan-store";
 import { useCheckInStore } from "src/stores/checkin-store";
+import { usePengaturanStore } from "src/stores/pengaturan-store";
+import { useAbsensiStore } from "src/stores/absensi-store";
 
 export default {
   data() {
     return {};
   },
   computed: {
+    ...mapState(useAbsensiStore, {
+      ABSENSI_struks: "struks",
+    }),
+    ...mapState(usePengaturanStore, {
+      cashier: "cashier",
+    }),
     ...mapState(useRotasiStore, {
       getTotal: "getTotal",
       isCheckDone: "isCheckDone",
@@ -214,14 +223,30 @@ export default {
     openDialogCalculatorRotasi(item) {
       console.log(item);
 
-      if (!this.CHECKIN_isCheckDone)
+      let isAbsensi = null;
+      this.ABSENSI_struks.forEach((element) => {
+        if (element?.cashier_id == this.cashier?.id) {
+          isAbsensi = element;
+        }
+      });
+      if (isAbsensi?.shift != "SHIFT 1") {
         return this.$q.notify({
           message: "Peringatan",
-          caption: "Wajib cek STOK AWAL dulu",
+          caption: "Cek PERGANTIAN SHIFT harus SHIFT 1",
           icon: "warning",
           color: "negative",
           position: "top",
         });
+      }
+
+      // if (!this.CHECKIN_isCheckDone)
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "Wajib cek STOK AWAL dulu",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
 
       if (Number(item?.stock) <= 0)
         return this.$q.notify({
@@ -247,14 +272,15 @@ export default {
       if (this.isCheckDone) return this.$refs.dialog_bayar?.onOpen(this.struk);
     },
     async openDialogConfirmRotasi() {
-      if (this.getTotalStruk <= 0)
-        return this.$q.notify({
-          message: "Peringatan",
-          caption: "Struk STOK AKHIR kosong",
-          icon: "warning",
-          color: "negative",
-          position: "top",
-        });
+      // if (this.getTotalStruk <= 0)
+      //   return this.$q.notify({
+      //     message: "Peringatan",
+      //     caption: "Struk STOK AWAL kosong",
+      //     icon: "warning",
+      //     color: "negative",
+      //     position: "top",
+      //   });
+      this.addNewStruk();
 
       const is_item_over_weight = await this.isItemOverWeight(this.struk?.items);
       console.log("isItemOverWeight", is_item_over_weight);

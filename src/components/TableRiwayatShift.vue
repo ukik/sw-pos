@@ -50,13 +50,13 @@
     <thead>
       <tr>
         <th>Nama Item</th>
-        <th>Stok Awal</th>
+        <th>{{ _shift == "SHIFT 1" ? "Stok Awal" : "Stok Pergantian Shift" }}</th>
         <th>Pengiriman</th>
         <th>Terjual</th>
         <th>Mutasi</th>
         <th>Stok Aktual</th>
-        <th v-if="_shift == 'SHIFT 2'">Stok Akhir</th>
-        <th v-if="_shift == 'SHIFT 2'">Selisih Stok</th>
+        <th>{{ _shift == "SHIFT 2" ? "Stok Akhir" : "Stok Pergantian Shift" }}</th>
+        <th>Selisih Stok</th>
       </tr>
     </thead>
     <tbody>
@@ -64,10 +64,17 @@
         <tr>
           <td>{{ item?.name }}</td>
 
-          <td>
+          <td v-if="_shift == 'SHIFT 1'">
             <template v-for="checkin_item in CHECKIN_produks">
               <span v-if="checkin_item?.produk_id == item?.produk_id"
                 >{{ checkin_item?.stock }} Kg</span
+              >
+            </template>
+          </td>
+          <td v-if="_shift == 'SHIFT 2'">
+            <template v-for="rotasi_item in ROTASI_produks">
+              <span v-if="rotasi_item?.produk_id == item?.produk_id"
+                >{{ rotasi_item?.stock }} Kg</span
               >
             </template>
           </td>
@@ -96,14 +103,29 @@
             </template>
           </td>
 
-          <td>
+          <td v-if="_shift == 'SHIFT 1'">
             <template v-for="aktual_item in filter_STOK_AKTUAL">
               <span v-if="aktual_item?.produk_id == item?.produk_id"
                 >{{ aktual_item?.stock }} Kg</span
               >
             </template>
           </td>
-          <td v-if="_shift == 'SHIFT 2'">
+          <td v-else-if="_shift == 'SHIFT 2'">
+            <template v-for="aktual_item in filter_STOK_AKTUAL_SHIFT_2">
+              <span v-if="aktual_item?.produk_id == item?.produk_id"
+                >{{ aktual_item?.stock }} Kg</span
+              >
+            </template>
+          </td>
+
+          <td v-if="_shift == 'SHIFT 1'">
+            <template v-for="rotasi_produk in ROTASI_produks">
+              <span v-if="rotasi_produk?.produk_id == item?.produk_id"
+                >{{ rotasi_produk?.stock }} Kg</span
+              >
+            </template>
+          </td>
+          <td v-else-if="_shift == 'SHIFT 2'">
             <template v-for="checkout_produk in CHECKOUT_produks">
               <span v-if="checkout_produk?.produk_id == item?.produk_id"
                 >{{ checkout_produk?.stock }} Kg</span
@@ -111,7 +133,14 @@
             </template>
           </td>
 
-          <td v-if="_shift == 'SHIFT 2'">
+          <td v-if="_shift == 'SHIFT 1'">
+            <template v-for="selisih_produk in filter_PERGANTIAN_SELISIH">
+              <span v-if="selisih_produk?.produk_id == item?.produk_id"
+                >{{ selisih_produk?.stock }} Kg</span
+              >
+            </template>
+          </td>
+          <td v-else-if="_shift == 'SHIFT 2'">
             <template v-for="selisih_produk in filter_STOK_SELISIH">
               <span v-if="selisih_produk?.produk_id == item?.produk_id"
                 >{{ selisih_produk?.stock }} Kg</span
@@ -141,6 +170,7 @@ import columns from "src/helpers/colums-riwayat-penjualan";
 import TableRiwayatPenjualanPDF from "./TableRiwayatPenjualanPDF.vue";
 import { useAbsensiStore } from "src/stores/absensi-store";
 import { usePengaturanStore } from "src/stores/pengaturan-store";
+import { useRotasiStore } from "src/stores/rotasi-store";
 
 function uniqueAndSummed(data) {
   return data.reduce((acc, currentItem) => {
@@ -213,7 +243,7 @@ export default {
       BALANCE_rows: "getStruks",
     }),
     ...mapState(useCheckInStore, {
-      CHECKIN_rows: "getStruks",
+      // CHECKIN_rows: "getStruks",
       CHECKIN_produks: "produks",
     }),
     ...mapState(useMutasiStore, {
@@ -224,8 +254,12 @@ export default {
       // PENGIRIMAN_produks: "produks",
     }),
     ...mapState(useCheckOutStore, {
-      CHECKOUT_rows: "getStruks",
+      // CHECKOUT_rows: "getStruks",
       CHECKOUT_produks: "produks",
+    }),
+    ...mapState(useRotasiStore, {
+      // ROTASI_rows: "getStruks",
+      ROTASI_produks: "produks",
     }),
     ...mapWritableState(usePenjualanStore, {
       invoice: "invoice",
@@ -254,6 +288,7 @@ export default {
     //   return temp;
     // },
     getTotalCash() {
+      console.log(this.getModalAwal, this.getTagihanPembulatan);
       return Number(this.getModalAwal) + Number(this.getTagihanPembulatan);
     },
     getHasil() {
@@ -315,12 +350,12 @@ export default {
     getPengeluaran() {
       let temp = 0;
       this.BALANCE_rows.forEach((el) => {
-        temp += Number(el?.total_keluar);
+        temp += Number(el?.total_keluar ? el?.total_keluar : 0);
       });
       return temp;
     },
     getModalAwal() {
-      return Number(this.getAbsensi?.modal_awal);
+      return Number(this.getAbsensi?.modal_awal ? this.getAbsensi?.modal_awal : 0);
     },
 
     filter_rows() {
@@ -366,6 +401,7 @@ export default {
       return Object.values(uniqueAndSummed(temp));
     },
     filter_STOK_AKTUAL() {
+      console.log("filter_STOK_AKTUAL", this.CHECKIN_produks);
       let temp = JSON.parse(JSON.stringify(this.CHECKIN_produks));
       temp.forEach((el) => {
         this.filter_PENGIRIMAN_rows_produk.forEach((el2) => {
@@ -393,10 +429,54 @@ export default {
 
       return temp;
     },
+    filter_STOK_AKTUAL_SHIFT_2() {
+      console.log("filter_STOK_AKTUAL_SHIFT_2", this.ROTASI_produks);
+      let temp = JSON.parse(JSON.stringify(this.ROTASI_produks));
+      temp.forEach((el) => {
+        this.filter_PENGIRIMAN_rows_produk.forEach((el2) => {
+          if (el?.produk_id == el2?.produk_id) {
+            el.stock = Number(el?.stock) + Number(el2?.qty ? el2?.qty : 0);
+          }
+        });
+      });
+
+      temp.forEach((el) => {
+        this.filter_PENJUALAN_rows_produk.forEach((el2) => {
+          if (el?.produk_id == el2?.produk_id) {
+            el.stock = Number(el?.stock) - Number(el2?.qty ? el2?.qty : 0);
+          }
+        });
+      });
+
+      temp.forEach((el) => {
+        this.filter_MUTASI_rows_produk.forEach((el2) => {
+          if (el?.produk_id == el2?.produk_id) {
+            el.stock = Number(el?.stock) - Number(el2?.qty ? el2?.qty : 0);
+          }
+        });
+      });
+
+      return temp;
+    },
+
+    filter_PERGANTIAN_SELISIH() {
+      let temp = []; // JSON.parse(JSON.stringify(this.CHECKIN_produks));
+      this.ROTASI_produks.forEach((el) => {
+        this.filter_STOK_AKTUAL.forEach((el2) => {
+          if (el?.produk_id == el2?.produk_id) {
+            temp.push({
+              ...el,
+              stock: Number(el2?.stock) - Number(el?.stock),
+            });
+          }
+        });
+      });
+      return temp;
+    },
     filter_STOK_SELISIH() {
       let temp = []; // JSON.parse(JSON.stringify(this.CHECKIN_produks));
       this.CHECKOUT_produks.forEach((el) => {
-        this.filter_STOK_AKTUAL.forEach((el2) => {
+        this.filter_STOK_AKTUAL_SHIFT_2.forEach((el2) => {
           if (el?.produk_id == el2?.produk_id) {
             temp.push({
               ...el,
@@ -488,6 +568,7 @@ export default {
                                     </tbody>
                                   </table>`;
 
+      /*
       content += `
                                   <table id="customers2" style="width: 100%; margin-bottom: 10px">
                                     <tbody>
@@ -529,6 +610,12 @@ export default {
                                       </tr>
                                     </tbody>
                                   </table>`;
+      */
+
+      content += `<table id="customers2" style="width: 100%; margin-bottom: 10px">${
+        document.getElementById("customers2").innerHTML
+      }</table>`;
+
       content += `<table id="customers11">${
         document.getElementById("customers11").innerHTML
       }</table>`;

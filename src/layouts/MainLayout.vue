@@ -112,14 +112,16 @@
         />
         <q-separator vertical color="white"></q-separator>
 
-        <!-- <q-route-tab
-          icon="event_repeat"
-          :to="{ name: 'check-rotasi' }"
-          label="Cek Rotasi"
-        />
-        <q-separator vertical color="white"></q-separator> -->
         <q-route-tab
           :class="!this.CHECKIN_isCheckDone || !ABSENSI_isAbsensi ? 'bg-red' : ''"
+          icon="event_repeat"
+          :to="{ name: 'check-rotasi' }"
+          label="Pergantian Shift"
+        />
+        <q-separator vertical color="white"></q-separator>
+
+        <q-route-tab
+          :class="!this.ROTASI_isCheckDone || !ABSENSI_isAbsensi ? 'bg-red' : ''"
           icon="content_paste_go"
           :to="{ name: 'check-out' }"
           label="Stok Akhir"
@@ -352,11 +354,23 @@ export default {
         case "penjualan":
         case "pengiriman":
         case "mutasi":
-        case "check-out":
+        case "check-rotasi":
           if (!this.CHECKIN_isCheckDone) {
             this.$q.notify({
               message: "Peringatan",
               caption: "Wajib cek STOK AWAL dulu",
+              icon: "warning",
+              color: "negative",
+              position: "top",
+            });
+            return "index";
+          }
+          break;
+        case "check-out":
+          if (!this.ROTASI_isCheckDone) {
+            this.$q.notify({
+              message: "Peringatan",
+              caption: "Wajib cek PERGANTIAN SHIFT dulu",
               icon: "warning",
               color: "negative",
               position: "top",
@@ -470,7 +484,7 @@ export default {
           case "penjualan":
             this.PENJUALAN_loadLocalStorageStruks(tanggalString);
             break;
-          case "rotasi":
+          case "check-rotasi":
             this.ROTASI_loadLocalStorageStruks(tanggalString);
             break;
         }
@@ -562,7 +576,7 @@ export default {
     ABSENSI_struk: {
       deep: true,
       handler(val) {
-        console.log("MAINLAYOUT ABSENSI_struk");
+        console.log("MAINLAYOUT ABSENSI_struk", val);
         localStorage.setItem("ABSENSI-STRUK", JSON.stringify(val));
       },
     },
@@ -677,7 +691,6 @@ export default {
       CHECKOUT_initLocalStorage: "initLocalStorage",
       CHECKOUT_updateLocalStorage: "updateLocalStorage",
       CHECKOUT_loadLocalStorageStruks: "loadLocalStorageStruks",
-      CHECKOUT_updateLocalStorageProduk: "updateLocalStorageProduk",
     }),
     ...mapActions(usePengaturanStore, {
       PENGATURAN_initLocalStorage: "initLocalStorage",
@@ -885,8 +898,6 @@ export default {
           break;
       }
     });
-
-    this.CHECKOUT_updateLocalStorageProduk();
 
     await this.$nextTick();
     if (!this.PENGATURAN_cashier?.id) {
